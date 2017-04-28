@@ -1,0 +1,21 @@
+ __        __        __   __
+|  \  /\  |__) |__/ |__) /  \ \_/     |
+|__/ /~~\ |  \ |  \ |__) \__/ / \ ___ |
+
+Darkbox standalone module to use Console Input.
+This, of course does not need darkbox to work, it work as a standalone.
+
+Syntax:
+    darkbox_i [-k[_] OR [-m] OR [-y] OR [-h]
+
+ -k: Return keyboard key to errorlevel
+ -m: Return mouse clic to stdout (see "Mouse event format")
+ -y: Return any mouse movement to stdout (see "Mouse event format")
+ -h: Return a non-nul positive value if data is available in stdin.
+ 
+NOTE: darkbox_i support both darkbox ('-') and batbox ('/') command prefixes.
+
+Mouse event format: "x y c"
+    - x: X position of the mouse in the console
+    - y: Y position of the mouse in the console
+    - c: mouse event value (like mouse button or simply movement)

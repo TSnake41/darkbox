@@ -1,0 +1,26 @@
+Many thanks to :
+    Darkbatcher:
+        - Console clearing stuff for -s on Windows.
+        - Developement of Dos9 which is foundamental for this project.
+        - Some support with fixes for Dos9 (to fix some bugs encountered with darkbox).
+
+    Xenoxis:
+        - Some support and tests.
+        - Some suggestions given.
+
+    Sachadee:
+        - Hosting of distribution archives.
+
+And also some thanks to :
+    - TheBATeam:
+        - Writting of an article on the darkbox command.
+
+    - The batch.xoo.it community:
+        - Some suggestions given.
+        - Report some bugs.
+        - Made some projects based on it.
+    
+    - Fabrice Bellard and some contributors:
+        - Provide a nice compiler (TCC) (used in this project) for Windows.
+
+And many others...

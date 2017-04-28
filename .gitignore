@@ -1,0 +1,8 @@
+bin/
+tcc/
+*.exe
+tests/darkbox*
+tests/makemenu*
+tests/socket*
+tests/dos9
+tests/misc

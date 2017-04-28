@@ -1,0 +1,194 @@
+ __        __        __   __
+|  \  /\  |__) |__/ |__) /  \ \_/
+|__/ /~~\ |  \ |  \ |__) \__/ / \
+
+Darkbox fully portable fast I/O server, powerfull graphic command
+Fully compatible with Dos9 Project.
+
+Syntaxes:
+    1) (process, code or "launcher" part) | darkbox
+    2) darkbox -i | (process, code or "launcher" part)
+    3) darkbox -w t
+    4) darkbox -kbh (reduced: -k)
+
+1) Start darkbox as output server.
+2) Start darkbox as input server.
+3) Wait t ms.
+4) Return 1 if data is available in stdin,
+   should be used for non-blocking input.
+
+   NOTE: "bh" is not required but recommended for
+         "a better code", so it's just cosmetic.
+
+Output commands passing:
+    Commands pass to stdin, so any command like type, more, echo,
+    <nul set/p "=text" or whatever you can imagine send command to darkbox.
+
+    So, you can store commands to files to reuses them easly, like sprites or
+    something else.
+
+    Also, darkbox accept both new syntax ('-') and batbox/tinybg syntax ('/') to
+    begin command.
+
+Output command format:
+    Commands follow this format
+
+    -(execution_count)<commands as letters>
+    REMARK: '-' can be replaced by '/'
+
+    So each <commands as letters> run (execution_count) times (or 1 time if undefined).
+
+    NOTES:
+        - You can escape chracters (" or spaces without double quotes) with '\'
+        - With double quotes, new lines are considerated as characters like any others.
+        - No commands will produce an error (Parsing error: No command specified).
+        - Commands should be in litterals ONLY (Parsing error: Invalid litterals)
+        - Commands are case-insensitive.
+
+    TRICK:
+        You can write your commands througth multiples echoes :
+            echo -5dn "This is a"
+            echo      "small text"
+            echo      "throught"
+            echo      "multiples"
+            echo      "lines"
+
+Launcher (and working variations):
+    Official launchers:
+
+        Original (first) :
+            @Echo off
+            call game.bat | darkbox
+
+        Original with Input server
+            @Echo off
+            darkbox -i | call game.bat | darkbox
+
+        Enhanced (only in one file) :
+            @Echo off
+            if defined __ goto :(code)
+            set __=.
+            call %0 %* | darkbox
+            set __=
+            pause>NUL
+            goto :eof
+
+            "call" is facultative
+
+        Enhanced with Input server
+            @Echo off
+            if defined __ goto :(code)
+            set __=.
+            darkbox -i | call %0 %* | darkbox
+            set __=
+            pause>NUL
+            goto :eof
+
+            "call" is facultative.
+
+    Unofficial launcher (variants):
+        @echo off
+        if not defined $ (
+            set "$=1"
+            (
+              call "%~f0" %*
+            ) | darkbox
+            exit/b
+        )
+
+Output commands reference:
+
+    ASCII:
+        -a Integer
+
+        Usage : Print the character corresponding to the integer
+
+    Newline:
+        -n
+
+        Usage : Go to the next line
+
+    Color:
+        -c color
+        color is in hexadecimal format.
+
+        Usage : Change the current color
+               0xF0 : Background
+               0x0F : Foreground
+
+    Goto:
+        -g x y
+
+        Usage : Move cursor to (x;y)
+
+    Hide/Show cursor:
+        -h 0/1
+
+        Usage : Hide or show cursor
+
+    Clear Screen:
+        -s
+
+        Usage : Clear console
+
+    Origin:
+        -o x y
+
+        Usage : Change goto origin
+
+    Reset:
+        -r
+
+        Usage : Reset foreground and background colors
+
+    Quit:
+        -q
+
+        Usage : Properly stop darkbox
+
+    Wait:
+        -w t
+
+        Usage : Wait t miliseconds
+
+        NOTE: Wait is internal to darkbox, it
+              do not interrupt batch execution.
+
+        REMARK: Wait flush stdout even if t is null.
+
+Input callback reference:
+
+    Mouse:
+        m x y b
+
+        x: Mouse X position
+        y: Mouse Y position
+        b: Mouse button
+
+    Keyboard press:
+        k key
+
+        key: Key code.
+
+List of supported mouse buttons :
+    1: NOTHING (mouse movement)
+    2: LEFT_BUTTON
+    3: RIGHT_BUTTON
+    4: DOUBLE LEFT_BUTTON (portability issues known (*NIX))
+    5: DOUBLE RIGHT_BUTTON (portability issues known (*NIX))
+    6: MIDDLE_BUTTON
+    7: SCROLL_UP (portability issues known (Win32))
+    8: SCROLL_DOWN (portability issues known (Win32))
+    9: RELEASE
+
+See also:
+    Official post : http://batch.xoo.it/t5526-Dev-Darkbox-TSnake41.htm
+    Snake game : http://batch.xoo.it/t5614-Batch-Snake-IK-DC.htm
+    Exquation : http://batch.xoo.it/t5654-Batch-Exquation-IK-DC.htm
+
+    tests for examples of uses
+
+    C library core/core_i in "lib" directory (part of darkbox project)
+
+    Dos9 project : dos9.org
+    darkbox_i and darkbox_t
