@@ -70,17 +70,17 @@ int main(int argc, char const *argv[])
                available in stdin otherwise, return 0
             */
             case 'k': ;
-				#ifndef WIN32
+                #ifndef WIN32
                 return core_kbhit();
-				#else
-				/* Unfortunately, Windows's kbhit take input only from Console and
-				   not stdin, so, we must hack to makes this working with stdin.
-				*/
-				HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
-				DWORD available = 0;
-				PeekNamedPipe(hin, NULL, 0, NULL, &available, NULL);
-				return available;
-				#endif
+                #else
+                /* Unfortunately, Windows's kbhit take input only from Console and
+                   not stdin, so, we must hack to makes this working with stdin.
+                */
+                HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
+                DWORD available = 0;
+                PeekNamedPipe(hin, NULL, 0, NULL, &available, NULL);
+                return available;
+                #endif
 
             case 'w': ;
                 if (argc < 2)
@@ -101,16 +101,16 @@ int main(int argc, char const *argv[])
     showHelp:
         puts("darkbox - Fast Portable Console IO Server - Astie Teddy (TSnake41)\n"
              "Syntaxes : \n"
-			 "  1: (code) | darkbox\n"
-			 "  2: darkbox -i | (code)\n"
-			 "  3: darkbox -w t\n"
-			 "  4: darkbox -k\n\n"
-			 " 1: Start darkbox as output server\n"
-			 " 2: Start darkbox as input server\n"
-			 " 3: Wait t ms\n"
-			 " 4: Return a non-nul value if data is avaialble in stdin.\n\n"
-			 "NOTE: darkbox support both '-' and '/' as command prefixes.\n"
-			 "For more information, see README or http://batch.xoo.it/p41497.htm\n");
+             "  1: (code) | darkbox\n"
+             "  2: darkbox -i | (code)\n"
+             "  3: darkbox -w t\n"
+             "  4: darkbox -k\n\n"
+             " 1: Start darkbox as output server\n"
+             " 2: Start darkbox as input server\n"
+             " 3: Wait t ms\n"
+             " 4: Return a non-nul value if data is avaialble in stdin.\n\n"
+             "NOTE: darkbox support both '-' and '/' as command prefixes.\n"
+             "For more information, see README or http://batch.xoo.it/p41497.htm\n");
         return 0;
 }
 
