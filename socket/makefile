@@ -42,7 +42,7 @@ lib_src=$(libdir)/sthread/sthread.c $(libdir)/fllist/fllist.c \
 	    $(libdir)/socket/socket.c $(libdir)/nms/nms.c $(libdir)/ipc/ipc.c
 
 src=socket.c args_parser.c message.c \
-	client/client.c server/*.c \
+	client/*.c server/*.c \
 	server/commands/*.c
 
 all: socket postbuild

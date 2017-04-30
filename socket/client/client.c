@@ -38,6 +38,8 @@
 #include "../args_parser.h"
 #include "../message.h"
 
+#include "client_handle.h"
+
 void client(socket_args_t args)
 {
     ipc_socket_t socket = ipc_client_new(args.id);

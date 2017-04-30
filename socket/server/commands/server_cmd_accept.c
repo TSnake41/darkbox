@@ -57,11 +57,10 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
         return;
     }
 
-    struct sockaddr_storage _addr;
-    struct sockaddr *addr = (struct sockaddr *)&_addr;
+    struct sockaddr_storage addr;
     socklen_t addr_len;
 
-    socket_t new_socket = accept(listner_pair->socket, (struct sockaddr *)&_addr, &addr_len);
+    socket_t new_socket = accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
 
     if (new_socket == -1) {
         /* accept() error */
@@ -69,35 +68,14 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
         return;
     }
 
-    char ip[INET6_ADDRSTRLEN];
+    char ip_port[INET6_ADDRSTRLEN + 6];
 
-    bool is_ipv6 = addr->sa_family == AF_INET6;
-    void *in_addr;
-
-    if (is_ipv6) {
-        struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *)addr;
-        in_addr = &(sin6->sin6_addr);
-    } else {
-        struct sockaddr_in *sin = (struct sockaddr_in *)addr;
-        in_addr = &(sin->sin_addr);
-    }
-
-    if (inet_ntop(addr->sa_family, in_addr, ip, addr_len) == NULL) {
-        /* inet_ntop() failed */
+    /* Convert addr to ip:port */
+    if (server_addr_to_str(ip_port, &addr, addr_len)) {
         send_code(client, CMD_INTERNAL_ERROR);
         close(new_socket);
         return;
     }
-
-    in_port_t port = (addr->sa_family == AF_INET6) /* is ipv6 */
-        ? ((struct sockaddr_in6 *)addr)->sin6_port
-        : ((struct sockaddr_in *)addr)->sin_port;
-
-    port = ntohs(port);
-
-    char ip_port[sizeof(ip) + 7];
-    snprintf(ip_port, sizeof(ip_port), "%s:%hu", ip, port);
-    /* Now, ip_port should contain "ip:port" */
 
     /* Define ID with ip_port or new_sock_id if defined */
     char *new_id = id_arg_defined ? msg.argv[2] : ip_port;
@@ -113,7 +91,7 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
     }
 
     new_pair->socket = new_socket;
-    new_pair->ipv6 = is_ipv6;
+    new_pair->ipv6 = addr.ss_family == AF_INET6;
 
     new_pair->id = get_id(new_pair);
     strcpy(new_pair->id, new_id);
@@ -122,6 +100,8 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
 
     send_code(client, CMD_SUCCESS);
 
-    /* Send ip_port to client. */
+    puts(ip_port);
+
+    /* Send ip:port to client. */
     nms_send(client, ip_port, strlen(ip_port) + 1);
 }

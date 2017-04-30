@@ -43,7 +43,7 @@ bool nms_send(socket_t socket, void *data, uint16_t length)
     /* Convert length to network bytes */
     uint8_t length_bytes[2] = {
     	length & 0xF,
-    	(length << 4) & 0xF,
+    	length >> 8,
     };
 
     if (send(socket, length_bytes, 2, nms_flags) == -1 ||
@@ -62,7 +62,7 @@ bool nms_recv(socket_t socket, void **buffer, uint16_t *received)
         return true;
 
     /* Convert message length network bytes to integer. */
-    *received = head_bytes[0] + (head_bytes[1] >> 4);
+    *received = head_bytes[0] + (head_bytes[1] << 8);
 
     *buffer = malloc(*received);
     if (*buffer == NULL) {
@@ -76,6 +76,23 @@ bool nms_recv(socket_t socket, void **buffer, uint16_t *received)
         free(*buffer);
         return true;
     }
+
+    return false;
+}
+
+bool nms_recv_no_alloc(socket_t socket, void *buffer, uint16_t *received)
+{
+    uint8_t head_bytes[2];
+
+    if (recv(socket, head_bytes, 2, nms_flags) == -1)
+        return true;
+
+    /* Convert message length network bytes to integer. */
+    *received = head_bytes[0] + (head_bytes[1] << 8);
+
+    if (recv(socket, buffer, *received, nms_flags) == -1)
+        /* Failed ? */
+        return true;
 
     return false;
 }

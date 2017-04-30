@@ -40,14 +40,12 @@
 void server_cmd_list(message_t msg, ipc_socket_t client, server_data_t *data)
 {
     /* TODO: Send it throught network using nms. */
-    puts("List of sockets :");
-
     smutex_lock(&data->sock_list_mutex);
     llist_t *sock_list_node = data->sock_list;
 
     while (sock_list_node != NULL) {
         id_socket_pair_t *pair = sock_list_node->value;
-        printf("%d:%s\n", pair->socket, pair->id);
+        printf("%s\n", pair->id);
         sock_list_node = sock_list_node->next;
     }
 

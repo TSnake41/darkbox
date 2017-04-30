@@ -299,9 +299,17 @@ void execute_cmd(command_t cmd)
                     sleep_ms(read_int());
                     break;
 
-                case 'p':
+                case 'x': ;
+                    /* Syntax : -x offset_x offset_y sprite_file
+                       Usage : Draw 'sprite_file' at (offset_x;offset_y).
+                    */
 
+                    int offset_x = read_int(),
+                        offset_y = read_int();
 
+                    read_string(text_buffer, MAX_TEXT_LENGTH);
+
+                    draw_sprite(offset_x, offset_y, text_buffer);
                     break;
 
                 /*

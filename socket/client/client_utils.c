@@ -30,48 +30,15 @@
 */
 
 #include <stdio.h>
+#include <stdint.h>
 
-#include "server_cmd_utils.h"
+#include <socket.h>
 
-/* Syntax : bind sock_id ip port
-   Usage : Bind socket to port.
-*/
-void server_cmd_bind(message_t msg, ipc_socket_t client, server_data_t *data)
+uint8_t recv_code(socket_t socket)
 {
-    if (msg.argc != 4) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+    uint8_t code;
+    if (recv(socket, &code, 1, socket_default_flags) == -1)
+        code = 0xFF;
 
-    char *sock_id = msg.argv[1],
-         *ip = msg.argv[2];
-
-    in_port_t port = htons(strtoul(msg.argv[3], NULL, 0));
-
-    id_socket_pair_t *pair = server_get_pair(sock_id, data, NULL);
-
-    if (pair == NULL) {
-        /* No pair */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
-
-    socklen_t len;
-    struct sockaddr *addr;
-
-    if (server_make_sockaddr(ip, port, pair->ipv6, &addr, &len)) {
-        /* Invalid host */
-        send_code(client, CMD_INVALID_HOST);
-        return;
-    }
-
-    if (bind(pair->socket, addr, len) == -1) {
-        /* Failed to bind to port. */
-        send_code(client, CMD_BIND_ERROR);
-        free(addr);
-        return;
-    }
-
-    send_code(client, CMD_SUCCESS);
+    return code;
 }

@@ -33,6 +33,7 @@
 #define H_SERVER_CMD_UTILS
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <socket.h>
 
@@ -48,8 +49,9 @@ void server_remove_pair(server_data_t *data, unsigned int index);
 bool server_make_sockaddr(const char *ip, in_port_t port, bool ipv6, struct sockaddr **addr, socklen_t *len);
 bool server_get_sockaddr_in(const char *ip, struct sockaddr_in *sock_in);
 bool server_get_sockaddr_in6(const char *ip, struct sockaddr_in6 *sock_in);
+bool server_addr_to_str(char *output, struct sockaddr_storage *addr, socklen_t addr_len);
 
-int send_code(socket_t socket, unsigned char code);
+int send_code(socket_t socket, uint8_t code);
 bool parse_bool(const char *str);
 
 #define new_pair(id_len) (calloc(sizeof(id_socket_pair_t) + (id_len) + 1, 1))

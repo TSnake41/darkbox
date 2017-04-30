@@ -29,49 +29,30 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <stdio.h>
+#ifndef H_CLIENT_HANDLE
+#define H_CLIENT_HANDLE
 
-#include "server_cmd_utils.h"
+#include <socket.h>
 
-/* Syntax : bind sock_id ip port
-   Usage : Bind socket to port.
-*/
-void server_cmd_bind(message_t msg, ipc_socket_t client, server_data_t *data)
-{
-    if (msg.argc != 4) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+typedef void (*client_handle_func_t)(socket_t);
 
-    char *sock_id = msg.argv[1],
-         *ip = msg.argv[2];
+typedef struct client_handle {
+    client_handle_func_t func;
+    char *cmd;
+} client_handle_t;
 
-    in_port_t port = htons(strtoul(msg.argv[3], NULL, 0));
+void client_handle_code(socket_t socket);
+void client_handle_accept(socket_t socket);
 
-    id_socket_pair_t *pair = server_get_pair(sock_id, data, NULL);
+void client_handle_recv(socket_t socket);
+void client_handle_send(socket_t socket);
 
-    if (pair == NULL) {
-        /* No pair */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
+void client_handle_nms_recv(socket_t socket);
+void client_handle_nms_send(socket_t socket);
 
-    socklen_t len;
-    struct sockaddr *addr;
+void client_handle_poll(socket_t socket);
 
-    if (server_make_sockaddr(ip, port, pair->ipv6, &addr, &len)) {
-        /* Invalid host */
-        send_code(client, CMD_INVALID_HOST);
-        return;
-    }
+extern const unsigned int client_handles_count;
+extern const client_handle_t client_handles[];
 
-    if (bind(pair->socket, addr, len) == -1) {
-        /* Failed to bind to port. */
-        send_code(client, CMD_BIND_ERROR);
-        free(addr);
-        return;
-    }
-
-    send_code(client, CMD_SUCCESS);
-}
+#endif /* H_CLIENT_HANDLE */

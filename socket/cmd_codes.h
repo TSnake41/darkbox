@@ -41,5 +41,6 @@
 #define CMD_INTERNAL_ERROR 6
 #define CMD_BIND_ERROR     7
 #define CMD_INVALID_HOST   8
+#define CMD_DATA_AVAILABLE 9
 
 #endif /* H_CMD_CODES */

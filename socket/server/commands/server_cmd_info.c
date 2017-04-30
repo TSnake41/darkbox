@@ -30,6 +30,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 
 #include "server_cmd_utils.h"
 
@@ -38,5 +39,51 @@
 */
 void server_cmd_info(message_t msg, ipc_socket_t client, server_data_t *data)
 {
-    puts("Not implemented...");
+    if (msg.argc != 2) {
+        /* Invalid arguments */
+        send_code(client, CMD_INVALID_ARGS);
+        return;
+    }
+
+    id_socket_pair_t *pair = server_get_pair(msg.argv[1], data, NULL);
+
+    if (pair == NULL) {
+        /* No pair found */
+        send_code(client, CMD_NOT_FOUND);
+        return;
+    }
+
+    /* Send code before data. */
+    send_code(client, CMD_SUCCESS);
+
+    /* Get other informations */
+    bool listening = false;
+    char local_addr[INET6_ADDRSTRLEN + 6];
+    char peer_addr[INET6_ADDRSTRLEN + 6];
+
+    memset(local_addr, '\0', sizeof(local_addr));
+    memset(peer_addr, '\0', sizeof(peer_addr));
+
+    /* Check if socket is listening */
+    int v;
+    socklen_t len = sizeof(v);
+
+    getsockopt(pair->socket, SOL_SOCKET, SO_ACCEPTCONN, &v, &len);
+    listening = v;
+
+    /* Define each ip_port */
+    struct sockaddr_storage addr;
+    socklen_t addr_len;
+
+    /* Get local addr. */
+    if (getsockname(pair->socket, (struct sockaddr *)&addr, &addr_len) != -1)
+        server_addr_to_str(local_addr, &addr, addr_len);
+
+    /* Get peer addr. */
+    if (getpeername(pair->socket, (struct sockaddr *)&addr, &addr_len) != -1)
+        server_addr_to_str(peer_addr, &addr, addr_len);
+
+    printf("id:%s\nlistening:%s\nlocal_addr:%s\npeer_addr:%s\n",
+        pair->id, listening ? "true" : "false",
+        local_addr, peer_addr);
 }

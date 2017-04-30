@@ -32,6 +32,6 @@
 #ifndef H_SPRITE
 #define H_SPRITE
 
-void draw_sprite(char *sprite_file);
+void draw_sprite(int offset_x, int offset_y, char *sprite_file);
 
 #endif /* H_SPRITE */

@@ -33,55 +33,29 @@
 #include <stdint.h>
 #include <core.h>
 
-enum {
-    LITTLE_ENDIAN,
-    BIG_ENDIAN
-};
+uint16_t read_uint16(FILE *f);
 
-#ifndef WIN32
-static int dump_get_endianess(void);
-static uint32_t reverse_byte_order(uint32_t n);
-#endif
-
-void draw_sprite(char *sprite_file)
+void draw_sprite(int offset_x, int offset_y, char *sprite_file)
 {
-    int endianess;
-
-    #ifndef WIN32
-    endianess = dump_get_endianess();
-    #else
-    endianess = LITTLE_ENDIAN;
-    #endif
-
     FILE *f = fopen(sprite_file, "rb");
 
     if (f == NULL)
         return;
 
-    uint32_t count;
-    fread(&count, sizeof(uint32_t), 1, f);
+    uint16_t width = read_uint16(f);
+    uint16_t height = read_uint16(f);
 
-    #ifndef WIN32
-    if (endianess == BIG_ENDIAN)
-        /* Convert count to low endian */
-        count = reverse_byte_order(count);
-    #endif
-
-
+    for (uint16_t x = 0; x < width; x++)
+        for (uint16_t y = 0; y < height; y++) {
+            uint16_t p = read_uint16(f);
+            core_gotoxy(offset_x + x, offset_y + y);
+            core_cwritecolor(p & 0xF, p << 8);
+        }
 }
 
-#ifndef WIN32
-static int dump_get_endianess(void)
+uint16_t read_uint16(FILE *f)
 {
-    int test=1;
-    char val;
-    val = *((char*)&test);
-    return val ? LITTLE_ENDIAN : BIG_ENDIAN;
+    uint8_t bytes[2];
+    fread(&bytes, sizeof(uint16_t), 1, f);
+    return bytes[0] + (bytes[1] << 8);
 }
-
-static uint32_t reverse_byte_order(uint32_t n)
-{
-    uint8_t *bytes = (uint8_t *)&n;
-    return (bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];
-}
-#endif

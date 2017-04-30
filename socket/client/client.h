@@ -32,6 +32,8 @@
 #ifndef H_CLIENT
 #define H_CLIENT
 
+#include <socket.h>
+
 #include "../args_parser.h"
 
 void client(socket_args_t args);

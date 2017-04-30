@@ -39,7 +39,32 @@
 */
 void server_cmd_nms_recv(message_t msg, ipc_socket_t client, server_data_t *data)
 {
-    puts("Not implemented...");
+    if (msg.argc != 2) {
+        /* Invalid arguments */
+        send_code(client, CMD_INVALID_ARGS);
+        return;
+    }
+
+    id_socket_pair_t *pair = server_get_pair(msg.argv[1], data, NULL);
+
+    if (pair == NULL) {
+        /* No pair found */
+        send_code(client, CMD_NOT_FOUND);
+        return;
+    }
+
+    /* Create buffer of 2^16-1 bytes. */
+    uint16_t recieved;
+    void *buffer;
+
+    if (nms_recv(pair->socket, &buffer, &recieved))
+        /* nms_recv failed, send nothing to client. */
+        return;
+
+    /* Send back recieved data. */
+    nms_send(client, buffer, recieved);
+
+    free(buffer);
 }
 
 /* Syntax : nms_send sock_id
@@ -47,5 +72,34 @@ void server_cmd_nms_recv(message_t msg, ipc_socket_t client, server_data_t *data
 */
 void server_cmd_nms_send(message_t msg, ipc_socket_t client, server_data_t *data)
 {
-    puts("Not implemented...");
+    if (msg.argc != 2) {
+        /* Invalid arguments */
+        send_code(client, CMD_INVALID_ARGS);
+        return;
+    }
+
+    id_socket_pair_t *pair = server_get_pair(msg.argv[1], data, NULL);
+
+    if (pair == NULL) {
+        /* No pair found */
+        send_code(client, CMD_NOT_FOUND);
+        return;
+    }
+
+    uint16_t recieved;
+    void *buffer;
+
+    if (nms_recv(client, &buffer, &recieved))
+        /* nms_recv from client failed ??? */
+        return;
+
+    /* Send data to socket */
+    if (nms_send(client, buffer, recieved)) {
+        /* Unable to send data to client. */
+        send_code(client, CMD_NETWORK_ERROR);
+        free(buffer);
+        return;
+    }
+
+    send_code(client, CMD_SUCCESS);
 }

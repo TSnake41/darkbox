@@ -51,6 +51,6 @@ void server_cmd_exit(message_t msg, ipc_socket_t client, server_data_t *data)
 
     smutex_unlock(&data->sock_list_mutex);
 
-    /* Call exit */
+    /* Exit current process */
     exit(0);
 }
