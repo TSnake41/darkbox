@@ -32,7 +32,7 @@
 #define H_IPC
 
 #include <stdbool.h>
-#include "socket.h"
+#include <socket.h>
 
 #define ipc_socket_is_valid(socket) ((socket) != -1)
 
@@ -44,7 +44,7 @@ typedef socket_t ipc_socket_t;
 #endif
 
 ipc_socket_t ipc_server_new(const char *id, int max_clients);
-ipc_socket_t ipc_client_new(char *id);
 ipc_socket_t ipc_server_accept(ipc_socket_t server);
+ipc_socket_t ipc_client_new(char *id);
 
 #endif /* H_IPC */

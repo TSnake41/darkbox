@@ -35,9 +35,17 @@
 #include <nms.h>
 #include <socket.h>
 
+#ifndef WIN32
+#include <core_i.h>
+#else
+#include <windows.h>
+#endif
+
 #include "client_utils.h"
 #include "client_handle.h"
 #include "../cmd_codes.h"
+
+#define client_handle_nms_send client_handle_send
 
 const client_handle_t client_handles[] = {
     { client_handle_code, "new" },
@@ -56,7 +64,7 @@ const client_handle_t client_handles[] = {
 };
 const unsigned int client_handles_count = sizeof(client_handles) / sizeof(*client_handles);
 
-/* Recieve code from socket, and use it as exit code. */
+/** Recieve code from socket, and use it as exit code. */
 void client_handle_code(socket_t socket)
 {
     uint8_t code = recv_code(socket);
@@ -64,68 +72,79 @@ void client_handle_code(socket_t socket)
     exit(code);
 }
 
-void client_handle_accept(socket_t socket)
-{
-    uint8_t code = recv_code(socket);
-
-    void *buffer;
-    uint16_t recieved;
-
-    if (!nms_recv(socket, &buffer, &recieved))
-        fwrite(buffer, recieved, 1, stdout);
-
-    free(buffer);
-    exit(code);
-}
-
+/* First recieve code from IPC socket, then (if sucess)
+ * read message write them to stdout until count!=0xFFFF
+ */
 void client_handle_recv(socket_t socket)
 {
+    uint8_t code = recv_code(socket);
+    if (code != CMD_SUCCESS)
+        /* Is an error. */
+        exit(code);
 
+    uint16_t count = 0;
+    char *buffer = malloc(0xFFFF);
+    if (buffer == NULL)
+        exit(CMD_CLIENT_OOM);
+
+    do {
+        if (nms_recv_no_alloc(socket, buffer, &count))
+            exit(CMD_IPC_ERROR);
+
+        fwrite(buffer, 1, count, stdout);
+    } while(count == 0xFFFF);
+
+    free(buffer);
+    exit(CMD_SUCCESS);
 }
 
+/** Send to IPC socket data from stdin. */
 void client_handle_send(socket_t socket)
 {
     setvbuf(stdin, NULL, _IONBF, 0);
 
     uint16_t count = 0;
-    char buffer[0xFFFF];
+    char *buffer = malloc(0xFFFF);
+    if (buffer == NULL)
+        exit(CMD_CLIENT_OOM);
 
     do {
         count = fread(buffer, 1, 0xFFFF, stdin);
+
         if (nms_send(socket, buffer, count))
-            exit(CMD_NETWORK_ERROR);
-    } while(!feof(stdin));
-
-    exit(0);
-}
-
-void client_handle_nms_recv(socket_t socket)
-{
-    void *buffer;
-    uint16_t recieved;
-
-    if (!nms_recv(socket, &buffer, &recieved))
-        fwrite(buffer, recieved, 1, stdout);
+            exit(CMD_IPC_ERROR);
+    } while(count == 0xFFFF);
 
     free(buffer);
-    exit(recieved);
+
+    uint8_t code = recv_code(socket);
+    exit(code);
 }
 
-void client_handle_nms_send(socket_t socket)
+/** Recieve code from IPC socket, then (if success)
+ *  recieve network message and write it to stdout.
+ */
+void client_handle_nms_recv(socket_t socket)
 {
-    setvbuf(stdin, NULL, _IONBF, 0);
+    uint8_t code = recv_code(socket);
+    if (code != CMD_SUCCESS)
+        /* Is an error. */
+        exit(code);
 
-    uint16_t count = 0;
-    char buffer[0xFFFF];
+    void *buffer;
+    uint16_t recieved = 0;
 
-    count = fread(buffer, 1, 0xFFFF, stdin);
-    if (nms_send(socket, buffer, count))
-        exit(CMD_NETWORK_ERROR);
+    if (nms_recv(socket, &buffer, &recieved))
+        exit(CMD_IPC_ERROR);
+    else
+        fwrite(buffer, 1, recieved, stdout);
 
-    exit(0);
+    free(buffer);
+    exit(recieved ? CMD_SUCCESS : CMD_NMS_ZERO_SIZE);
 }
 
+/** Implementation needed */
 void client_handle_poll(socket_t socket)
 {
-
+    /* TODO */
 }

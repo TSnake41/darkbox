@@ -30,6 +30,7 @@
 */
 
 #include <stdlib.h>
+#include <ipc.h>
 
 #include "server_cmd_utils.h"
 
@@ -50,6 +51,9 @@ void server_cmd_exit(message_t msg, ipc_socket_t client, server_data_t *data)
     }
 
     smutex_unlock(&data->sock_list_mutex);
+
+    close(client);
+    close(data->ipc_server);
 
     /* Exit current process */
     exit(0);

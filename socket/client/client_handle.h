@@ -42,7 +42,6 @@ typedef struct client_handle {
 } client_handle_t;
 
 void client_handle_code(socket_t socket);
-void client_handle_accept(socket_t socket);
 
 void client_handle_recv(socket_t socket);
 void client_handle_send(socket_t socket);

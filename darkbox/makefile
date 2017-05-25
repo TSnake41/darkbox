@@ -34,7 +34,7 @@ EXEC=darkbox$(exec_suffix)
 BINDIR=../bin
 
 lib_src=$(libdir)/core/core.c $(libdir)/core_i/core_i.c
-src= darkbox.c
+src=darkbox.c
 
 all: darkbox postbuild
 

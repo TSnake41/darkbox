@@ -38,7 +38,6 @@
 static void _tiny_assert_exit(unsigned int line, char *file)
 {
     fprintf(stderr, "%s:%u : Assertion Failed ! \n", file, line);
-    fflush(stderr);
     exit(1);
 }
 

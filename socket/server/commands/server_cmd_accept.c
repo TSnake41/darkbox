@@ -57,8 +57,8 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
         return;
     }
 
-    struct sockaddr_storage addr;
-    socklen_t addr_len;
+    struct sockaddr_storage addr = { 0 };
+    socklen_t addr_len = sizeof(addr);
 
     socket_t new_socket = accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
 
@@ -67,6 +67,14 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
         send_code(client, CMD_NETWORK_ERROR);
         return;
     }
+
+    #ifdef WIN32
+    /* I have some doubts for Windows whether the sure
+       socket is blocking or not, so I prefer be
+       (for *NIX, this is defined by standards).
+    */
+    set_blocking(new_socket, true);
+    #endif
 
     char ip_port[INET6_ADDRSTRLEN + 6];
 
@@ -100,8 +108,6 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
 
     send_code(client, CMD_SUCCESS);
 
-    puts(ip_port);
-
     /* Send ip:port to client. */
-    nms_send(client, ip_port, strlen(ip_port) + 1);
+    nms_send(client, ip_port, strlen(ip_port));
 }

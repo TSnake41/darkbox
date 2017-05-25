@@ -1,3 +1,0 @@
-#!/bin/sh
-echo call darkbox_s.bat $* | dos9 /A:qe
-exit

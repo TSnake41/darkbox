@@ -55,7 +55,6 @@ id_socket_pair_t *server_get_pair(char *id, server_data_t *data, unsigned int *i
 
         l = l->next;
     }
-
     smutex_unlock(&data->sock_list_mutex);
 
     return false;
@@ -77,7 +76,6 @@ void server_remove_pair(server_data_t *data, unsigned int index)
 
 int send_code(socket_t socket, uint8_t code)
 {
-    printf("Sent %u\n", code);
     return send(socket, &code, 1, socket_default_flags);
 }
 
@@ -130,7 +128,7 @@ bool server_get_sockaddr_in(const char *ip, struct sockaddr_in *sock_in)
 bool server_get_sockaddr_in6(const char *ip, struct sockaddr_in6 *sock_in)
 {
     memset(sock_in, '\0', sizeof(struct sockaddr_in6));
-    return inet_pton(AF_INET6, ip, &sock_in->sin6_addr) == 1;
+    return inet_pton(AF_INET6, ip, &sock_in->sin6_addr) != 1;
 }
 
 bool server_addr_to_str(char *output, struct sockaddr_storage *addr, socklen_t addr_len)

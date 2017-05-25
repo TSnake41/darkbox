@@ -39,7 +39,8 @@ EXEC=socket$(exec_suffix)
 BINDIR=../bin
 
 lib_src=$(libdir)/sthread/sthread.c $(libdir)/fllist/fllist.c \
-	    $(libdir)/socket/socket.c $(libdir)/nms/nms.c $(libdir)/ipc/ipc.c
+	    $(libdir)/socket/socket.c $(libdir)/nms/nms.c \
+	 	$(libdir)/ipc/ipc.c	$(libdir)/core_i/core_i.c
 
 src=socket.c args_parser.c message.c \
 	client/*.c server/*.c \
@@ -53,6 +54,6 @@ socket:
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
 	mv $(EXEC) ../bin
-	cp $(BINDIR)/$(EXEC) ../tests/
+	cp $(BINDIR)/$(EXEC) ../tests/network/
 
 .PHONY: $(EXEC)

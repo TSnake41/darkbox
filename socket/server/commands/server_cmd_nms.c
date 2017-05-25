@@ -58,13 +58,14 @@ void server_cmd_nms_recv(message_t msg, ipc_socket_t client, server_data_t *data
     void *buffer;
 
     if (nms_recv(pair->socket, &buffer, &recieved))
-        /* nms_recv failed, send nothing to client. */
-        return;
+        send_code(client, CMD_NETWORK_ERROR);
+    else {
+        send_code(client, CMD_SUCCESS);
 
-    /* Send back recieved data. */
-    nms_send(client, buffer, recieved);
-
-    free(buffer);
+        /* Send back recieved data. */
+        nms_send(client, buffer, recieved);
+        free(buffer);
+    }
 }
 
 /* Syntax : nms_send sock_id
@@ -87,19 +88,32 @@ void server_cmd_nms_send(message_t msg, ipc_socket_t client, server_data_t *data
     }
 
     uint16_t recieved;
-    void *buffer;
+    void *buffer = malloc(0xFFFF);
 
-    if (nms_recv(client, &buffer, &recieved))
-        /* nms_recv from client failed ??? */
-        return;
-
-    /* Send data to socket */
-    if (nms_send(client, buffer, recieved)) {
-        /* Unable to send data to client. */
-        send_code(client, CMD_NETWORK_ERROR);
-        free(buffer);
+    if (buffer == NULL) {
+        /* Out of memory. */
+        send_code(client, CMD_OUT_OF_MEMORY);
         return;
     }
 
+    do {
+        if (nms_recv_no_alloc(client, buffer, &recieved)) {
+            /* I assume that the IPC socket pipe is broken.
+               So, I will not send any message because it will *probably* fail.
+            */
+            free(buffer);
+            return;
+        }
+
+        /* Send data to socket */
+        if (nms_send(pair->socket, buffer, recieved)) {
+            /* Unable to send data to client. */
+            send_code(client, CMD_NETWORK_ERROR);
+            free(buffer);
+            return;
+        }
+    } while (recieved == 0xFFFF);
+
     send_code(client, CMD_SUCCESS);
+    free(buffer);
 }

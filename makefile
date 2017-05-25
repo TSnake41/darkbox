@@ -27,7 +27,7 @@
 
 exec_suffix=
 
-subdirs=darkbox darkbox_i darkbox_s darkbox_t makemenu socket
+subdirs=darkbox darkbox_i darkbox_t makemenu socket
 
 all: $(subdirs)
 no_extras: darkbox
@@ -37,10 +37,12 @@ $(subdirs):
 
 upx:
 	upx ./bin/* \
-	    ./tests/* 2>/dev/null
+	    ./tests/* \
+	    ./tests/network/* \
+	    2>/dev/null
 
 clean:
-	rm ./bin/darkbox* ./bin/makemenu* || true
-	rm ./tests/darkbox* ./tests/makemenu* || true
+	rm ./bin/darkbox* ./bin/makemenu* ./bin/socket* || true
+	rm ./tests/darkbox* ./tests/makemenu* ./tests/network/socket* || true
 
 .PHONY: $(subdirs)

@@ -42,7 +42,7 @@ bool nms_send(socket_t socket, void *data, uint16_t length)
 {
     /* Convert length to network bytes */
     uint8_t length_bytes[2] = {
-    	length & 0xF,
+    	length & 0xFF,
     	length >> 8,
     };
 

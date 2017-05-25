@@ -56,8 +56,9 @@ ipc_socket_t ipc_server_new(const char *id, int max_pending)
     if ((s = ipc_create_socket(id, &saun)) == 0)
         return -1;
 
+    socklen_t l = sizeof(saun.sun_family) + strlen(saun.sun_path);
+
     unlink(saun.sun_path);
-    int l = sizeof(saun.sun_family) + strlen(saun.sun_path);
 
     if (bind(s, (const struct sockaddr *)&saun, l) < 0) {
         close(s);

@@ -27,7 +27,11 @@
 
 /* Add cross-platform sockets */
 #ifndef WIN32
+
+#if !defined(_XOPEN_SOURCE)
 #define _XOPEN_SOURCE 720
+#endif
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -48,11 +52,18 @@ typedef unsigned short in_port_t;
 
 #define socket_default_flags (0)
 #define close closesocket
+#define inet_pton inet_pton_win
+#define inet_ntop inet_ntop_win
 #endif
 
 void socket_init(void);
 void socket_end(void);
 int available(socket_t);
 bool set_blocking(socket_t socket, bool blocking);
+
+#ifdef WIN32
+int inet_pton_win(int af, const char *src, void *dst);
+const char *inet_ntop_win(int af, const void *src, char *dst, socklen_t size);
+#endif
 
 #endif /* H_SOCKETS */

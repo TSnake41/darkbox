@@ -30,6 +30,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 
 #include <ipc.h>
 #include <tiny_assert.h>
@@ -54,4 +55,15 @@ void client(socket_args_t args)
     };
 
     tiny_assert(message_send(socket, msg));
+
+    /* Execute corresponding callback. */
+    unsigned int i = 0;
+    while (i < client_handles_count) {
+        client_handle_t handle = client_handles[i];
+
+        if (strcmp(handle.cmd, msg.argv[0]) == 0)
+            handle.func(socket);
+
+        i++;
+    }
 }

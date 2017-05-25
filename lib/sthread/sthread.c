@@ -100,7 +100,7 @@ sthread_t sthread_current(void)
     #ifndef WIN32
     return pthread_self();
     #else
-    return (sthread_t){ .handle = GetCurrentThread(), .id = GetCurrentThreadId };
+    return (sthread_t){ .handle = GetCurrentThread(), .id = GetCurrentThreadId() };
     #endif
 }
 

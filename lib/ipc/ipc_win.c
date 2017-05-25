@@ -26,6 +26,7 @@
 #include <string.h>
 #include <time.h>
 
+#include <windows.h>
 #include <socket.h>
 #include <ipc.h>
 
@@ -100,6 +101,7 @@ ipc_socket_t ipc_client_new(char *id)
         return INVALID_SOCKET;
     }
 
+    /* Set non-blocking */
     u_long non_blocking = 0;
     ioctlsocket((int)socket, FIONBIO, &non_blocking);
     return s;

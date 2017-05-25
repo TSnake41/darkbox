@@ -32,15 +32,18 @@
 #ifndef H_CMD_CODES
 #define H_CMD_CODES
 
-#define CMD_SUCCESS        0
-#define CMD_INVALID_ARGS   1
-#define CMD_OUT_OF_MEMORY  2
-#define CMD_NETWORK_ERROR  3
-#define CMD_NOT_FOUND      4
-#define CMD_OVERWRITTEN    5
-#define CMD_INTERNAL_ERROR 6
-#define CMD_BIND_ERROR     7
-#define CMD_INVALID_HOST   8
-#define CMD_DATA_AVAILABLE 9
+#define CMD_SUCCESS         0
+#define CMD_INVALID_ARGS    1
+#define CMD_OUT_OF_MEMORY   2
+#define CMD_NETWORK_ERROR   3
+#define CMD_NOT_FOUND       4
+#define CMD_OVERWRITTEN     5
+#define CMD_INTERNAL_ERROR  6
+#define CMD_BIND_ERROR      7
+#define CMD_INVALID_HOST    8
+#define CMD_DATA_AVAILABLE  9
+#define CMD_CLIENT_OOM     10
+#define CMD_NMS_ZERO_SIZE  11
+#define CMD_IPC_ERROR      12
 
 #endif /* H_CMD_CODES */

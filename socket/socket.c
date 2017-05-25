@@ -37,7 +37,7 @@
 
 #include <tiny_assert.h>
 
-#define NO_FORK
+/* #define NO_FORK */
 
 #ifndef WIN32
 #include <unistd.h>
@@ -82,13 +82,14 @@ int main(int argc, char **argv)
 
         server(args);
 	} else {
-		client(args);
+        client(args);
     }
 
     socket_end();
     return 0;
 
     show_help:
+		/* TODO */
         puts("SockeT - Portable TCP and NMS Network IO interface - Astie Teddy (TSnake41)\n"
              "");
 }
@@ -126,7 +127,7 @@ static int fork_to_background_win(int argc, char **argv)
 
         ExitProcess(0);
     }
-
+	
     argv[argc - 1] = NULL;
     argc--;
 

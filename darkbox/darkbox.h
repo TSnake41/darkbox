@@ -32,6 +32,10 @@
 #ifndef H_DARKBOX
 #define H_DARKBOX
 
+#if !defined(_XOPEN_SOURCE)
+#define _XOPEN_SOURCE
+#endif
+
 #include <stdlib.h>
 
 /* --- Beginning of user configuration --- */

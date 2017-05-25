@@ -44,7 +44,6 @@
 #include <core_i.h>
 
 #include "darkbox.h"
-#include "sprite.h"
 
 char text_buffer[MAX_TEXT_LENGTH],
      command_buffer[MAX_COMMAND_SIZE];
@@ -95,7 +94,7 @@ int main(int argc, char const *argv[])
 
     start();
 
-	/* Never reached */
+    /* Never reached */
     return 0;
 
     showHelp:
@@ -297,19 +296,6 @@ void execute_cmd(command_t cmd)
                     */
 
                     sleep_ms(read_int());
-                    break;
-
-                case 'x': ;
-                    /* Syntax : -x offset_x offset_y sprite_file
-                       Usage : Draw 'sprite_file' at (offset_x;offset_y).
-                    */
-
-                    int offset_x = read_int(),
-                        offset_y = read_int();
-
-                    read_string(text_buffer, MAX_TEXT_LENGTH);
-
-                    draw_sprite(offset_x, offset_y, text_buffer);
                     break;
 
                 /*

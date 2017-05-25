@@ -59,7 +59,6 @@ void server_cmd_new(message_t msg, ipc_socket_t client, server_data_t *data)
 
         server_remove_pair(data, old_node_index);
 
-        fputs("DEBUG: Previous socket overwritten.\n", stderr);
         overwritten = true;
     }
 
@@ -74,6 +73,11 @@ void server_cmd_new(message_t msg, ipc_socket_t client, server_data_t *data)
         return;
     }
 
+    #ifdef WIN32
+    /* See server_cmd_accept for more infos */
+    set_blocking(new_sock, true);
+    #endif
+
     /* Add the new socket to the list */
 
     /* pair : Pair struct + ID string block */
@@ -87,8 +91,8 @@ void server_cmd_new(message_t msg, ipc_socket_t client, server_data_t *data)
 
     pair->socket = new_sock;
     pair->id = get_id(pair);
-    strcpy(pair->id, msg.argv[1]);
     pair->ipv6 = use_ipv6;
+    strcpy(pair->id, msg.argv[1]);
 
     server_add_pair(data, pair);
 

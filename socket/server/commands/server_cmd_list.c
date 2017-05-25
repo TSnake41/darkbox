@@ -30,6 +30,7 @@
 */
 
 #include <stdio.h>
+#include <string.h>
 #include <nms.h>
 
 #include "server_cmd_utils.h"
@@ -39,15 +40,22 @@
 */
 void server_cmd_list(message_t msg, ipc_socket_t client, server_data_t *data)
 {
-    /* TODO: Send it throught network using nms. */
+    send_code(client, CMD_SUCCESS);
+
     smutex_lock(&data->sock_list_mutex);
     llist_t *sock_list_node = data->sock_list;
 
     while (sock_list_node != NULL) {
         id_socket_pair_t *pair = sock_list_node->value;
-        printf("%s\n", pair->id);
+        /* Send id using nms. */
+        char new_str[strlen(pair->id) + 2];
+        sprintf(new_str, "%s\n", pair->id);
+        nms_send(client, new_str, strlen(new_str));
+
         sock_list_node = sock_list_node->next;
     }
+
+    nms_send(client, NULL, 0);
 
     smutex_unlock(&data->sock_list_mutex);
 }
