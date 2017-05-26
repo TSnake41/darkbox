@@ -39,6 +39,8 @@
 #include <core_i.h>
 #else
 #include <windows.h>
+int _setmode(int, int);
+#define _O_BINARY 0x8000
 #endif
 
 #include "client_utils.h"
@@ -68,7 +70,6 @@ const unsigned int client_handles_count = sizeof(client_handles) / sizeof(*clien
 void client_handle_code(socket_t socket)
 {
     uint8_t code = recv_code(socket);
-
     exit(code);
 }
 
@@ -82,6 +83,11 @@ void client_handle_recv(socket_t socket)
         /* Is an error. */
         exit(code);
 
+    #ifdef WIN32
+    /* Set stdout to binary mode */
+    _setmode(_fileno(stdout), _O_BINARY);
+    #endif
+
     uint16_t count = 0;
     char *buffer = malloc(0xFFFF);
     if (buffer == NULL)
@@ -91,7 +97,7 @@ void client_handle_recv(socket_t socket)
         if (nms_recv_no_alloc(socket, buffer, &count))
             exit(CMD_IPC_ERROR);
 
-        fwrite(buffer, 1, count, stdout);
+        fwrite(buffer, count, 1, stdout);
     } while(count == 0xFFFF);
 
     free(buffer);
@@ -102,6 +108,11 @@ void client_handle_recv(socket_t socket)
 void client_handle_send(socket_t socket)
 {
     setvbuf(stdin, NULL, _IONBF, 0);
+
+    #ifdef WIN32
+    /* Set stdin to binary mode */
+    _setmode(_fileno(stdin), _O_BINARY);
+    #endif
 
     uint16_t count = 0;
     char *buffer = malloc(0xFFFF);
@@ -131,8 +142,13 @@ void client_handle_nms_recv(socket_t socket)
         /* Is an error. */
         exit(code);
 
-    void *buffer;
+    #ifdef WIN32
+    /* Set stdout to binary mode */
+    _setmode(_fileno(stdout), _O_BINARY);
+    #endif
+
     uint16_t recieved = 0;
+    void *buffer;
 
     if (nms_recv(socket, &buffer, &recieved))
         exit(CMD_IPC_ERROR);

@@ -18,12 +18,10 @@ call :update
 
 
 :it_loop
-
 darkbox -w 25
 darkbox -kbh || goto :input
 
 echo -gcdw 0 0 0x4 "No input : Yes" 0
-
 goto :it_loop
 
 :input

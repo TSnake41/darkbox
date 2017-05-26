@@ -48,10 +48,10 @@ void core_input_terminate(unsigned int mode)
 
 void core_get_mouse(char on_move, int *mouse_x, int *mouse_y, int *mouse_b)
 {
-	core_input_initialize(on_move);
+    core_input_initialize(on_move);
 
     int c;
-    do /* Wait CSI mouse  start (-1) */
+    do /* Wait CSI mouse start (-1) */
         c = core_getkey();
     while(c != -1);
 
@@ -60,7 +60,7 @@ void core_get_mouse(char on_move, int *mouse_x, int *mouse_y, int *mouse_b)
     *mouse_x = core_getkey() - 33;
     *mouse_y = core_getkey() - 33;
 
-	core_input_terminate(on_move);
+    core_input_terminate(on_move);
 }
 
 static char tomouse_b(int mouse_char)

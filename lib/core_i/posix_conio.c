@@ -29,24 +29,25 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#if !defined(_XOPEN_SOURCE)
+#define _XOPEN_SOURCE 700
+#endif
+
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/select.h>
 #include <sys/ioctl.h>
 #include <termios.h>
-#include <fcntl.h>
-#include <stropts.h>
 
 int getch(void)
 {
     struct termios oldattr, newattr;
     int ch;
-    tcgetattr( STDIN_FILENO, &oldattr );
+    tcgetattr(fileno(stdin), &oldattr);
     newattr = oldattr;
     newattr.c_lflag &= ~( ICANON | ECHO );
-    tcsetattr( STDIN_FILENO, TCSANOW, &newattr );
+    tcsetattr(fileno(stdin), TCSANOW, &newattr);
     ch = getchar();
-    tcsetattr( STDIN_FILENO, TCSANOW, &oldattr );
+    tcsetattr(fileno(stdin), TCSANOW, &oldattr);
 
     /* Handle special chracters */
     if (ch == '\033' && getch() == '[')
@@ -98,21 +99,20 @@ int getch(void)
 /* Morgan McGuire, morgan@cs.brown.edu */
 int kbhit(void)
 {
-    static const int STDIN = 0;
     static char initialized = 0;
 
     if (! initialized) {
         // Use termios to turn off line buffering
         struct termios term;
-        tcgetattr(STDIN, &term);
+        tcgetattr(fileno(stdin), &term);
         term.c_lflag &= ~ICANON;
-        tcsetattr(STDIN, TCSANOW, &term);
+        tcsetattr(fileno(stdin), TCSANOW, &term);
         setbuf(stdin, NULL);
         initialized = 1;
     }
 
     int bytesWaiting;
-    ioctl(STDIN, FIONREAD, &bytesWaiting);
+    ioctl(fileno(stdin), FIONREAD, &bytesWaiting);
     return bytesWaiting;
 
 }
