@@ -41,7 +41,7 @@ void server_cmd_exit(message_t msg, ipc_socket_t client, server_data_t *data)
 {
     /* Close sockets, to be sure */
     smutex_lock(&data->sock_list_mutex);
-    llist_t *l = data->sock_list;
+    list_t *l = data->sock_list;
 
     while (l) {
         id_socket_pair_t *pair = l->value;

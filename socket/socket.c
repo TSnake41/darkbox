@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     socket_init();
 
     /* Define out of memory handler for fllist */
-    ll_oom_handler = oom_handler;
+    list_oom_handler = oom_handler;
 
     /* Parse args */
     socket_args_t args;
@@ -127,7 +127,7 @@ static int fork_to_background_win(int argc, char **argv)
 
         ExitProcess(0);
     }
-	
+
     argv[argc - 1] = NULL;
     argc--;
 

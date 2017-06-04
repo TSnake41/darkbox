@@ -41,7 +41,7 @@ id_socket_pair_t *server_get_pair(char *id, server_data_t *data, unsigned int *i
         *index = 0;
 
     smutex_lock(&data->sock_list_mutex);
-    llist_t *l = data->sock_list;
+    list_t *l = data->sock_list;
 
     while (l) {
         id_socket_pair_t *pair = l->value;
@@ -63,14 +63,14 @@ id_socket_pair_t *server_get_pair(char *id, server_data_t *data, unsigned int *i
 void server_add_pair(server_data_t *data, id_socket_pair_t *pair)
 {
     smutex_lock(&data->sock_list_mutex);
-    data->sock_list = ll_insert_begin(data->sock_list, pair);
+    data->sock_list = list_insert_begin(data->sock_list, pair);
     smutex_unlock(&data->sock_list_mutex);
 }
 
 void server_remove_pair(server_data_t *data, unsigned int index)
 {
     smutex_lock(&data->sock_list_mutex);
-    data->sock_list = ll_remove_at(data->sock_list, index);
+    data->sock_list = list_remove_at(data->sock_list, index);
     smutex_unlock(&data->sock_list_mutex);
 }
 

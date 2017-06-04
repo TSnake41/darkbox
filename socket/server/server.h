@@ -49,7 +49,7 @@ typedef struct id_socket_pair {
 
 typedef struct server_data {
     ipc_socket_t ipc_server;
-    llist_t *sock_list;
+    list_t *sock_list;
     smutex_t sock_list_mutex;
     socket_args_t *args;
 } server_data_t;

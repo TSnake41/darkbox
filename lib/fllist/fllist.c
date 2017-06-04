@@ -91,7 +91,7 @@ list_t *list_remove(list_t *list, list_t *node)
     return base;
 }
 
-list_t *ll_get_node(list_t *list, unsigned int index)
+list_t *list_get_node(list_t *list, unsigned int index)
 {
     if (list == NULL)
         return NULL;
@@ -106,7 +106,7 @@ list_t *ll_get_node(list_t *list, unsigned int index)
     return list;
 }
 
-unsigned int ll_get_count(list_t *llist)
+unsigned int list_get_count(list_t *llist)
 {
     if (llist == NULL)
         return 0;

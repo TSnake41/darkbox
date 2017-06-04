@@ -43,7 +43,7 @@ void server_cmd_list(message_t msg, ipc_socket_t client, server_data_t *data)
     send_code(client, CMD_SUCCESS);
 
     smutex_lock(&data->sock_list_mutex);
-    llist_t *sock_list_node = data->sock_list;
+    list_t *sock_list_node = data->sock_list;
 
     while (sock_list_node != NULL) {
         id_socket_pair_t *pair = sock_list_node->value;

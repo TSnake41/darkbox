@@ -38,22 +38,22 @@ typedef struct list {
 /**
  * Insert an item at index to the list.
  */
-list_t *list_insert(list_t *llist, void *value, unsigned int index);
+list_t *list_insert(list_t *list, void *value, unsigned int index);
 
 /**
  * Insert an item at the beginning of the list.
  */
-#define list_insert_begin(llist, value) list_insert(list, value, 0)
+#define list_insert_begin(list, value) list_insert(list, value, 0)
 
 /**
  * Insert an item at the end of the list.
  */
-#define list_insert_end(llist, value) list_insert(list, value, UINT_MAX)
+#define list_insert_end(list, value) list_insert(list, value, UINT_MAX)
 
 /**
  * Remove a node from a list.
  */
-list_t *list_remove(list_t *llist, list_t *node);
+list_t *list_remove(list_t *list, list_t *node);
 
 /**
  * Remove a node using its id from a list.
