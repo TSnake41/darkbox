@@ -26,17 +26,20 @@
 #include <stdbool.h>
 #include <fllist.h>
 
-void (*ll_oom_handler)(void) = NULL;
+void (*list_oom_handler)(void) = NULL;
 
-llist_t *ll_insert(llist_t *llist, void *value, unsigned int index)
+list_t *list_insert(list_t *list, void *value, unsigned int index)
 {
-    llist_t *base = llist;
-    llist_t *node = calloc(sizeof(llist_t), 1);
+    list_t *base = list;
+    list_t *node = calloc(sizeof(list_t), 1);
 
-    if (node == NULL)
+    if (node == NULL) {
         /* Allocation failed */
-        if (ll_oom_handler != NULL)
-            ll_oom_handler();
+        if (list_oom_handler != NULL)
+            list_oom_handler();
+
+        return NULL;
+    }
 
     node->value = value;
 
@@ -49,19 +52,19 @@ llist_t *ll_insert(llist_t *llist, void *value, unsigned int index)
     }
 
     unsigned int i = 0;
-    while (llist->next && (i++ < (index - 1)))
-        llist = llist->next;
+    while (list->next && (i++ < (index - 1)))
+        list = list->next;
 
-    if (llist->next != NULL)
-        node->next = llist->next;
+    if (list->next != NULL)
+        node->next = list->next;
 
-    llist->next = node;
+    list->next = node;
     return base;
 }
 
-llist_t *ll_remove(llist_t *llist, llist_t *node)
+list_t *list_remove(list_t *list, list_t *node)
 {
-    llist_t *base = llist;
+    list_t *base = list;
 
     if (base == NULL)
         return NULL;
@@ -70,40 +73,40 @@ llist_t *ll_remove(llist_t *llist, llist_t *node)
         return base;
 
     if (base == node) {
-        llist = base->next;
+        list = base->next;
         free(base);
-        return llist;
+        return list;
     }
 
-    while (llist->next) {
-        if (llist->next == node) {
-            llist_t *n_node = llist->next->next;
-            free(llist->next);
-            llist->next = n_node;
+    while (list->next) {
+        if (list->next == node) {
+            list_t *n_node = list->next->next;
+            free(list->next);
+            list->next = n_node;
             break;
         }
-        llist = llist->next;
+        list = list->next;
     }
 
     return base;
 }
 
-llist_t *ll_get_node(llist_t *llist, unsigned int index)
+list_t *ll_get_node(list_t *list, unsigned int index)
 {
-    if (llist == NULL)
+    if (list == NULL)
         return NULL;
 
     if (index == 0)
-        return llist;
+        return list;
 
     unsigned int i = 0;
-    while (llist->next && (i++ < index))
-        llist = llist->next;
+    while (list->next && (i++ < index))
+        list = list->next;
 
-    return llist;
+    return list;
 }
 
-unsigned int ll_get_count(llist_t *llist)
+unsigned int ll_get_count(list_t *llist)
 {
     if (llist == NULL)
         return 0;

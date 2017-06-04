@@ -53,8 +53,6 @@ typedef struct mouse_event {
     int x, y, b;
 } mouse_event_t;
 
-
-
 typedef struct input_event {
     int type;
     union {
@@ -74,24 +72,22 @@ enum {
     SCROLL_UP,
     SCROLL_DOWN,
     RELEASE
-
-	/* Planned :
-
-		Grabbing :
-		  - G_LEFT_BUTTON
-		  - G_RIGHT_BUTTON
-		  - G_MIDDLE_BUTTON
-
-	 */
 };
 
-#define core_getkey() getch()
-#define core_kbhit() kbhit()
+#define core_getkey getch
+#define core_kbhit kbhit
 
 void core_get_mouse(char, int*, int*, int*);
 void core_input_get_event(input_event_t *e);
 
 void core_input_initialize(unsigned int mode);
 void core_input_terminate(unsigned int mode);
+
+#ifndef WIN32
+/* *NIX kbhit works in this case. */
+#define core_peek_stdin core_kbhit
+#else
+int core_peek_stdin(void);
+#endif
 
 #endif /* H_CORE_I */

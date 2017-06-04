@@ -32,10 +32,6 @@
 #ifndef H_DARKBOX
 #define H_DARKBOX
 
-#if !defined(_XOPEN_SOURCE)
-#define _XOPEN_SOURCE
-#endif
-
 #include <stdlib.h>
 
 /* --- Beginning of user configuration --- */
@@ -60,14 +56,6 @@ typedef struct command_t {
     */
 } command_t;
 
-#ifndef WIN32
-static void sleep_ms(unsigned long ms);
-#else
-#define sleep_ms(ms) Sleep(ms)
-#endif
-
-// void init_buffers(void);
-// void free_buffers(void);
 void start(void);
 
 void execute_line(void);

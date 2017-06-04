@@ -43,6 +43,6 @@ upx:
 
 clean:
 	rm ./bin/darkbox* ./bin/makemenu* ./bin/socket* || true
-	rm ./tests/darkbox* ./tests/makemenu* ./tests/network/socket* || true
+	rm ./tests/darkbox* ./tests/makemenu* ./tests/socket* || true
 
 .PHONY: $(subdirs)

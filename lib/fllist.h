@@ -28,73 +28,73 @@
 /**
  * Out of memory handler.
  */
-extern void (*ll_oom_handler)(void);
+extern void (*list_oom_handler)(void);
 
-typedef struct linked_list {
-    struct linked_list *next;
+typedef struct list {
+    struct list *next;
     void *value;
-} llist_t, queue_t, stack_t;
+} list_t, queue_t, stack_t;
 
 /**
- * Insert an item at index to the linked list.
+ * Insert an item at index to the list.
  */
-llist_t *ll_insert(llist_t *llist, void *value, unsigned int index);
+list_t *list_insert(list_t *llist, void *value, unsigned int index);
 
 /**
- * Insert an item at the beginning of the linked list.
+ * Insert an item at the beginning of the list.
  */
-#define ll_insert_begin(llist, value) ll_insert(llist, value, 0)
+#define list_insert_begin(llist, value) list_insert(list, value, 0)
 
 /**
- * Insert an item at the end of the linked list.
+ * Insert an item at the end of the list.
  */
-#define ll_insert_end(llist, value) ll_insert(llist, value, UINT_MAX)
+#define list_insert_end(llist, value) list_insert(list, value, UINT_MAX)
 
 /**
  * Remove a node from a list.
  */
-llist_t *ll_remove(llist_t *llist, llist_t *node);
+list_t *list_remove(list_t *llist, list_t *node);
 
 /**
  * Remove a node using its id from a list.
  */
-#define ll_remove_at(llist, index) ll_remove(llist, ll_get_node(llist, index))
+#define list_remove_at(list, index) list_remove(list, list_get_node(list, index))
 
 /**
  * Get an item's node using its index.
  */
-llist_t *ll_get_node(llist_t *llist, unsigned int index);
+list_t *list_get_node(list_t *list, unsigned int index);
 
 /**
  * Get an item's value using its index.
  */
-#define ll_get_value(llist, index) (ll_get_node(llist, index)->value)
+#define list_get_value(list, index) (list_get_node(list, index)->value)
 
 
 /**
- * Get the count of items in the linked list.
+ * Get the count of items in the list.
  */
-unsigned int ll_get_count(llist_t *llist);
+unsigned int list_get_count(list_t *list);
 
 /**
  * Go a value in the queue.
  */
-#define queue_push(queue, value) ll_insert_end(queue, value)
+#define queue_push(queue, value) list_insert_end(queue, value)
 
 /**
  * Pull the next value of the node.
  */
-llist_t *queue_pop(llist_t *llist);
+list_t *queue_pop(list_t *list);
 
 /**
  * Get the size of the queue.
  */
-#define queue_size(queue) ll_get_count(queue)
+#define queue_size(queue) list_get_count(queue)
 
 /**
  * Push a value to the stack.
  */
-#define stack_push(stack, value) ll_insert_begin(stack, value)
+#define stack_push(stack, value) list_insert_begin(stack, value)
 
 /**
  * Pop a value upon the stack.
@@ -104,6 +104,6 @@ llist_t *queue_pop(llist_t *llist);
 /**
  * Get the size of the stack.
  */
-#define stack_size(stack) ll_get_count(stack)
+#define stack_size(stack) list_get_count(stack)
 
 #endif /* H_LLIST */

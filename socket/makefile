@@ -54,6 +54,6 @@ socket:
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
 	mv $(EXEC) ../bin
-	cp $(BINDIR)/$(EXEC) ../tests/network/
+	cp $(BINDIR)/$(EXEC) ../tests/
 
 .PHONY: $(EXEC)

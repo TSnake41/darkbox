@@ -44,4 +44,12 @@ void core_change_cursor_state(char state);
 void core_clear_console(void);
 void core_reset_color(void);
 
+#ifndef WIN32
+void core_sleep(int ms);
+#else
+#include <windows.h>
+
+#define core_sleep Sleep
+#endif
+
 #endif /* H_CORE */

@@ -32,7 +32,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-/* #include <assert.h> */
 
 #include "core.h"
 
@@ -42,6 +41,12 @@
 static HANDLE stdout_handle;
 static CONSOLE_SCREEN_BUFFER_INFO csbi;
 #else
+#if !defined(_XOPEN_SOURCE)
+#define _XOPEN_SOURCE
+#endif
+
+#include <unistd.h>
+#include <time.h>
 
 const char Ansi_Table[8] = {
     0, 4, 2, 6,
@@ -64,7 +69,6 @@ void core_init(void)
 
 void core_gotoxy(int x, int y)
 {
-    /* assert(x > -1 || y > -1); */
     if (x < 0 || y < 0)
         return;
 
@@ -113,7 +117,7 @@ void core_change_cursor_state(char state)
     );
     #else
     CONSOLE_CURSOR_INFO cursor;
-    /* assert(GetConsoleCursorInfo(stdout_handle, &cursor)); */
+
     if (!GetConsoleCursorInfo(stdout_handle, &cursor))
         return;
 
@@ -174,7 +178,6 @@ void core_reset_color(void)
 
 void core_swritecolor(unsigned char color, const char *s)
 {
-    /* assert(!s); */
     if (!s)
         return;
 
@@ -191,3 +194,16 @@ void core_cwritecolor(unsigned char color, int c)
 
     core_reset_color();
 }
+
+#ifndef WIN32
+void core_sleep(int ms)
+{
+    struct timespec req;
+    time_t sec = (int)(ms / 1000);
+    ms -= sec * 1000;
+    req.tv_sec = sec;
+    req.tv_nsec = ms * 1e+6L;
+    while (nanosleep(&req, &req) == -1)
+        continue;
+}
+#endif

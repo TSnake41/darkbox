@@ -34,11 +34,6 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
-#include <time.h>
-
-#ifdef WIN32
-#include <windows.h>
-#endif
 
 #include <core.h>
 #include <core_i.h>
@@ -68,24 +63,15 @@ int main(int argc, char const *argv[])
             /* Returns a non-zero value if data is
                available in stdin otherwise, return 0
             */
-            case 'k': ;
-                #ifndef WIN32
-                return core_kbhit();
-                #else
-                /* Unfortunately, Windows's kbhit take input only from Console and
-                   not stdin, so, we must hack to makes this working with stdin.
-                */
-                HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
-                DWORD available = 0;
-                PeekNamedPipe(hin, NULL, 0, NULL, &available, NULL);
-                return available;
-                #endif
+            case 'k':
+                return core_peek_stdin();
+                break;
 
             case 'w': ;
                 if (argc < 2)
                     return 1;
 
-                sleep_ms(strtol(argv[2], NULL, 10));
+                core_sleep(strtol(argv[2], NULL, 10));
                 return 0;
         }
 
@@ -285,17 +271,9 @@ void execute_cmd(command_t cmd)
                        Usage : Wait t miliseconds
                     */
 
-                    #ifndef WIN32
-                    /* Flush stdout on *NIXes because they use
-                       buffers. On DJGPP, this behavior works
-                    */
+                    /* Flush stdout (display any "waiting" stuff) */
                     fflush(stdout);
-                    #endif
-                    /* On Windows, we do not need to
-                       because this is done automaticaly
-                    */
-
-                    sleep_ms(read_int());
+                    core_sleep(read_int());
                     break;
 
                 /*
@@ -394,16 +372,3 @@ void read_string(char *buffer, const size_t max_length)
 
     buffer[pos++] = '\0';
 }
-
-#ifndef WIN32
-static void sleep_ms(unsigned long ms)
-{
-    struct timespec req;
-    time_t sec = (int)(ms / 1000);
-    ms -= sec * 1000;
-    req.tv_sec = sec;
-    req.tv_nsec = ms * 1e+6L;
-    while (nanosleep(&req, &req) == -1)
-        continue;
-}
-#endif

@@ -33,6 +33,7 @@
 #include "djgpp_mouse.c"
 #elif defined(WIN32)
 #include "win_mouse.c"
+#include "win_core_i.c"
 #else
 #include "posix_conio.c"
 #include "x11_mouse.c"
