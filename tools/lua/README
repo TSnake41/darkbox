@@ -1,0 +1,39 @@
+Here you have my own tiny lua distribution (for Windows and Linux).
+Have fun with it !
+
+Use it, hack it, distribute it with your project the only thing I want to help
+you to make funny things, to make projects that grow. So, I share you this
+distribution of Lua, because I am not the only one that need it, you probably
+(or will) need it too. And you should too, share your work, your knowledges with
+others, to do the same.
+
+I do not ask you to throw your project into the ground, just make it Open Source
+with a raisonable licence.
+
+Never forget that, share permit knowledge. Knowledge allows us to share new knowledge.
+
+Quotes from lua.org :
+« Just download it and use it. »
+« The spirit of the Lua license is that you are free to use Lua for any purpose
+  at no cost without having to ask us. The only requirement is that if you do use
+  Lua, then you should give us credit by including the copyright notice somewhere
+  in your product or its documentation. A nice, but optional, way to give us further
+  credit is to include a Lua logo and a link to our site in a web page for your product.
+»
+
+PS: I do not own lua, but I share it because I like it and peoples do not use it
+    not because this is bad, but just because they do not know that exists.
+
+PS2: In the future, I will make a lua version with stuff present in the "lib/"
+     directory, so, you will be able to do powerful portable terminal games in Lua.
+     Something like an ultimate lua version for terminal-based games.
+
+NOTE: If you do not have any binary of lua, no worry, you are using git version,
+      so just take it in the latest offical release.
+
+NOTE2:
+    - Linux version is built using clang with musl-libc, everything is "static",
+      so it should even work on a barebones Linux kernel.
+    - Window version is built using latest tcc.
+
+- Teddy

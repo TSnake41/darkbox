@@ -1,5 +1,7 @@
 tcc/
 *.exe
+*.dll
+tools/lua/lua*
 tests/darkbox*
 tests/makemenu*
 tests/socket*
