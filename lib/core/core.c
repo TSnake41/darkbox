@@ -41,8 +41,8 @@
 static HANDLE stdout_handle;
 static CONSOLE_SCREEN_BUFFER_INFO csbi;
 #else
-#if !defined(_XOPEN_SOURCE)
-#define _XOPEN_SOURCE
+#ifndef _XOPEN_SOURCE
+#define _XOPEN_SOURCE 700
 #endif
 
 #include <unistd.h>
@@ -57,6 +57,10 @@ const char Ansi_Table[8] = {
 
 #if defined(WIN32) || defined(__DJGPP__)
 #include <conio.h>
+#endif
+
+#ifdef __DJGPP__
+#include <dos.h>
 #endif
 
 void core_init(void)
@@ -198,6 +202,9 @@ void core_cwritecolor(unsigned char color, int c)
 #ifndef WIN32
 void core_sleep(int ms)
 {
+    #ifdef __DJGPP__
+    delay(ms);
+    #else
     struct timespec req;
     time_t sec = (int)(ms / 1000);
     ms -= sec * 1000;
@@ -205,5 +212,6 @@ void core_sleep(int ms)
     req.tv_nsec = ms * 1e+6L;
     while (nanosleep(&req, &req) == -1)
         continue;
+    #endif
 }
 #endif

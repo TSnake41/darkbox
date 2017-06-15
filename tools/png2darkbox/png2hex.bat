@@ -7,7 +7,7 @@ goto :eof
 :lua_path
 :: Use lua version distributed in tools/lua
 set PATH=%CD%\..\lua
-2>nul lua -v || goto :no_lua
+(2>nul lua -v 0>CON) || goto :no_lua
 goto :eof
 
 :no_lua

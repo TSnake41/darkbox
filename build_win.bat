@@ -29,7 +29,6 @@ tcc %CFLAGS% -o bin\makemenu.exe %makemenu_src%
 
 upx bin\*.exe
 copy bin\*.exe tests\
-move tests\socket.exe tests\network\
 
 @echo off
 prompt

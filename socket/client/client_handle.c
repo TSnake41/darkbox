@@ -29,6 +29,10 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifndef WIN32
+#define _XOPEN_SOURCE 700
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -37,10 +41,12 @@
 
 #ifndef WIN32
 #include <core_i.h>
-#else
+#endif
+
+#ifdef WIN32
 #include <windows.h>
 int _setmode(int, int);
-#define _O_BINARY 0x8000
+#define set_bin_mode(f) _setmode(_fileno(f), 0x8000)
 #endif
 
 #include "client_utils.h"
@@ -84,8 +90,8 @@ void client_handle_recv(socket_t socket)
         exit(code);
 
     #ifdef WIN32
-    /* Set stdout to binary mode */
-    _setmode(_fileno(stdout), _O_BINARY);
+	/* Set stdout to binary mode */
+    set_bin_mode(stdout);
     #endif
 
     uint16_t count = 0;
@@ -110,8 +116,8 @@ void client_handle_send(socket_t socket)
     setvbuf(stdin, NULL, _IONBF, 0);
 
     #ifdef WIN32
-    /* Set stdin to binary mode */
-    _setmode(_fileno(stdin), _O_BINARY);
+	/* Set stdin to binary mode */
+    set_bin_mode(stdin);
     #endif
 
     uint16_t count = 0;
@@ -144,7 +150,7 @@ void client_handle_nms_recv(socket_t socket)
 
     #ifdef WIN32
     /* Set stdout to binary mode */
-    _setmode(_fileno(stdout), _O_BINARY);
+    set_bin_mode(stdout);
     #endif
 
     uint16_t recieved = 0;

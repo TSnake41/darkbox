@@ -79,7 +79,6 @@ int main(int argc, char **argv)
 
         default:
             goto showhelp;
-
     }
 
     /* this part is never reached */
