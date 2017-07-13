@@ -43,20 +43,20 @@
  * Send a Network Message to 'socket'.
  * Returns true on fail.
  */
-bool nms_send(socket_t socket, void *buffer, uint16_t length);
+bool nms_send(socket_int socket, void *buffer, uint16_t length);
 
 /**
  * Recieve a Network Message from 'socket'.
  * NOTE: You need to manually free buffer.
  * Returns true on fail.
  */
-bool nms_recv(socket_t socket, void **buffer, uint16_t *length);
+bool nms_recv(socket_int socket, void **buffer, uint16_t *length);
 
 /**
  * Recieve a Network Message from 'socket'.
  * NOTE: Size of buffer must be at least of 2^16-1 bytes.
  * Returns true on fail.
  */
-bool nms_recv_no_alloc(socket_t socket, void *buffer, uint16_t *received);
+bool nms_recv_no_alloc(socket_int socket, void *buffer, uint16_t *received);
 
 #endif /* H_NMS */

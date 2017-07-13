@@ -36,7 +36,7 @@
 /* Syntax : connect sock_id ip port
    Usage : Connect sock_id to ip:port.
 */
-void server_cmd_connect(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_connect(socket_message msg, socket_int client, server_data *data)
 {
     if (msg.argc != 4) {
         /* Invalid args */
@@ -49,7 +49,7 @@ void server_cmd_connect(message_t msg, ipc_socket_t client, server_data_t *data)
 
     in_port_t port = htons(strtoul(msg.argv[3], NULL, 0));
 
-    id_socket_pair_t *pair = server_get_pair(sock_id, data, NULL);
+    id_socket_pair *pair = server_get_pair(sock_id, data, NULL);
 
     if (pair == NULL) {
         /* No pair */

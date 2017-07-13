@@ -37,6 +37,6 @@
 
 #include "client.h"
 
-uint8_t recv_code(socket_t socket);
+uint8_t recv_code(socket_int socket);
 
 #endif /* H_CLIENT_UTILS */

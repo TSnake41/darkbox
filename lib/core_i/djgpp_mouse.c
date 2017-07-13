@@ -31,12 +31,12 @@
 
 #include <core_i.h>
 
-void core_input_initialize(unsigned int mode)
+void core_input_initialize(bool on_move)
 {
 
 }
 
-void core_input_terminate(unsigned int mode)
+void core_input_terminate(bool on_move)
 {
 
 }
@@ -47,7 +47,7 @@ void core_get_mouse(char m, int *x, int *y, int *b)
 
 }
 
-void core_input_get_event(input_event_t *e)
+void core_input_get_event(core_input_event *e)
 {
     int c = core_getkey();
     e->type = KEY_PRESS;

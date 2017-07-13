@@ -24,6 +24,7 @@ echo Client accepted
 (socket -id:server -c nms_recv client || goto :client_end_loop)
 goto :client_loop
 :client_end_loop
+echo.
 echo Connection ended
 
 socket -id:server -c free client
@@ -32,4 +33,5 @@ goto :loop
 :error
 echo Error occured :^(
 socket -id:server -c exit
+pause
 goto :eof

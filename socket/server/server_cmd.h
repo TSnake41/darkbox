@@ -35,14 +35,14 @@
 #include "server.h"
 #include "../message.h"
 
-typedef void (*server_cmd_func_t)(message_t, ipc_socket_t, server_data_t *);
+typedef void (*server_cmd_func)(socket_message, socket_int, server_data *);
 
 typedef struct server_cmd {
-    server_cmd_func_t cmd;
+    server_cmd_func cmd;
     char *key;
-} server_cmd_t;
+} server_cmd;
 
 extern const unsigned int server_cmds_count;
-extern const server_cmd_t server_cmds[];
+extern const server_cmd server_cmds[];
 
 #endif /* H_SERVER_CMD */

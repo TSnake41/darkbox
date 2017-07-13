@@ -42,19 +42,19 @@
 #include "../../cmd_codes.h"
 #include "../../message.h"
 
-id_socket_pair_t *server_get_pair(char *id, server_data_t *data, unsigned int *index);
-void server_add_pair(server_data_t *data, id_socket_pair_t *pair);
-void server_remove_pair(server_data_t *data, unsigned int index);
+id_socket_pair *server_get_pair(char *id, server_data *data, unsigned int *index);
+void server_add_pair(server_data *data, id_socket_pair *pair);
+void server_remove_pair(server_data *data, unsigned int index);
 
 bool server_make_sockaddr(const char *ip, in_port_t port, bool ipv6, struct sockaddr **addr, socklen_t *len);
 bool server_get_sockaddr_in(const char *ip, struct sockaddr_in *sock_in);
 bool server_get_sockaddr_in6(const char *ip, struct sockaddr_in6 *sock_in);
 bool server_addr_to_str(char *output, struct sockaddr_storage *addr, socklen_t addr_len);
 
-int send_code(socket_t socket, uint8_t code);
+int send_code(socket_int socket, uint8_t code);
 bool parse_bool(const char *str);
 
-#define new_pair(id_len) (calloc(sizeof(id_socket_pair_t) + (id_len) + 1, 1))
-#define get_id(pair) (((char *)pair) + sizeof(id_socket_pair_t))
+#define new_pair(id_len) (calloc(sizeof(id_socket_pair) + (id_len) + 1, 1))
+#define get_id(pair) (((char *)pair) + sizeof(id_socket_pair))
 
 #endif /* H_SERVER_CMD_UTILS */

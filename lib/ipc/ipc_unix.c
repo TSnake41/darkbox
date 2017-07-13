@@ -29,7 +29,8 @@
 
 #include <ipc.h>
 
-static ipc_socket_t ipc_create_socket(const char *id, struct sockaddr_un *saun_o)
+static socket_int socket_ipc_create_socket(const char *id,
+    struct sockaddr_un *saun_o)
 {
     const char *f_path_prefix = ".socket_";
     strcpy(saun_o->sun_path, f_path_prefix);
@@ -42,18 +43,18 @@ static ipc_socket_t ipc_create_socket(const char *id, struct sockaddr_un *saun_o
         return -1;
     }
 
-    socket_t s;
+    socket_int s;
     if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
         return -1;
 
     return s;
 }
 
-ipc_socket_t ipc_server_new(const char *id, int max_pending)
+socket_int socket_ipc_server_new(const char *id, int max_pending)
 {
-    socket_t s;
+    socket_int s;
     struct sockaddr_un saun;
-    if ((s = ipc_create_socket(id, &saun)) == 0)
+    if ((s = socket_ipc_create_socket(id, &saun)) == 0)
         return -1;
 
     socklen_t l = sizeof(saun.sun_family) + strlen(saun.sun_path);
@@ -69,15 +70,15 @@ ipc_socket_t ipc_server_new(const char *id, int max_pending)
     return s;
 }
 
-ipc_socket_t ipc_client_new(char *id)
+socket_int socket_ipc_client_new(char *id)
 {
-    socket_t s;
+    socket_int s;
     struct sockaddr_un saun;
 
-    if ((s = ipc_create_socket(id, &saun)) == -1)
+    if ((s = socket_ipc_create_socket(id, &saun)) == -1)
         return -1;
 
-    if (connect(s, (struct sockaddr *)&saun, sizeof(struct sockaddr_un)) == -1) {
+    if (connect(s, (struct sockaddr *)&saun, sizeof(struct sockaddr_un)) == -1){
         close(s);
         return -1;
     }

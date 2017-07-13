@@ -38,7 +38,7 @@
 
 #define nms_flags socket_default_flags
 
-bool nms_send(socket_t socket, void *data, uint16_t length)
+bool nms_send(socket_int socket, void *data, uint16_t length)
 {
     /* Convert length to network bytes */
     uint8_t length_bytes[2] = {
@@ -54,7 +54,7 @@ bool nms_send(socket_t socket, void *data, uint16_t length)
     return false;
 }
 
-bool nms_recv(socket_t socket, void **buffer, uint16_t *received)
+bool nms_recv(socket_int socket, void **buffer, uint16_t *received)
 {
     uint8_t head_bytes[2];
 
@@ -80,7 +80,7 @@ bool nms_recv(socket_t socket, void **buffer, uint16_t *received)
     return false;
 }
 
-bool nms_recv_no_alloc(socket_t socket, void *buffer, uint16_t *received)
+bool nms_recv_no_alloc(socket_int socket, void *buffer, uint16_t *received)
 {
     uint8_t head_bytes[2];
 

@@ -28,10 +28,10 @@
 
 void (*list_oom_handler)(void) = NULL;
 
-list_t *list_insert(list_t *list, void *value, unsigned int index)
+fllist *list_insert(fllist *list, void *value, unsigned int index)
 {
-    list_t *base = list;
-    list_t *node = calloc(sizeof(list_t), 1);
+    fllist *base = list;
+    fllist *node = calloc(sizeof(fllist), 1);
 
     if (node == NULL) {
         /* Allocation failed */
@@ -62,9 +62,9 @@ list_t *list_insert(list_t *list, void *value, unsigned int index)
     return base;
 }
 
-list_t *list_remove(list_t *list, list_t *node)
+fllist *list_remove(fllist *list, fllist *node)
 {
-    list_t *base = list;
+    fllist *base = list;
 
     if (base == NULL)
         return NULL;
@@ -80,7 +80,7 @@ list_t *list_remove(list_t *list, list_t *node)
 
     while (list->next) {
         if (list->next == node) {
-            list_t *n_node = list->next->next;
+            fllist *n_node = list->next->next;
             free(list->next);
             list->next = n_node;
             break;
@@ -91,7 +91,7 @@ list_t *list_remove(list_t *list, list_t *node)
     return base;
 }
 
-list_t *list_get_node(list_t *list, unsigned int index)
+fllist *list_get_node(fllist *list, unsigned int index)
 {
     if (list == NULL)
         return NULL;
@@ -106,7 +106,7 @@ list_t *list_get_node(list_t *list, unsigned int index)
     return list;
 }
 
-unsigned int list_get_count(list_t *llist)
+unsigned int list_get_count(fllist *llist)
 {
     if (llist == NULL)
         return 0;
@@ -119,12 +119,12 @@ unsigned int list_get_count(list_t *llist)
     return i;
 }
 
-queue_t *queue_pop(queue_t *queue)
+flqueue *queue_pop(flqueue *queue)
 {
     if (!queue)
         return NULL;
 
-    queue_t *next_queue = queue->next;
+    flqueue *next_queue = queue->next;
     free(queue);
 
     return next_queue;

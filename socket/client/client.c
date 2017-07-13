@@ -41,15 +41,15 @@
 
 #include "client_handle.h"
 
-void client(socket_args_t args)
+void client(socket_args args)
 {
-    ipc_socket_t socket = ipc_client_new(args.id);
-    if (!ipc_socket_is_valid(socket)) {
+    socket_int socket = socket_ipc_client_new(args.id);
+    if (!socket_is_valid(socket)) {
         fputs("ERROR: Unable to connect to IPC server.\n", stderr);
         return;
     }
 
-    message_t msg = {
+    socket_message msg = {
         .argc = args.data.client.command_argc,
         .argv = args.data.client.command_argv
     };
@@ -59,7 +59,7 @@ void client(socket_args_t args)
     /* Execute corresponding callback. */
     unsigned int i = 0;
     while (i < client_handles_count) {
-        client_handle_t handle = client_handles[i];
+        client_handle handle = client_handles[i];
 
         if (strcmp(handle.cmd, msg.argv[0]) == 0)
             handle.func(socket);

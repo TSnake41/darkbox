@@ -41,25 +41,35 @@
 #include <unistd.h>
 #include <poll.h>
 
-typedef int socket_t;
+typedef int socket_int;
 
 #define socket_default_flags (MSG_NOSIGNAL)
+#define socket_is_valid(socket) ((socket) != -1)
 #else
 #include <winsock2.h>
 #include <ws2tcpip.h>
-typedef SOCKET socket_t;
+typedef SOCKET socket_int;
 typedef unsigned short in_port_t;
 
 #define socket_default_flags (0)
 #define close closesocket
 #define inet_pton inet_pton_win
 #define inet_ntop inet_ntop_win
+
+/* Avoid pointer warnings. */
+#ifdef AVOID_POINTER_WARNING
+#define send(s, b, l, f) send(s, (char *)(b), l, f)
+#define recv(s, b, l, f) recv(s, (char *)(b), l, f)
+#define getsockopt(s, l, n, v, ol) getsockopt(s, l, n, (char *)(v), ol)
+#endif
+
+#define socket_is_valid(socket) ((socket) != INVALID_SOCKET)
 #endif
 
 void socket_init(void);
 void socket_end(void);
-int available(socket_t);
-bool set_blocking(socket_t socket, bool blocking);
+int socket_available(socket_int);
+bool socket_set_blocking(socket_int socket, bool blocking);
 
 #ifdef WIN32
 int inet_pton_win(int af, const char *src, void *dst);

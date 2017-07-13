@@ -15,12 +15,12 @@
 
 #define WAIT_DELAY ((int)(WAIT_FREQUENCY * 1000))
 
-unsigned char run_choice(choice_args_t args);
-bool check_key(choice_args_t args, unsigned char *index);
+unsigned char run_choice(choice_args args);
+bool check_key(choice_args args, unsigned char *index);
 
 int main(int argc, char **argv)
 {
-    choice_args_t args;
+    choice_args args;
 
     if (parse_args(argc, argv, &args))
         return 0xFF; /* 0xFF : Choice exit code */
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
         return 0;
 }
 
-unsigned char run_choice(choice_args_t args)
+unsigned char run_choice(choice_args args)
 {
     unsigned char key_index,
                   default_key_index;
@@ -109,9 +109,9 @@ unsigned char run_choice(choice_args_t args)
     return 0;
 }
 
-bool check_key(choice_args_t args, unsigned char *index)
+bool check_key(choice_args args, unsigned char *index)
 {
-    int key = core_getkey();
+    int key = core_is_stdin_console() ? core_getkey() : getchar();
 
     if (key == EOF) {
         /* Returns 0 */

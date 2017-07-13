@@ -14,7 +14,7 @@
 
 static char **get_value(char **argv, char **value);
 
-bool parse_args(int argc, char **argv, choice_args_t *args)
+bool parse_args(int argc, char **argv, choice_args *args)
 {
     args->keys = DEFAULT_KEYS;
     args->prompt = NULL;
@@ -94,10 +94,10 @@ bool parse_args(int argc, char **argv, choice_args_t *args)
         fputs(ERROR_NO_KEY, stderr);
         return true;
     }
-	
+
 	if (args->default_key != 0
 		&& s_strchr(args->keys, args->default_key, args->case_sensitive) == NULL) {
-		
+
 		fputs(ERROR_DEFAULT_KEY_NOT_FOUND, stderr);
 		return true;
 	}
@@ -116,10 +116,10 @@ bool parse_args(int argc, char **argv, choice_args_t *args)
 static char **get_value(char **argv, char **value)
 {
     char *separator = strchr(*argv, ':');
-	
+
 	/* Avoid crash by not defining a value that doesn't exists. */
 	if (separator != NULL || argv[1] != NULL)
 		*value = separator == NULL ? *++argv : separator + 1;
-	
+
     return argv;
 }

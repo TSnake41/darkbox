@@ -37,7 +37,7 @@
 /* Syntax : nms_recv sock_id
    Usage : Recieve data from socket using NMS.
 */
-void server_cmd_nms_recv(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *data)
 {
     if (msg.argc != 2) {
         /* Invalid arguments */
@@ -45,7 +45,7 @@ void server_cmd_nms_recv(message_t msg, ipc_socket_t client, server_data_t *data
         return;
     }
 
-    id_socket_pair_t *pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *pair = server_get_pair(msg.argv[1], data, NULL);
 
     if (pair == NULL) {
         /* No pair found */
@@ -71,7 +71,7 @@ void server_cmd_nms_recv(message_t msg, ipc_socket_t client, server_data_t *data
 /* Syntax : nms_send sock_id
    Usage : Send bytes to socket using NMS.
 */
-void server_cmd_nms_send(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_nms_send(socket_message msg, socket_int client, server_data *data)
 {
     if (msg.argc != 2) {
         /* Invalid arguments */
@@ -79,7 +79,7 @@ void server_cmd_nms_send(message_t msg, ipc_socket_t client, server_data_t *data
         return;
     }
 
-    id_socket_pair_t *pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *pair = server_get_pair(msg.argv[1], data, NULL);
 
     if (pair == NULL) {
         /* No pair found */

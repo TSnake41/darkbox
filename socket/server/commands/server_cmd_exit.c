@@ -37,14 +37,14 @@
 /* Syntax : exit
    Usage : Exit SockeT.
 */
-void server_cmd_exit(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_exit(socket_message msg, socket_int client, server_data *data)
 {
     /* Close sockets, to be sure */
     smutex_lock(&data->sock_list_mutex);
-    list_t *l = data->sock_list;
+    fllist *l = data->sock_list;
 
     while (l) {
-        id_socket_pair_t *pair = l->value;
+        id_socket_pair *pair = l->value;
         close(pair->socket);
 
         l = queue_pop(l);

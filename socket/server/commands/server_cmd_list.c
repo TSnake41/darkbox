@@ -38,15 +38,15 @@
 /* Syntax : list
    Usage : Get socket list.
 */
-void server_cmd_list(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_list(socket_message msg, socket_int client, server_data *data)
 {
     send_code(client, CMD_SUCCESS);
 
     smutex_lock(&data->sock_list_mutex);
-    list_t *sock_list_node = data->sock_list;
+    fllist *sock_list_node = data->sock_list;
 
     while (sock_list_node != NULL) {
-        id_socket_pair_t *pair = sock_list_node->value;
+        id_socket_pair *pair = sock_list_node->value;
         /* Send id using nms. */
         char new_str[strlen(pair->id) + 2];
         sprintf(new_str, "%s\n", pair->id);

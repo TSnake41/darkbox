@@ -51,7 +51,7 @@
 
 #define msg_flags socket_default_flags
 
-bool message_recv(ipc_socket_t socket, message_t *message)
+bool message_recv(socket_int socket, socket_message *message)
 {
     if (message == NULL)
         goto error;
@@ -103,7 +103,7 @@ bool message_recv(ipc_socket_t socket, message_t *message)
         return true;
 }
 
-bool message_send(ipc_socket_t socket, message_t message)
+bool message_send(socket_int socket, socket_message message)
 {
     if (send(socket, &message.argc, sizeof(unsigned int), msg_flags) == -1)
         return true;
@@ -125,7 +125,7 @@ bool message_send(ipc_socket_t socket, message_t message)
     return false;
 }
 
-void message_free(message_t message)
+void message_free(socket_message message)
 {
     int c = message.argc;
 

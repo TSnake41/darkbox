@@ -43,46 +43,46 @@ enum sthread_return {
 };
 
 #ifndef WIN32
-typedef pthread_t sthread_t;
-typedef pthread_mutex_t smutex_t;
+typedef pthread_t sthread;
+typedef pthread_mutex_t smutex;
 #else
 typedef struct {
     HANDLE handle;
     DWORD id;
-} sthread_t;
-typedef CRITICAL_SECTION smutex_t;
+} sthread;
+typedef CRITICAL_SECTION smutex;
 #endif
 
 /**
  * Function used to start thread.
  */
-typedef void (*sthread_start_t)(void *);
+typedef void (*sthread_start)(void *);
 
 /**
  * Create (and start) a new thread.
  */
-bool sthread_new(sthread_t *thread, sthread_start_t thread_start, void *arg);
+bool sthread_new(sthread *thread, sthread_start thread_start, void *arg);
 
 /**
  * Get the current thread.
  */
-sthread_t sthread_current(void);
+sthread sthread_current(void);
 
 /**
  * Detach a thread to the current process, the
  * resources are automaticaly freed on thread exit.
  */
-bool sthread_detach(sthread_t thread);
+bool sthread_detach(sthread thread);
 
 /**
  * Wait the end of the thread.
  */
-bool sthread_join(sthread_t thread);
+bool sthread_join(sthread thread);
 
 /**
  * Return 1 if the threads a and b are the same, otherwise, 0.
  */
-int sthread_equals(sthread_t a, sthread_t b);
+int sthread_equals(sthread a, sthread b);
 
 /**
  * Exit the current thread.
@@ -97,27 +97,27 @@ void sthread_sleep(unsigned long ms);
 /**
  * Create a new mutex.
  */
-bool smutex_new(smutex_t *mutex);
+bool smutex_new(smutex *mutex);
 
 /**
  * Destroy a mutex.
  */
-void smutex_free(smutex_t *mutex);
+void smutex_free(smutex *mutex);
 
 /**
  * Lock a mutex.
  */
-bool smutex_lock(smutex_t *mutex);
+bool smutex_lock(smutex *mutex);
 
 /**
  * Try to lock a mutex.
  * Return true if the mutex is busy.
  */
-bool smutex_try_lock(smutex_t *mutex);
+bool smutex_try_lock(smutex *mutex);
 
 /**
  * Unlock a mutex.
  */
-bool smutex_unlock(smutex_t *mutex);
+bool smutex_unlock(smutex *mutex);
 
 #endif /* H_STHREAD */

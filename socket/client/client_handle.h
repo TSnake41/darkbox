@@ -34,24 +34,24 @@
 
 #include <socket.h>
 
-typedef void (*client_handle_func_t)(socket_t);
+typedef void (*client_handle_func)(socket_int);
 
 typedef struct client_handle {
-    client_handle_func_t func;
+    client_handle_func func;
     char *cmd;
-} client_handle_t;
+} client_handle;
 
-void client_handle_code(socket_t socket);
+void client_handle_code(socket_int socket);
 
-void client_handle_recv(socket_t socket);
-void client_handle_send(socket_t socket);
+void client_handle_recv(socket_int socket);
+void client_handle_send(socket_int socket);
 
-void client_handle_nms_recv(socket_t socket);
-void client_handle_nms_send(socket_t socket);
+void client_handle_nms_recv(socket_int socket);
+void client_handle_nms_send(socket_int socket);
 
-void client_handle_poll(socket_t socket);
+void client_handle_poll(socket_int socket);
 
 extern const unsigned int client_handles_count;
-extern const client_handle_t client_handles[];
+extern const client_handle client_handles[];
 
 #endif /* H_CLIENT_HANDLE */

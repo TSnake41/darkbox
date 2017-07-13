@@ -1,5 +1,5 @@
 /*
-    SockeT - Portable TCP and NMS Network IO interface.
+    Darkbox - A Fast and Portable Console IO Server
     Copyright (c) 2017 Teddy ASTIE (TSnake41)
 
     All rights reserved.
@@ -29,32 +29,15 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef H_MESSAGE
-#define H_MESSAGE
+#if !defined(_XOPEN_SOURCE)
+#define _XOPEN_SOURCE 700
+#endif
 
-#include <ipc.h>
-#include <socket.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <unistd.h>
 
-typedef struct socket_message {
-    unsigned int argc;
-    char **argv;
-} socket_message;
-
-/**
- * Recieve message from s and store it to
- * 'message', allocate recieved arguments
- * (which need to be freed using message_free())
- */
-bool message_recv(socket_int socket, socket_message *message);
-
-/**
- * Send a message to s.
- */
-bool message_send(socket_int socket, socket_message message);
-
-/**
- * Free all variables of message allocated by message_recv.
- */
-void message_free(socket_message message);
-
-#endif /* H_MESSAGE */
+bool core_is_stdin_console(void)
+{
+    return isatty(fileno(stdin));
+}

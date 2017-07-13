@@ -32,18 +32,18 @@
 
 static const char *file_id_prefix = "$socket_";
 
-static void ipc_get_file_id_path(const char *id, char *out)
+static void get_file_id_path(const char *id, char *out)
 {
     strcpy(out, file_id_prefix);
     strcat(out, id);
 }
 
-ipc_socket_t ipc_server_new(const char *id, int max_pending)
+socket_int socket_ipc_server_new(const char *id, int max_pending)
 {
     char f_path[strlen(file_id_prefix) + strlen(id) + 1];
-    ipc_get_file_id_path(id, f_path);
+    get_file_id_path(id, f_path);
 
-    socket_t s = socket(AF_INET, SOCK_STREAM, 0);
+    socket_int s = socket(AF_INET, SOCK_STREAM, 0);
     if (s == INVALID_SOCKET)
         return INVALID_SOCKET;
 
@@ -73,10 +73,10 @@ ipc_socket_t ipc_server_new(const char *id, int max_pending)
     return s;
 }
 
-ipc_socket_t ipc_client_new(char *id)
+socket_int socket_ipc_client_new(char *id)
 {
     char f_path[strlen(file_id_prefix) + strlen(id) + 1];
-    ipc_get_file_id_path(id, f_path);
+    get_file_id_path(id, f_path);
 
     unsigned short port;
 
@@ -87,7 +87,7 @@ ipc_socket_t ipc_client_new(char *id)
     fread(&port, sizeof(unsigned short), 1, f);
     fclose(f);
 
-    socket_t s;
+    socket_int s;
     if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
         return INVALID_SOCKET;
 
@@ -96,7 +96,9 @@ ipc_socket_t ipc_client_new(char *id)
     sin.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
     sin.sin_port = port;
 
-    if (connect(s, (struct sockaddr *)&sin, sizeof(struct sockaddr)) == SOCKET_ERROR) {
+    if (connect(s, (struct sockaddr *)&sin,
+        sizeof(struct sockaddr)) == SOCKET_ERROR) {
+
         closesocket(s);
         return INVALID_SOCKET;
     }
@@ -107,10 +109,10 @@ ipc_socket_t ipc_client_new(char *id)
     return s;
 }
 
-ipc_socket_t ipc_server_accept(ipc_socket_t server)
+socket_int socket_ipc_server_accept(socket_int server)
 {
-    socket_t s = accept(server, NULL, NULL);
-    if (s != INVALID_SOCKET) {
+    socket_int s = accept(server, NULL, NULL);
+    if (socket_is_valid(s)) {
         u_long non_blocking = 0;
         ioctlsocket((int)s, FIONBIO, &non_blocking);
     }

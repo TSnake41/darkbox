@@ -51,20 +51,20 @@ void socket_end(void)
     #endif
 }
 
-int available(socket_t socket)
+int available(socket_int socket)
 {
     int c;
 
     #ifndef WIN32
     int e = fcntl(socket, FIONREAD, &c);
     #else
-    int e = ioctlsocket(socket, FIONREAD, &c);
+    int e = ioctlsocket(socket, FIONREAD, (u_long *)&c);
     #endif
 
     return e != -1 ? c : -1;
 }
 
-bool set_blocking(socket_t socket, bool blocking)
+bool socket_set_blocking(socket_int socket, bool blocking)
 {
     #ifndef WIN32
     int flags = fcntl(socket, F_GETFL, 0);

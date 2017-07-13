@@ -14,8 +14,8 @@ typedef struct choice_args {
     bool case_sensitive;
 
     bool display_help;
-} choice_args_t;
+} choice_args;
 
-bool parse_args(int argc, char **argv, choice_args_t *args);
+bool parse_args(int argc, char **argv, choice_args *args);
 
 #endif /* H_PARSE_ARGS */

@@ -38,7 +38,7 @@
 
    Usage : Poll input or output from sockets using a timeout.
 */
-void server_cmd_poll(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_poll(socket_message msg, socket_int client, server_data *data)
 {
     puts("Not implemented...");
 }

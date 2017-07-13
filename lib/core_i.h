@@ -32,6 +32,8 @@
 #ifndef H_CORE_I
 #define H_CORE_I
 
+#include <stdbool.h>
+
 #if !defined __DJGPP__ && !defined WIN32
 /* Declare getch() and kbhit()
    See core_i/unix_conio.c
@@ -44,22 +46,22 @@ int kbhit();
 #endif
 
 /* Event type */
-enum event_type {
+enum core_event_type {
     MOUSE = 1,
     KEY_PRESS = 2
 };
 
-typedef struct mouse_event {
-    int x, y, b;
-} mouse_event_t;
+typedef struct core_mouse_event {
+    unsigned int x, y, b;
+} core_mouse_event;
 
-typedef struct input_event {
+typedef struct core_input_event {
     int type;
     union {
-        mouse_event_t mouse;
+        core_mouse_event mouse;
         unsigned char key_press;
     } event;
-} input_event_t;
+} core_input_event;
 
 /* Mouse input enumeration */
 enum {
@@ -78,10 +80,12 @@ enum {
 #define core_kbhit kbhit
 
 void core_get_mouse(char, int*, int*, int*);
-void core_input_get_event(input_event_t *e);
+void core_input_get_event(core_input_event *e);
 
-void core_input_initialize(unsigned int mode);
-void core_input_terminate(unsigned int mode);
+void core_input_initialize(bool on_move);
+void core_input_terminate(bool on_move);
+
+bool core_is_stdin_console(void);
 
 #ifndef WIN32
 /* *NIX kbhit works in this case. */

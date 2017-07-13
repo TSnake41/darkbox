@@ -39,7 +39,7 @@
    Usage : Accept a pending socket connection of listner_sock_id.
    If new_sock_id is not defined, define id to "IP:PORT".
 */
-void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
 {
     if (msg.argc < 2) {
         /* Invalid arguments */
@@ -49,7 +49,7 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
 
     bool id_arg_defined = msg.argc > 2;
 
-    id_socket_pair_t *listner_pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *listner_pair = server_get_pair(msg.argv[1], data, NULL);
 
     if (listner_pair == NULL) {
         /* No pair */
@@ -60,7 +60,8 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
     struct sockaddr_storage addr = { 0 };
     socklen_t addr_len = sizeof(addr);
 
-    socket_t new_socket = accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
+    socket_int new_socket =
+        accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
 
     if (new_socket == -1) {
         /* accept() error */
@@ -73,7 +74,7 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
        socket is blocking or not, so I prefer be
        (for *NIX, this is defined by standards).
     */
-    set_blocking(new_socket, true);
+    socket_set_blocking(new_socket, true);
     #endif
 
     char ip_port[INET6_ADDRSTRLEN + 6];
@@ -89,7 +90,7 @@ void server_cmd_accept(message_t msg, ipc_socket_t client, server_data_t *data)
     char *new_id = id_arg_defined ? msg.argv[2] : ip_port;
 
     /* Create a new pair */
-    id_socket_pair_t *new_pair = new_pair(strlen(new_id));
+    id_socket_pair *new_pair = new_pair(strlen(new_id));
 
     if (new_pair == NULL) {
         /* Out of memory */

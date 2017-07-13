@@ -32,19 +32,10 @@
 #define H_IPC
 
 #include <stdbool.h>
-#include <socket.h>
+#include "socket.h"
 
-#define ipc_socket_is_valid(socket) ((socket) != -1)
-
-#ifndef WIN32
-typedef int ipc_socket_t;
-#else
-#include <windows.h>
-typedef socket_t ipc_socket_t;
-#endif
-
-ipc_socket_t ipc_server_new(const char *id, int max_clients);
-ipc_socket_t ipc_server_accept(ipc_socket_t server);
-ipc_socket_t ipc_client_new(char *id);
+socket_int socket_ipc_server_new(const char *id, int max_clients);
+socket_int socket_ipc_server_accept(socket_int server);
+socket_int socket_ipc_client_new(char *id);
 
 #endif /* H_IPC */

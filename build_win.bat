@@ -24,7 +24,7 @@ prompt ^>
 tcc %CFLAGS% -o bin\darkbox.exe %darkbox_src%
 tcc %CFLAGS% -o bin\darkbox_i.exe %darkbox_i_src%
 tcc %CFLAGS% -o bin\darkbox_t.exe %darkbox_t_src%
-tcc %CFLAGS% -lkernel32 -lws2_32 -o bin\socket.exe %socket_src%
+tcc %CFLAGS% -DAVOID_POINTER_WARNING -lkernel32 -lws2_32 -o bin\socket.exe %socket_src%
 tcc %CFLAGS% -o bin\makemenu.exe %makemenu_src%
 
 upx bin\*.exe

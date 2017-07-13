@@ -38,7 +38,7 @@
 
    Usage : Create a new socket sock_id.
 */
-void server_cmd_new(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_new(socket_message msg, socket_int client, server_data *data)
 {
     /* TODO: Send ip:port to client. */
     if (msg.argc < 2) {
@@ -50,7 +50,8 @@ void server_cmd_new(message_t msg, ipc_socket_t client, server_data_t *data)
     bool overwritten = false;
     unsigned int old_node_index = 0;
 
-    id_socket_pair_t *old_pair = server_get_pair(msg.argv[1], data, &old_node_index);
+    id_socket_pair *old_pair =
+        server_get_pair(msg.argv[1], data, &old_node_index);
 
     /* Remove previous bound socket. */
     if (old_pair != NULL) {
@@ -65,7 +66,7 @@ void server_cmd_new(message_t msg, ipc_socket_t client, server_data_t *data)
     bool use_ipv6 = msg.argc > 2 && parse_bool(msg.argv[2]);
     int af = use_ipv6 ? AF_INET6 : AF_INET;
 
-    socket_t new_sock = socket(af, SOCK_STREAM, 0);
+    socket_int new_sock = socket(af, SOCK_STREAM, 0);
 
     if (new_sock == -1) {
         /* Unable to create socket. */
@@ -75,13 +76,13 @@ void server_cmd_new(message_t msg, ipc_socket_t client, server_data_t *data)
 
     #ifdef WIN32
     /* See server_cmd_accept for more infos */
-    set_blocking(new_sock, true);
+    socket_set_blocking(new_sock, true);
     #endif
 
     /* Add the new socket to the list */
 
     /* pair : Pair struct + ID string block */
-    id_socket_pair_t *pair = new_pair(strlen(msg.argv[1]));
+    id_socket_pair *pair = new_pair(strlen(msg.argv[1]));
     if (pair == NULL) {
         /* Out of memory */
         send_code(client, CMD_OUT_OF_MEMORY);

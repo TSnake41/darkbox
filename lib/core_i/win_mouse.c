@@ -36,18 +36,25 @@
 static char tomouse_b(DWORD, DWORD);
 
 static HANDLE hin;
+static DWORD flags;
 static int on_move;
 
-void core_input_initialize(unsigned int mode)
+void core_input_initialize(bool on_move_arg)
 {
-    on_move = mode;
+    const DWORD new_flags =
+        ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT;
+
+    on_move = on_move_arg;
     hin = GetStdHandle(STD_INPUT_HANDLE);
-    SetConsoleMode(hin, ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
+    GetConsoleMode(hin, &flags);
+
+    /* Set new flags */
+    SetConsoleMode(hin, new_flags);
 }
 
-void core_input_terminate(unsigned int mode)
+void core_input_terminate(bool on_move)
 {
-
+    SetConsoleMode(hin, flags);
 }
 
 void core_get_mouse(char on_move, int *x, int *y, int *b)
@@ -77,23 +84,36 @@ void core_get_mouse(char on_move, int *x, int *y, int *b)
 
 static char tomouse_b(DWORD m_bs, DWORD m_ef)
 {
+    static char latest = NOTHING;
+
+    /* Redefine latest and return button. */
+    #define return_button(button) return (latest = (button))
+
 	if (m_bs & FROM_LEFT_1ST_BUTTON_PRESSED) /* left clic */
-		return (m_ef & DOUBLE_CLICK) ? D_LEFT_BUTTON : LEFT_BUTTON;
+		return_button((m_ef & DOUBLE_CLICK) ? D_LEFT_BUTTON : LEFT_BUTTON);
 
 	else if (m_bs & RIGHTMOST_BUTTON_PRESSED) /* right clic */
-		return (m_ef & DOUBLE_CLICK) ? D_RIGHT_BUTTON : RIGHT_BUTTON;
+		return_button((m_ef & DOUBLE_CLICK) ? D_RIGHT_BUTTON : RIGHT_BUTTON);
 
 	else if (m_bs & FROM_LEFT_2ND_BUTTON_PRESSED) /* middle clic */
-		return MIDDLE_BUTTON;
+		return_button(MIDDLE_BUTTON);
 
 	else if (m_ef & MOUSE_WHEELED) /* mouse scrolling */
-		return HIWORD(m_bs) > 0 ? SCROLL_UP : SCROLL_DOWN;
+		return (int)m_bs < 0 ? SCROLL_UP : SCROLL_DOWN;
 
-	else /* mouse moved */
+	else {
+        /* mouse moved */
+        if (latest != NOTHING) {
+            /* Button release */
+            latest = NOTHING;
+            return RELEASE;
+        }
+
 		return NOTHING;
+    }
 }
 
-void core_input_get_event(input_event_t *ie)
+void core_input_get_event(core_input_event *ie)
 {
     DWORD e;
     INPUT_RECORD ir;
@@ -110,7 +130,10 @@ void core_input_get_event(input_event_t *ie)
             ie->event.mouse.x = mouse_pos.X;
             ie->event.mouse.y = mouse_pos.Y;
 
-			ie->event.mouse.b = tomouse_b(ir.Event.MouseEvent.dwButtonState, ir.Event.MouseEvent.dwEventFlags);
+            DWORD m_bs = ir.Event.MouseEvent.dwButtonState,
+                  m_ef = ir.Event.MouseEvent.dwEventFlags;
+
+			ie->event.mouse.b = tomouse_b(m_bs, m_ef);
             break;
 
         case KEY_EVENT:

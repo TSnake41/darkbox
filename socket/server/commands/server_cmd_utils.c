@@ -35,16 +35,16 @@
 #include <string.h>
 #include "server_cmd_utils.h"
 
-id_socket_pair_t *server_get_pair(char *id, server_data_t *data, unsigned int *index)
+id_socket_pair *server_get_pair(char *id, server_data *data, unsigned int *index)
 {
     if (index)
         *index = 0;
 
     smutex_lock(&data->sock_list_mutex);
-    list_t *l = data->sock_list;
+    fllist *l = data->sock_list;
 
     while (l) {
-        id_socket_pair_t *pair = l->value;
+        id_socket_pair *pair = l->value;
         if (strcmp(id, pair->id) == 0) {
             smutex_unlock(&data->sock_list_mutex);
             return pair;
@@ -60,21 +60,21 @@ id_socket_pair_t *server_get_pair(char *id, server_data_t *data, unsigned int *i
     return false;
 }
 
-void server_add_pair(server_data_t *data, id_socket_pair_t *pair)
+void server_add_pair(server_data *data, id_socket_pair *pair)
 {
     smutex_lock(&data->sock_list_mutex);
     data->sock_list = list_insert_begin(data->sock_list, pair);
     smutex_unlock(&data->sock_list_mutex);
 }
 
-void server_remove_pair(server_data_t *data, unsigned int index)
+void server_remove_pair(server_data *data, unsigned int index)
 {
     smutex_lock(&data->sock_list_mutex);
     data->sock_list = list_remove_at(data->sock_list, index);
     smutex_unlock(&data->sock_list_mutex);
 }
 
-int send_code(socket_t socket, uint8_t code)
+int send_code(socket_int socket, uint8_t code)
 {
     return send(socket, &code, 1, socket_default_flags);
 }
@@ -84,7 +84,8 @@ bool parse_bool(const char *str)
     return *str == '1' || tolower(*str) == 't';
 }
 
-bool server_make_sockaddr(const char *ip, in_port_t port, bool ipv6, struct sockaddr **addr, socklen_t *len)
+bool server_make_sockaddr(const char *ip, in_port_t port, bool ipv6,
+    struct sockaddr **addr, socklen_t *len)
 {
     if (ipv6) {
         /* Create sockaddr_in6 */
@@ -131,7 +132,8 @@ bool server_get_sockaddr_in6(const char *ip, struct sockaddr_in6 *sock_in)
     return inet_pton(AF_INET6, ip, &sock_in->sin6_addr) != 1;
 }
 
-bool server_addr_to_str(char *output, struct sockaddr_storage *addr, socklen_t addr_len)
+bool server_addr_to_str(char *output, struct sockaddr_storage *addr,
+    socklen_t addr_len)
 {
     bool is_ipv6 = addr->ss_family == AF_INET6;
     const void *in_addr;

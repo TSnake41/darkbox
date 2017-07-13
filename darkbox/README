@@ -174,8 +174,8 @@ List of supported mouse buttons :
     1: NOTHING (mouse movement)
     2: LEFT_BUTTON
     3: RIGHT_BUTTON
-    4: DOUBLE LEFT_BUTTON (portability issues known (*NIX))
-    5: DOUBLE RIGHT_BUTTON (portability issues known (*NIX))
+    4: DOUBLE LEFT_BUTTON
+    5: DOUBLE RIGHT_BUTTON
     6: MIDDLE_BUTTON
     7: SCROLL_UP (portability issues known (Win32))
     8: SCROLL_DOWN (portability issues known (Win32))

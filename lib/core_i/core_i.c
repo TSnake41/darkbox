@@ -31,10 +31,13 @@
 
 #if defined(__DJGPP__)
 #include "djgpp_mouse.c"
+/* DJGPP supports isatty and fileno. */
+#include "posix_core_i.c"
 #elif defined(WIN32)
 #include "win_mouse.c"
 #include "win_core_i.c"
 #else
+#include "posix_core_i.c"
 #include "posix_conio.c"
 #include "x11_mouse.c"
 #endif

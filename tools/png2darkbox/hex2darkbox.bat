@@ -15,8 +15,7 @@ if not defined DOS9_OS (
     echo This script only work with Dos9,
     echo please take a version in ../dos9.
     echo.
-    echo The Dos9 extentions are needed and cmd.exe seem
-    echo have troubles while managing a lot of variables.
+    echo The Dos9 extentions are needed.
     pause>nul
     exit /b
 )

@@ -55,7 +55,7 @@ int _setmode(int, int);
 
 #define client_handle_nms_send client_handle_send
 
-const client_handle_t client_handles[] = {
+const client_handle client_handles[] = {
     { client_handle_code, "new" },
     { client_handle_code, "free" },
     { client_handle_nms_recv, "accept" },
@@ -73,7 +73,7 @@ const client_handle_t client_handles[] = {
 const unsigned int client_handles_count = sizeof(client_handles) / sizeof(*client_handles);
 
 /** Recieve code from socket, and use it as exit code. */
-void client_handle_code(socket_t socket)
+void client_handle_code(socket_int socket)
 {
     uint8_t code = recv_code(socket);
     exit(code);
@@ -82,7 +82,7 @@ void client_handle_code(socket_t socket)
 /* First recieve code from IPC socket, then (if sucess)
  * read message write them to stdout until count!=0xFFFF
  */
-void client_handle_recv(socket_t socket)
+void client_handle_recv(socket_int socket)
 {
     uint8_t code = recv_code(socket);
     if (code != CMD_SUCCESS)
@@ -111,7 +111,7 @@ void client_handle_recv(socket_t socket)
 }
 
 /** Send to IPC socket data from stdin. */
-void client_handle_send(socket_t socket)
+void client_handle_send(socket_int socket)
 {
     setvbuf(stdin, NULL, _IONBF, 0);
 
@@ -141,7 +141,7 @@ void client_handle_send(socket_t socket)
 /** Recieve code from IPC socket, then (if success)
  *  recieve network message and write it to stdout.
  */
-void client_handle_nms_recv(socket_t socket)
+void client_handle_nms_recv(socket_int socket)
 {
     uint8_t code = recv_code(socket);
     if (code != CMD_SUCCESS)
@@ -166,7 +166,7 @@ void client_handle_nms_recv(socket_t socket)
 }
 
 /** Implementation needed */
-void client_handle_poll(socket_t socket)
+void client_handle_poll(socket_int socket)
 {
     /* TODO */
 }

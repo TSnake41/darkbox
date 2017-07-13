@@ -34,7 +34,7 @@
 
 #include <socket.h>
 
-uint8_t recv_code(socket_t socket)
+uint8_t recv_code(socket_int socket)
 {
     uint8_t code;
     if (recv(socket, &code, 1, socket_default_flags) == -1)

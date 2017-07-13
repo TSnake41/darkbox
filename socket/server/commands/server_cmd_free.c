@@ -34,7 +34,7 @@
 /* Syntax : free sock_id
    Usage : Close and free sock_id.
 */
-void server_cmd_free(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_free(socket_message msg, socket_int client, server_data *data)
 {
     if (msg.argc != 2) {
         /* Invalid arguments */
@@ -43,7 +43,7 @@ void server_cmd_free(message_t msg, ipc_socket_t client, server_data_t *data)
     }
 
     unsigned int index;
-    id_socket_pair_t *pair = server_get_pair(msg.argv[1], data, &index);
+    id_socket_pair *pair = server_get_pair(msg.argv[1], data, &index);
 
     if (pair == NULL) {
         /* No pair found */

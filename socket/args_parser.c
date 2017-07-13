@@ -37,10 +37,10 @@
 
 #include "args_parser.h"
 
-bool parse_args(char **argv, int argc, socket_args_t *args)
+bool parse_args(char **argv, int argc, socket_args *args)
 {
     bool context_defined = false;
-    memset(args, '\0', sizeof(socket_args_t));
+    memset(args, '\0', sizeof(socket_args));
 
     int i = 0;
     while (i < argc) {
@@ -79,7 +79,7 @@ bool parse_args(char **argv, int argc, socket_args_t *args)
 
             case 'c':
                 context_defined = true;
-                client_request_data_t *client_data = &(args->data.client);
+                client_request_data *client_data = &(args->data.client);
                 i++;
 
                 /* Begin client command list */
@@ -112,7 +112,7 @@ bool parse_args(char **argv, int argc, socket_args_t *args)
         return false;
 }
 
-void free_args(socket_args_t args)
+void free_args(socket_args args)
 {
     if (!args.new_instance && args.data.client.command_argv != NULL)
         free(args.data.client.command_argv);

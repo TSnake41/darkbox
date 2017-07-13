@@ -36,7 +36,7 @@
 /* Syntax : listen sock_id [n]
    Usage : Prepare to accept connections, allow n pending requests.
 */
-void server_cmd_listen(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_listen(socket_message msg, socket_int client, server_data *data)
 {
     if (msg.argc < 2) {
         /* Invalid arguments */
@@ -44,7 +44,7 @@ void server_cmd_listen(message_t msg, ipc_socket_t client, server_data_t *data)
         return;
     }
 
-    id_socket_pair_t *listner_pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *listner_pair = server_get_pair(msg.argv[1], data, NULL);
 
     if (listner_pair == NULL) {
         /* No pair */

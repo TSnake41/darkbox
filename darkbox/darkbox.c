@@ -48,7 +48,6 @@ int origin_x, origin_y;
 int main(int argc, char const *argv[])
 {
     if (argc > 1 && (argv[1][0] == '-' || argv[1][0] == '/'))
-
         switch (argv[1][1]) {
 
             /* Get help */
@@ -110,7 +109,7 @@ void start(void)
 */
 void execute_line(void)
 {
-    command_t cmd;
+    darkbox_cmd cmd;
 
     if (parse_cmd(&cmd))
         execute_cmd(cmd);
@@ -119,7 +118,7 @@ void execute_line(void)
 /* Parse the command from stdin if this is not
    a command, print the current line to stdout
 */
-bool parse_cmd(command_t *command)
+bool parse_cmd(darkbox_cmd *command)
 {
     char *str = command_buffer;
 
@@ -170,7 +169,7 @@ bool parse_cmd(command_t *command)
 }
 
 /* Execute a command, get args from stdin */
-void execute_cmd(command_t cmd)
+void execute_cmd(darkbox_cmd cmd)
 {
     for (int i = 0; i < cmd.count; i++) {
         char *str = cmd.cmd;
@@ -296,8 +295,8 @@ void execute_cmd(command_t cmd)
 /* Start input server */
 void input_server(void)
 {
-    core_input_initialize(1);
-    input_event_t e;
+    core_input_initialize(true);
+    core_input_event e;
 
     while (!feof(stdin)) {
         core_input_get_event(&e);
@@ -315,7 +314,7 @@ void input_server(void)
         fflush(stdout);
     }
 
-    core_input_terminate(1);
+    core_input_terminate(true);
 }
 /* Read the next integer from stdin */
 int read_int(void)

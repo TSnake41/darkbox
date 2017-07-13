@@ -30,15 +30,15 @@
  */
 extern void (*list_oom_handler)(void);
 
-typedef struct list {
-    struct list *next;
+typedef struct fllist {
+    struct fllist *next;
     void *value;
-} list_t, queue_t, stack_t;
+} fllist, flqueue, flstack;
 
 /**
  * Insert an item at index to the list.
  */
-list_t *list_insert(list_t *list, void *value, unsigned int index);
+fllist *list_insert(fllist *list, void *value, unsigned int index);
 
 /**
  * Insert an item at the beginning of the list.
@@ -53,7 +53,7 @@ list_t *list_insert(list_t *list, void *value, unsigned int index);
 /**
  * Remove a node from a list.
  */
-list_t *list_remove(list_t *list, list_t *node);
+fllist *list_remove(fllist *list, fllist *node);
 
 /**
  * Remove a node using its id from a list.
@@ -63,7 +63,7 @@ list_t *list_remove(list_t *list, list_t *node);
 /**
  * Get an item's node using its index.
  */
-list_t *list_get_node(list_t *list, unsigned int index);
+fllist *list_get_node(fllist *list, unsigned int index);
 
 /**
  * Get an item's value using its index.
@@ -74,7 +74,7 @@ list_t *list_get_node(list_t *list, unsigned int index);
 /**
  * Get the count of items in the list.
  */
-unsigned int list_get_count(list_t *list);
+unsigned int list_get_count(fllist *list);
 
 /**
  * Go a value in the queue.
@@ -84,7 +84,7 @@ unsigned int list_get_count(list_t *list);
 /**
  * Pull the next value of the node.
  */
-list_t *queue_pop(list_t *list);
+fllist *queue_pop(fllist *list);
 
 /**
  * Get the size of the queue.

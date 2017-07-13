@@ -48,19 +48,19 @@
 
 /* --- End of user configuration --- */
 
-typedef struct command_t {
+typedef struct darkbox_cmd {
     char *cmd;
     int count;
     /* no argv nor argc because they are parsed
        from stdin to get the parsing more responsive
     */
-} command_t;
+} darkbox_cmd;
 
 void start(void);
 
 void execute_line(void);
-bool parse_cmd(command_t *command);
-void execute_cmd(command_t cmd);
+bool parse_cmd(darkbox_cmd *command);
+void execute_cmd(darkbox_cmd cmd);
 
 void input_server(void);
 

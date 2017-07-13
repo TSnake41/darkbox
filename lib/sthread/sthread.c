@@ -40,12 +40,12 @@
 */
 
 typedef struct {
-    sthread_start_t start;
+    sthread_start start;
     void *arg;
     #ifdef WIN32
     DWORD *thread_id_ptr;
     #endif
-} _sthread_wrap_arg_t;
+} _sthread_wrap_arg;
 
 #ifndef WIN32
 static void *_sthread_wrap(void *arg)
@@ -53,7 +53,7 @@ static void *_sthread_wrap(void *arg)
 static DWORD __stdcall _sthread_wrap(void *arg)
 #endif
 {
-    _sthread_wrap_arg_t *wrap = arg;
+    _sthread_wrap_arg *wrap = arg;
 
     #ifdef WIN32
     /* Define thread id */
@@ -67,13 +67,13 @@ static DWORD __stdcall _sthread_wrap(void *arg)
     return 0;
 }
 
-bool sthread_new(sthread_t *thread, sthread_start_t thread_start, void *arg)
+bool sthread_new(sthread *thread, sthread_start thread_start, void *arg)
 {
     if (thread_start == NULL)
         return sthread_error;
 
     /* We need to define wrapper args. */
-    _sthread_wrap_arg_t *wrap_args = malloc(sizeof(_sthread_wrap_arg_t));
+    _sthread_wrap_arg *wrap_args = malloc(sizeof(_sthread_wrap_arg));
     if (wrap_args == NULL)
         return sthread_error;
 
@@ -95,16 +95,16 @@ bool sthread_new(sthread_t *thread, sthread_start_t thread_start, void *arg)
 
 }
 
-sthread_t sthread_current(void)
+sthread sthread_current(void)
 {
     #ifndef WIN32
     return pthread_self();
     #else
-    return (sthread_t){ .handle = GetCurrentThread(), .id = GetCurrentThreadId() };
+    return (sthread){ .handle = GetCurrentThread(), .id = GetCurrentThreadId() };
     #endif
 }
 
-int sthread_equals(sthread_t a, sthread_t b)
+int sthread_equals(sthread a, sthread b)
 {
     #ifndef WIN32
     return pthread_equal(a, b);
@@ -113,7 +113,7 @@ int sthread_equals(sthread_t a, sthread_t b)
     #endif
 }
 
-bool sthread_detach(sthread_t thread)
+bool sthread_detach(sthread thread)
 {
     #ifndef WIN32
     return pthread_detach(thread) != 0;
@@ -122,7 +122,7 @@ bool sthread_detach(sthread_t thread)
     #endif
 }
 
-bool sthread_join(sthread_t thread)
+bool sthread_join(sthread thread)
 {
     #ifndef WIN32
     if (pthread_join(thread, NULL) != 0)
@@ -159,7 +159,7 @@ void sthread_sleep(unsigned long ms)
     #endif
 }
 
-bool smutex_new(smutex_t *mutex)
+bool smutex_new(smutex *mutex)
 {
     #ifndef WIN32
     return pthread_mutex_init(mutex, NULL);
@@ -169,7 +169,7 @@ bool smutex_new(smutex_t *mutex)
     #endif
 }
 
-void smutex_free(smutex_t *mutex)
+void smutex_free(smutex *mutex)
 {
     #ifndef WIN32
     pthread_mutex_destroy(mutex);
@@ -178,7 +178,7 @@ void smutex_free(smutex_t *mutex)
     #endif
 }
 
-bool smutex_lock(smutex_t *mutex)
+bool smutex_lock(smutex *mutex)
 {
     #ifndef WIN32
     return pthread_mutex_lock(mutex) != 0;
@@ -188,7 +188,7 @@ bool smutex_lock(smutex_t *mutex)
     #endif
 }
 
-bool smutex_try_lock(smutex_t *mutex)
+bool smutex_try_lock(smutex *mutex)
 {
     #ifndef WIN32
     return pthread_mutex_trylock(mutex) != 0;
@@ -197,7 +197,7 @@ bool smutex_try_lock(smutex_t *mutex)
     #endif
 }
 
-bool smutex_unlock(smutex_t *mutex)
+bool smutex_unlock(smutex *mutex)
 {
     #ifndef WIN32
     return pthread_mutex_unlock(mutex) != 0;

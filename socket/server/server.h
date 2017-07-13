@@ -36,24 +36,24 @@
 
 #include <fllist.h>
 #include <sthread.h>
-#include <ipc.h>
 #include <socket.h>
+#include <ipc.h>
 
 #include "../args_parser.h"
 
 typedef struct id_socket_pair {
     char *id;
-    socket_t socket;
+    socket_int socket;
     bool ipv6;
-} id_socket_pair_t;
+} id_socket_pair;
 
 typedef struct server_data {
-    ipc_socket_t ipc_server;
-    list_t *sock_list;
-    smutex_t sock_list_mutex;
-    socket_args_t *args;
-} server_data_t;
+    socket_int ipc_server;
+    fllist *sock_list;
+    smutex sock_list_mutex;
+    socket_args *args;
+} server_data;
 
-void server(socket_args_t args);
+void server(socket_args args);
 
 #endif /* H_SERVER */

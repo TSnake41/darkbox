@@ -42,7 +42,7 @@
            Otherwise :
                 - Read as much as possible bytes (empty buffer).
 */
-void server_cmd_recv(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 {
     /* Use NMS for internal communication. */
     puts("Not implemented...");
@@ -51,7 +51,7 @@ void server_cmd_recv(message_t msg, ipc_socket_t client, server_data_t *data)
 /* Syntax : send sock_id
    Usage : Send bytes to socket.
 */
-void server_cmd_send(message_t msg, ipc_socket_t client, server_data_t *data)
+void server_cmd_send(socket_message msg, socket_int client, server_data *data)
 {
     /* Use NMS for internal communication. */
     puts("Not implemented...");

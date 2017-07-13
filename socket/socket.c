@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     list_oom_handler = oom_handler;
 
     /* Parse args */
-    socket_args_t args;
+    socket_args args;
     if (parse_args(argv, argc, &args))
         goto show_help;
 
