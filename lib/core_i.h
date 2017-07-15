@@ -32,6 +32,7 @@
 #ifndef H_CORE_I
 #define H_CORE_I
 
+#include <stdint.h>
 #include <stdbool.h>
 
 #if !defined __DJGPP__ && !defined WIN32
@@ -79,11 +80,11 @@ enum {
 #define core_getkey getch
 #define core_kbhit kbhit
 
-void core_get_mouse(char, int*, int*, int*);
+void core_get_mouse(bool, unsigned int*, unsigned int*, unsigned int*);
 void core_input_get_event(core_input_event *e);
 
-void core_input_initialize(bool on_move);
-void core_input_terminate(bool on_move);
+void core_mouse_initialize(bool on_move);
+void core_mouse_terminate(bool on_move);
 
 bool core_is_stdin_console(void);
 

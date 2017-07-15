@@ -47,5 +47,8 @@ int core_peek_stdin(void)
 
 bool core_is_stdin_console(void)
 {
-    return _isatty(1);
+    HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+
+    return GetConsoleMode(hin, &mode) != 0;
 }

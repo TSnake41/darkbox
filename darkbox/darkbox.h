@@ -62,7 +62,7 @@ void execute_line(void);
 bool parse_cmd(darkbox_cmd *command);
 void execute_cmd(darkbox_cmd cmd);
 
-void input_server(void);
+void input_server(int mode);
 
 int read_int(void);
 void read_string(char *buffer, const size_t max_length);

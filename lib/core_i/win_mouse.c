@@ -29,6 +29,7 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <stdbool.h>
 #include <windows.h>
 
 #include <core_i.h>
@@ -37,30 +38,37 @@ static char tomouse_b(DWORD, DWORD);
 
 static HANDLE hin;
 static DWORD flags;
-static int on_move;
+static bool on_move, mouse_enabled = false;
 
-void core_input_initialize(bool on_move_arg)
+void core_mouse_initialize(bool on_move_arg)
 {
+    /* Define hin (if not defined) */
+    if (hin == NULL)
+        hin = GetStdHandle(STD_INPUT_HANDLE);
+
+    mouse_enabled = true;
+    on_move = on_move_arg;
+
+    /* Save old flags */
+    GetConsoleMode(hin, &flags);
+
+    /* Set new flags */
     const DWORD new_flags =
         ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT;
-
-    on_move = on_move_arg;
-    hin = GetStdHandle(STD_INPUT_HANDLE);
-    GetConsoleMode(hin, &flags);
 
     /* Set new flags */
     SetConsoleMode(hin, new_flags);
 }
 
-void core_input_terminate(bool on_move)
+void core_mouse_terminate(bool on_move)
 {
+    mouse_enabled = false;
     SetConsoleMode(hin, flags);
 }
 
-void core_get_mouse(char on_move, int *x, int *y, int *b)
+void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int *b)
 {
-	HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
-    SetConsoleMode(hin, ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT);
+    core_mouse_initialize(on_move);
 
 	DWORD e;
 	INPUT_RECORD ir;
@@ -80,6 +88,8 @@ void core_get_mouse(char on_move, int *x, int *y, int *b)
 		*b = tomouse_b(ir.Event.MouseEvent.dwButtonState, ir.Event.MouseEvent.dwEventFlags);
 
 	} while (!on_move && *b == NOTHING);
+
+    core_mouse_terminate(on_move);
 }
 
 static char tomouse_b(DWORD m_bs, DWORD m_ef)
@@ -115,13 +125,18 @@ static char tomouse_b(DWORD m_bs, DWORD m_ef)
 
 void core_input_get_event(core_input_event *ie)
 {
+    /* Define hin (if not defined) */
+    if (hin == NULL)
+        hin = GetStdHandle(STD_INPUT_HANDLE);
+
     DWORD e;
     INPUT_RECORD ir;
 
     retry:
     do
         ReadConsoleInput(hin, &ir, 1, &e);
-    while(ir.EventType != MOUSE_EVENT && ir.EventType != KEY_EVENT);
+    while((ir.EventType != MOUSE_EVENT && mouse_enabled)
+        && ir.EventType != KEY_EVENT);
 
     switch (ir.EventType) {
         case MOUSE_EVENT: ;

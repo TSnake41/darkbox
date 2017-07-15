@@ -1,15 +1,15 @@
 @Echo off
 if defined __ goto :keyboard
 set __=.
-darkbox -i | call %0 %* | darkbox
+darkbox -ik | call %0 %* | darkbox
 set __=
 pause>NUL
 goto :eof
 
 :keyboard
 set /p i=
-for /f "tokens=1,2" %%A in ("%i%") do (
-	if %%A==k call :show_key %%B
+for /f "tokens=2" %%A in ("%i%") do (
+    call :show_key %%A
 )
 goto :keyboard
 

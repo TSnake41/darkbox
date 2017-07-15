@@ -30,13 +30,14 @@
 */
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <ctype.h>
 
 #include <core_i.h>
 
 int main(int argc, char **argv)
 {
-    int x, y, b;
+    unsigned int x, y, b;
 
     if (argc == 1)
         /* No arguments specified, show help */
@@ -60,17 +61,17 @@ int main(int argc, char **argv)
 
 		/* get mouse clic or any non-movement event */
         case 'm':
-            core_get_mouse(0, &x, &y, &b);
+            core_get_mouse(false, &x, &y, &b);
             goto get_mouse;
 
         /* get any mouse event including movement */
         case 'y':
-            core_get_mouse(1, &x, &y, &b);
+            core_get_mouse(true, &x, &y, &b);
             goto get_mouse;
 
         /* get keyboard key */
         case 'k': ;
-			char blocking = arg[2] != '_';
+			bool blocking = arg[2] != '_';
 			/* getch/kbhit with a small fix for Windows, do not cover every
 			   keys (like non-ASCII/Extended-ASCIIonly ones), but most of them
 			*/

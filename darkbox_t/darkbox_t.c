@@ -41,8 +41,8 @@
 #include <windows.h>
 #endif
 
-#define min(a,b) (((a)<(b))?(a):(b))
-#define max(a,b) (((a)>(b))?(a):(b))
+#define min(a,b) ( ((a) < (b) ) ? (a) : (b) )
+#define max(a,b) ( ((a) > (b) ) ? (a) : (b) )
 
 #define plot(x, y, c) printf("-gcar %d %d 0x%c0 32 ", x, y, c)
 

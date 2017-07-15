@@ -31,18 +31,18 @@
 
 #include <core_i.h>
 
-void core_input_initialize(bool on_move)
+void core_mouse_initialize(bool on_move)
 {
 
 }
 
-void core_input_terminate(bool on_move)
+void core_mouse_terminate(bool on_move)
 {
 
 }
 
 /* Can't get mouse position in console from DOS */
-void core_get_mouse(char m, int *x, int *y, int *b)
+void core_get_mouse(bool m, unsigned int *x, unsigned int *y, unsigned int *b)
 {
 
 }

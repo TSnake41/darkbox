@@ -7,12 +7,13 @@ Fully compatible with Dos9 Project.
 
 Syntaxes:
     1) (process, code or "launcher" part) | darkbox
-    2) darkbox -i | (process, code or "launcher" part)
+    2) darkbox -i[k/m] | (process, code or "launcher" part)
     3) darkbox -w t
     4) darkbox -kbh (reduced: -k)
 
 1) Start darkbox as output server.
 2) Start darkbox as input server.
+   k: Keyboard only, m: Mouse only, nothing: both
 3) Wait t ms.
 4) Return 1 if data is available in stdin,
    should be used for non-blocking input.

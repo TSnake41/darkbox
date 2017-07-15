@@ -40,6 +40,10 @@
 
 #include "darkbox.h"
 
+#define ENABLE_KEYBOARD 1
+#define ENABLE_MOUSE 2
+#define KNM_MODE (ENABLE_KEYBOARD | ENABLE_MOUSE)
+
 char text_buffer[MAX_TEXT_LENGTH],
      command_buffer[MAX_COMMAND_SIZE];
 
@@ -55,8 +59,16 @@ int main(int argc, char const *argv[])
                 goto showHelp;
 
             /* Start input server */
-            case 'i':
-                input_server();
+            case 'i': ;
+                #define m_arg (tolower(argv[1][2]))
+
+                int mode = m_arg == 'k' ? ENABLE_KEYBOARD : /* Keyboard mode */
+                           m_arg == 'm' ? ENABLE_MOUSE : /* Mouse mode */
+                           KNM_MODE; /* Keyboard and Mouse mode */
+
+                #undef m_arg
+
+                input_server(mode);
                 return 0;
 
             /* Returns a non-zero value if data is
@@ -86,11 +98,12 @@ int main(int argc, char const *argv[])
         puts("darkbox - Fast Portable Console IO Server - Astie Teddy (TSnake41)\n"
              "Syntaxes : \n"
              "  1: (code) | darkbox\n"
-             "  2: darkbox -i | (code)\n"
+             "  2: darkbox -i[k/m] | (code)\n"
              "  3: darkbox -w t\n"
              "  4: darkbox -k\n\n"
              " 1: Start darkbox as output server\n"
              " 2: Start darkbox as input server\n"
+             "    k: Keyboard-only, m: Mouse-only\n"
              " 3: Wait t ms\n"
              " 4: Return a non-nul value if data is avaialble in stdin.\n\n"
              "NOTE: darkbox support both '-' and '/' as command prefixes.\n"
@@ -293,9 +306,11 @@ void execute_cmd(darkbox_cmd cmd)
 }
 
 /* Start input server */
-void input_server(void)
+void input_server(int mode)
 {
-    core_input_initialize(true);
+    if (mode & ENABLE_MOUSE)
+        core_mouse_initialize(true);
+
     core_input_event e;
 
     while (!feof(stdin)) {
@@ -303,7 +318,9 @@ void input_server(void)
 
         switch (e.type) {
             case KEY_PRESS:
-                printf("k %d\n", e.event.key_press);
+                if (mode & ENABLE_KEYBOARD)
+                    /* Mode allow keyboard event. */
+                    printf("k %d\n", e.event.key_press);
                 break;
 
             case MOUSE:
@@ -314,7 +331,8 @@ void input_server(void)
         fflush(stdout);
     }
 
-    core_input_terminate(true);
+    if (mode & ENABLE_MOUSE)
+        core_mouse_terminate(true);
 }
 /* Read the next integer from stdin */
 int read_int(void)

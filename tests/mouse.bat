@@ -1,7 +1,7 @@
 @Echo off
 if defined __ goto :mouse
 set __=.
-darkbox -i | %0 %* | darkbox
+darkbox -im | %0 %* | darkbox
 set __=
 pause>NUL
 goto :eof
@@ -13,13 +13,10 @@ set old_Y=0
 
 :loop
 set /p i=
-for /f "tokens=1,2,3,4" %%A in ("%i%") do (
-    if %%A==m (
-        set X=%%B
-        set Y=%%C
-        set C=%%D
-        goto :draw_cur
-    )
+for /f "tokens=2,3,4" %%A in ("%i%") do (
+    set X=%%A
+    set Y=%%B
+    set C=%%C
 )
 goto :loop
 

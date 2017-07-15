@@ -38,12 +38,12 @@
 static char tomouse_b(int mouse_char);
 static char latest;
 
-void core_input_initialize(bool on_move)
+void core_mouse_initialize(bool on_move)
 {
     fprintf(stderr, "\033[?%dh", on_move ? 1003 : 1000);
 }
 
-void core_input_terminate(bool on_move)
+void core_mouse_terminate(bool on_move)
 {
     fprintf(stderr, "\033[?%dl", on_move ? 1003 : 1000);
 }
@@ -90,7 +90,7 @@ static char tomouse_b(int mouse_char)
 void core_input_get_event(core_input_event *e)
 {
     int c = core_getkey();
-    if (c == -1)
+    if (c == -2)
         goto mouse;
 
     /* key_press */
@@ -106,19 +106,19 @@ void core_input_get_event(core_input_event *e)
         return;
 }
 
-void core_get_mouse(char on_move, int *mouse_x, int *mouse_y, int *mouse_b)
+void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int *b)
 {
-    core_input_initialize(on_move);
+    core_mouse_initialize(on_move);
 
     int c;
-    do /* Wait CSI mouse start (-1) */
+    do /* Wait CSI mouse start (-2, see posix_conio.c) */
         c = core_getkey();
-    while(c != -1);
+    while(c != -2);
 
-    *mouse_b = tomouse_b(core_getkey());
+    *b = tomouse_b(core_getkey());
 
-    *mouse_x = core_getkey() - 33;
-    *mouse_y = core_getkey() - 33;
+    *x = core_getkey() - 33;
+    *y = core_getkey() - 33;
 
-    core_input_terminate(on_move);
+    core_mouse_terminate(on_move);
 }

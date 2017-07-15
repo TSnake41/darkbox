@@ -89,7 +89,7 @@ int getch(void)
                     break;
 
                 default:
-                    return -1; /* unmanaged/unknown key */
+                    return -2; /* unmanaged/unknown key */
                     break;
             }
 
