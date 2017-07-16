@@ -30,6 +30,10 @@
 */
 /* Darkbox Console Output Core */
 
+#if !defined(_XOPEN_SOURCE) && !defined(WIN32)
+#define _XOPEN_SOURCE 700
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -41,10 +45,6 @@
 static HANDLE stdout_handle;
 static CONSOLE_SCREEN_BUFFER_INFO csbi;
 #else
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 700
-#endif
-
 #include <unistd.h>
 #include <time.h>
 

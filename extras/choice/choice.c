@@ -88,7 +88,7 @@ unsigned char run_choice(choice_args args)
         unsigned int wait_cout = (args.timeout * 1000) / WAIT_DELAY;
 
         while (wait_cout--) {
-            if (core_peek_stdin()) {
+            if (!core_is_stdin_console() || core_kbhit()) {
                 if (check_key(args, &key_index))
                     putchar('\a');
                 else
@@ -131,5 +131,6 @@ bool check_key(choice_args args, unsigned char *index)
     #endif
         putchar(*chr_ptr);
 
+    putchar('\n');
     return false;
 }

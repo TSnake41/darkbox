@@ -43,6 +43,6 @@ static void _tiny_assert_exit(unsigned int line, char *file)
 
 static void _tiny_assert_exit(unsigned int line, char *file);
 
-#define tiny_assert(cond) ((cond) ? _tiny_assert_exit(__LINE__, __FILE__) : 0)
+#define tiny_assert(cond) ((cond) ? _tiny_assert_exit(__LINE__, __FILE__) : (void)0)
 
 #endif /* H_TINY_ASSERT */

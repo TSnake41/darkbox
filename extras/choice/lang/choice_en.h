@@ -10,4 +10,4 @@
 
 #define ERROR_VALUE_EXPECTED "Value expected.\n"
 
-#define WAIT_FREQUENCY 0.25f
+#define WAIT_FREQUENCY 0.1f

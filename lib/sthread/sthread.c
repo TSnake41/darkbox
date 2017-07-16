@@ -53,17 +53,19 @@ static void *_sthread_wrap(void *arg)
 static DWORD __stdcall _sthread_wrap(void *arg)
 #endif
 {
-    _sthread_wrap_arg *wrap = arg;
+    _sthread_wrap_arg *wrap_ptr = arg;
+    _sthread_wrap_arg wrap = *wrap_ptr;
 
     #ifdef WIN32
     /* Define thread id */
-    *(wrap->thread_id_ptr) = GetCurrentThreadId();
+    *(wrap_ptr->thread_id_ptr) = GetCurrentThreadId();
     #endif
 
-    wrap->start(wrap->arg);
-
     /* Because arg is allocated on the heap, we need to free it manually. */
-    free(wrap);
+    free(wrap_ptr);
+
+    wrap.start(wrap.arg);
+
     return 0;
 }
 
@@ -91,8 +93,6 @@ bool sthread_new(sthread *thread, sthread_start thread_start, void *arg)
 
     return thread->handle == 0;
     #endif
-
-
 }
 
 sthread sthread_current(void)
@@ -125,14 +125,13 @@ bool sthread_detach(sthread thread)
 bool sthread_join(sthread thread)
 {
     #ifndef WIN32
-    if (pthread_join(thread, NULL) != 0)
-        return sthread_error;
+	return pthread_join(thread, NULL) != 0;
     #else
     if (WaitForSingleObject(thread.handle, INFINITE) == WAIT_FAILED)
         return sthread_error;
-    #endif
 
-    return sthread_success;
+	return CloseHandle(thread.handle) == 0;
+    #endif
 }
 
 void sthread_exit(void)
