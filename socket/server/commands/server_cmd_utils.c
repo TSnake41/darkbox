@@ -55,9 +55,9 @@ id_socket_pair *server_get_pair(char *id, server_data *data, unsigned int *index
 
         l = l->next;
     }
+    
     smutex_unlock(&data->sock_list_mutex);
-
-    return false;
+    return NULL;
 }
 
 void server_add_pair(server_data *data, id_socket_pair *pair)

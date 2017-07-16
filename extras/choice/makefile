@@ -1,4 +1,3 @@
-# Darkbox - A Fast and Portable Console IO Server
 # Copyright (c) 2017 Teddy ASTIE (TSnake41)
 #
 # All rights reserved.
