@@ -37,7 +37,7 @@
 #include <fllist.h>
 #include <sthread.h>
 #include <socket.h>
-#include <ipc.h>
+#include <socket_ipc.h>
 
 #include "server.h"
 #include "server_cmd.h"
@@ -67,10 +67,13 @@ void server(socket_args args)
         return;
     }
 
-    sthread threads[args.data.server.thread_count - 1];
+    size_t thread_count = args.data.server.thread_count - 1;
+
+    /* Avoid undefined behavior when thread_count == 0. */
+    sthread threads[thread_count > 0 ? thread_count : 1];
 
     int i = 0;
-    while (i < (args.data.server.thread_count - 1)) {
+    while (i < thread_count) {
         if (sthread_new(&threads[i], server_thread, &data)) {
             fputs("ERROR: Unable to create a threads.\n", stderr);
             return;
@@ -80,6 +83,8 @@ void server(socket_args args)
 
     /* Use main thread too. */
     server_thread(&data);
+
+    /* Never reached (server_thread never returns) */
 }
 
 static void server_thread(void *_server_data)
@@ -91,8 +96,10 @@ static void server_thread(void *_server_data)
 
         socket_message msg;
 
-        if (message_recv(c, &msg))
-            goto end;
+        if (message_recv(c, &msg)) {
+            close(c);
+            continue;
+        }
 
         unsigned int i = 0;
         while (i < server_cmds_count) {
@@ -104,7 +111,6 @@ static void server_thread(void *_server_data)
             i++;
         }
 
-        end:
-            close(c);
+        close(c);
     }
 }

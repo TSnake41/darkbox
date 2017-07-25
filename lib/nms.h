@@ -34,7 +34,7 @@
  * Send a Network Message to 'socket'.
  * Returns true on fail.
  */
-bool nms_send(socket_int socket, void *buffer, uint16_t length);
+bool nms_send(socket_int socket, const void *buffer, uint16_t length);
 
 /**
  * Recieve a Network Message from 'socket'.

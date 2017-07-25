@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <ipc.h>
+#include <socket_ipc.h>
 #include <tiny_assert.h>
 #include <socket.h>
 

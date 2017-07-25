@@ -25,22 +25,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-CFLAGS=-O2 -s
+CFLAGS=-O2
 libdir=../lib
-LDFLAGS=-I$(libdir) -I.
-
-ifeq ($(OS),Windows_NT)
-	LDFLAGS += -lws2_32
-else
-	LDFLAGS += -pthread
-endif
+LDFLAGS += -s -I$(libdir) -I. -lpthread
 
 EXEC=socket$(exec_suffix)
 BINDIR=../bin
 
 lib_src=$(libdir)/sthread/sthread.c $(libdir)/fllist/fllist.c \
 	    $(libdir)/socket/socket.c $(libdir)/nms/nms.c \
-	 	$(libdir)/ipc/ipc.c	$(libdir)/core_i/core_i.c
+	 	$(libdir)/ipc/socket_ipc.c $(libdir)/core_i/core_i.c
 
 src=socket.c args_parser.c message.c \
 	client/*.c server/*.c \

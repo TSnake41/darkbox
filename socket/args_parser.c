@@ -74,7 +74,13 @@ bool parse_args(char **argv, int argc, socket_args *args)
                     fputs("ERROR: Attempted to define 't' in non-server context.\n", stderr);
                     return true;
                 }
-                args->data.server.thread_count = strtol(v + 1, NULL, 0);
+				
+				if (v != NULL)
+					args->data.server.thread_count = strtol(v + 1, NULL, 0);				
+				else {
+					fputs("ERROR: 't' defined without value.\n", stderr);
+					return true;
+				}				
                 break;
 
             case 'c':

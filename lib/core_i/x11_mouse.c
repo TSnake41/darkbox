@@ -81,20 +81,18 @@ static char tomouse_b(int mouse_char)
 void core_input_get_event(core_input_event *e)
 {
     int c = core_getkey();
-    if (c == -2)
-        goto mouse;
-
-    /* key_press */
-    e->type = KEY_PRESS;
-    e->event.key_press = c;
-    return;
-
-    mouse:
+	
+    if (c == -2) {
+		/* Mouse event */
         e->type = MOUSE;
         e->event.mouse.b = tomouse_b(core_getkey());
         e->event.mouse.x = core_getkey() - 33;
         e->event.mouse.y = core_getkey() - 33;
-        return;
+	} else {
+		/* Key press */
+		e->type = KEY_PRESS;
+		e->event.key_press = c;
+	}
 }
 
 void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int *b)

@@ -29,7 +29,7 @@
 
 #define nms_flags socket_default_flags
 
-bool nms_send(socket_int socket, void *data, uint16_t length)
+bool nms_send(socket_int socket, const void *data, uint16_t length)
 {
     /* Convert length to network bytes */
     uint8_t length_bytes[2] = {

@@ -1,0 +1,108 @@
+ __   __   __        ___ ___
+/__` /  \ /  ` |__/ |__   |
+.__/ \__/ \__, |  \ |___  |
+
+socket - Portable TCP and NMS Network IO interface
+Fully compatible with Dos9 project.
+
+Syntaxes:
+    1) socket -id:ID -n [-t thread_count]
+    2) socket -id:ID -c command [command args]
+
+1) Start new socket server.
+    If your ID override another server ID in the same directory, this server
+    remains active but gets inaccessible (and must be killed manually).
+
+2) Connect to a IPC server to perform a command.
+
+NOTE: ID are directory-dependant, so you can start multiples
+      server if they are in different directories.
+
+Commands list:
+
+    new:
+        Syntax : new sock_id [IPv6]
+        IPv6 : Use IPv6 instead of IPv4.
+
+        Usage : Create a new socket sock_id.
+
+    free:
+        Syntax : free sock_id
+        Usage : Close and free sock_id.
+
+    connect:
+        Syntax : connect sock_id ip port
+        Usage : Connect sock_id to ip:port.
+
+    bind:
+        Syntax : bind sock_id ip port
+        Usage : Bind socket to port.
+
+    listening:
+        Syntax : listen sock_id [n]
+        Usage : Prepare to accept connections, allow n pending requests.
+
+        Remarks:
+            Socket must be bound to a port.
+            If n is not defined, use default system value.
+
+    accept:
+        Syntax : accept listner_sock_id [new_sock_id]
+        Usage : Accept a pending socket connection of listner_sock_id.
+
+        Remarks:
+            If new_sock_id is not defined, define id to "IP:PORT".
+            Listner must be listening.
+
+    nms_recv: (testing, might change)
+        Syntax : nms_recv sock_id
+        Usage : Recieve data from socket using NMS.
+
+        Remarks:
+            Output might be piped or redirected.
+
+    nms_send: (testing, might change)
+        Syntax : nms_send sock_id
+        Usage : Send bytes to socket using NMS.
+
+        Remarks:
+            Input might be piped or redirected.
+
+    recv: (in draft)
+
+    send: (in draft)
+
+    poll: (in draft)
+
+    info:
+        Syntax : info sock_id
+        Usage : Get informations about socket.
+
+        Remarks:
+            Output might be piped or redirected.
+
+    list:
+        Syntax : list
+        Usage : Get socket list.
+
+        Remarks:
+            Output might be piped or redirected.
+
+    exit:
+        Syntax : exit
+        Usage : Ends server.
+
+errorlevels:
+    0: No error
+    1: Invalid arguments
+    2: Out of memory
+    3: Network error
+    4: Not found
+    5: sock_id overwritten (info)
+    6: Internal error
+    7: Bind error
+    8: Invalid host
+    9: Data available (info)
+    10: Client (socket command) internal out of memory
+    11: 0-size NMS packet received (info)
+    12: IPC error (error between socket server and client).

@@ -31,7 +31,6 @@
 
 #include <stdio.h>
 #include <string.h>
-
 #include <nms.h>
 
 #include "server_cmd_utils.h"

@@ -30,12 +30,12 @@
 */
 
 #include <stdlib.h>
-#include <ipc.h>
+#include <socket_ipc.h>
 
 #include "server_cmd_utils.h"
 
 /* Syntax : exit
-   Usage : Exit SockeT.
+   Usage : Ends server.
 */
 void server_cmd_exit(socket_message msg, socket_int client, server_data *data)
 {

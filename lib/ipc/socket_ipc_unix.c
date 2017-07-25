@@ -27,7 +27,7 @@
 #include <fcntl.h>
 #include <sys/un.h>
 
-#include <ipc.h>
+#include <socket_ipc.h>
 
 static socket_int socket_ipc_create_socket(const char *id,
     struct sockaddr_un *saun_o)

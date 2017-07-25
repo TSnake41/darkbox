@@ -29,7 +29,7 @@
 */
 
 #ifndef WIN32
-#include "ipc_unix.c"
+#include "socket_ipc_unix.c"
 #else
-#include "ipc_win.c"
+#include "socket_ipc_win.c"
 #endif

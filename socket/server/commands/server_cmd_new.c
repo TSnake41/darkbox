@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "server_cmd_utils.h"
 
 /* Syntax : new sock_id [IPv6]

@@ -56,7 +56,7 @@ int main(int argc, char const *argv[])
 
             /* Get help */
             case '?':
-                goto showHelp;
+                goto show_help;
 
             /* Start input server */
             case 'i': ;
@@ -89,14 +89,20 @@ int main(int argc, char const *argv[])
     /* Initialize Console IO */
     core_init();
 
-    start();
+	/* Main loop */
+    while (true) {
+		darkbox_cmd cmd;
+
+		if (parse_cmd(&cmd))
+			execute_cmd(cmd);
+	}
 
     /* Never reached */
     return 0;
 
-    showHelp:
+    show_help:
         puts("darkbox - Fast Portable Console IO Server - Astie Teddy (TSnake41)\n"
-             "Syntaxes : \n"
+             "Syntaxes :\n"
              "  1: (code) | darkbox\n"
              "  2: darkbox -i[k/m] | (code)\n"
              "  3: darkbox -w t\n"
@@ -107,25 +113,9 @@ int main(int argc, char const *argv[])
              " 3: Wait t ms\n"
              " 4: Return a non-nul value if data is avaialble in stdin.\n\n"
              "NOTE: darkbox support both '-' and '/' as command prefixes.\n"
-             "For more information, see README or http://batch.xoo.it/p41497.htm\n");
+             "For more informations, see README at:\n"
+             "https://gitlab.com/TSnake41/darkbox/blob/master/darkbox/README\n");
         return 0;
-}
-
-void start(void)
-{
-    while (true)
-        execute_line();
-}
-
-/* Parse a line from stdin and execute it, if this is
-   not a command, print the current line in stdout
-*/
-void execute_line(void)
-{
-    darkbox_cmd cmd;
-
-    if (parse_cmd(&cmd))
-        execute_cmd(cmd);
 }
 
 /* Parse the command from stdin if this is not
@@ -138,8 +128,21 @@ bool parse_cmd(darkbox_cmd *command)
     read_string(str, MAX_COMMAND_SIZE);
 
     if (*str != COMMAND_START_CHR &&
-        *str != COMMAND_START_CHR2)
-        goto no_command;
+        *str != COMMAND_START_CHR2) {
+		/* No command. */
+		fputs(str, stdout);
+        putchar(' ');
+
+        if (strchr(str, '\n') != 0)
+            /* do not break next line */
+            return false;
+
+        char c = 0;
+        while (c != '\n')
+            putchar(c = getchar());
+
+        return false;
+	}
 
     str++;
 
@@ -165,20 +168,6 @@ bool parse_cmd(darkbox_cmd *command)
     }
 
     return true;
-
-    no_command:
-        fputs(str, stdout);
-        putchar(' ');
-
-        if (strchr(str, '\n') != 0)
-            /* do not break next line */
-            return false;
-
-        char c = 0;
-        while (c != '\n')
-            putchar(c = getchar());
-
-        return false;
 }
 
 /* Execute a command, get args from stdin */

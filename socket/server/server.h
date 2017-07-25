@@ -37,7 +37,7 @@
 #include <fllist.h>
 #include <sthread.h>
 #include <socket.h>
-#include <ipc.h>
+#include <socket_ipc.h>
 
 #include "../args_parser.h"
 

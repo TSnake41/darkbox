@@ -32,7 +32,7 @@
 #ifndef H_MESSAGE
 #define H_MESSAGE
 
-#include <ipc.h>
+#include <socket_ipc.h>
 #include <socket.h>
 
 typedef struct socket_message {

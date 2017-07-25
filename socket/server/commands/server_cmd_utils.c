@@ -33,6 +33,7 @@
 #include <stdint.h>
 #include <ctype.h>
 #include <string.h>
+
 #include "server_cmd_utils.h"
 
 id_socket_pair *server_get_pair(char *id, server_data *data, unsigned int *index)
@@ -55,7 +56,7 @@ id_socket_pair *server_get_pair(char *id, server_data *data, unsigned int *index
 
         l = l->next;
     }
-    
+
     smutex_unlock(&data->sock_list_mutex);
     return NULL;
 }

@@ -28,7 +28,7 @@
 
 #include <windows.h>
 #include <socket.h>
-#include <ipc.h>
+#include <socket_ipc.h>
 
 static const char *file_id_prefix = "$socket_";
 

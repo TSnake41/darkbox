@@ -34,7 +34,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include <ipc.h>
+#include <socket_ipc.h>
 
 #include "message.h"
 

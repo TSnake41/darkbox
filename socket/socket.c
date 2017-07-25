@@ -81,17 +81,22 @@ int main(int argc, char **argv)
         #endif
 
         server(args);
-	} else {
+	} else
         client(args);
-    }
 
     socket_end();
     return 0;
 
     show_help:
-		/* TODO */
-        puts("SockeT - Portable TCP and NMS Network IO interface - Astie Teddy (TSnake41)\n"
-             "");
+        puts("socket - Portable TCP and NMS Network IO interface - Astie Teddy (TSnake41)\n"
+             "Syntaxes :\n"
+             "  1: socket -id:ID -n [-t thread_count]\n"
+             "  2: socket -id:ID -c command [command args]\n\n"
+             "1: Start new socket server.\n"
+             "2: Connect to a IPC server to perform a command.\n\n"
+             "For more informations, see README at:\n"
+             "https://gitlab.com/TSnake41/darkbox/tree/master/socket/README\n");
+        return 0;
 }
 
 #ifdef WIN32

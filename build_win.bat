@@ -10,12 +10,10 @@ set darkbox_i_src=darkbox_i\darkbox_i.c lib\core_i\core_i.c
 set darkbox_t_src=darkbox_t\darkbox_t.c
 set makemenu_src=makemenu\makemenu.c makemenu\parser.c lib\core\core.c lib\fllist\fllist.c
 
-set socket_src=lib\sthread\sthread.c lib\fllist\fllist.c lib\socket\socket.c lib\ipc\ipc.c lib\nms\nms.c
+set socket_src=lib\sthread\sthread.c lib\fllist\fllist.c lib\socket\socket.c lib\ipc\socket_ipc.c lib\nms\nms.c
 
-for %%A in (
-    socket\*.c socket\server\*.c socket\server\commands\*.c socket\client\*.c
-) do (
-  set socket_src=!socket_src! %%A
+for %%A in (socket\*.c socket\server\*.c socket\server\commands\*.c socket\client\*.c) do (
+    set socket_src=!socket_src! %%A
 )
 
 prompt ^>

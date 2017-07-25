@@ -21,6 +21,8 @@ Syntaxes:
    NOTE: "bh" is not required but recommended for
          "a better code", so it's just cosmetic.
 
+NOTE: darkbox support both '-' and '/' as command prefixes.
+
 Output commands passing:
     Commands pass to stdin, so any command like type, more, echo,
     <nul set/p "=text" or whatever you can imagine send command to darkbox.

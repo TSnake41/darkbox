@@ -91,7 +91,6 @@ void core_gotoxy_relative(int x, int y)
             abs(y),
             y > 0 ? 'B' : 'A'
         );
-
     #else
     GetConsoleScreenBufferInfo(stdout_handle, &csbi);
 

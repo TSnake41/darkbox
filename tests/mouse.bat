@@ -17,6 +17,7 @@ for /f "tokens=2,3,4" %%A in ("%i%") do (
     set X=%%A
     set Y=%%B
     set C=%%C
+    goto :draw_cur
 )
 goto :loop
 
