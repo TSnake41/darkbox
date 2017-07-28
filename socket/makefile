@@ -25,9 +25,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-CFLAGS=-O2
+
+CFLAGS ?= -O2 -s
+LDFLAGS ?= -s
+
+LDFLAGS += -I$(libdir) -I. -lpthread
+
 libdir=../lib
-LDFLAGS += -s -I$(libdir) -I. -lpthread
 
 EXEC=socket$(exec_suffix)
 BINDIR=../bin

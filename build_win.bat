@@ -1,6 +1,6 @@
 @Echo off
 setlocal enabledelayedexpansion
-set CFLAGS=-O2 -Ilib -DWIN32
+set CFLAGS=-O2 -s -Ilib -DWIN32
 
 set PATH=%CD%\tcc;%PATH%
 mkdir bin 2>nul

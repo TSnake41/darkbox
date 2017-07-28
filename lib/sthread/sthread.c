@@ -164,7 +164,7 @@ bool smutex_new(smutex *mutex)
     return pthread_mutex_init(mutex, NULL);
     #else
     InitializeCriticalSection(mutex);
-    return false;
+    return sthread_success;
     #endif
 }
 
