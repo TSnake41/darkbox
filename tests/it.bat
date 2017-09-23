@@ -4,18 +4,17 @@ if defined __ goto :it
 set __=.
 darkbox -i | call %0 %* | darkbox
 set __=
-pause>NUL
 goto :eof
 
 :it
 echo -chs 0x00 0
+echo -gcdr 0 4 0xA "Press F1 to quit (note: the window will be closed the next input)"
 
 set X=N/A
 set Y=N/A
 set B=N/A
 set K=N/A
 call :update
-
 
 :it_loop
 darkbox -w 25
@@ -29,12 +28,18 @@ set /p i=
 for /f "tokens=1,2,3,4" %%A in ("%i%") do (
     if %%A==k (
         set K=%%B
+        if !K!==59 (
+            echo -q
+            exit
+        )
     )
     if %%A==m (
         set X=%%B
         set Y=%%C
         set B=%%D
     )
+
+    if %%A==q exit
 )
 call :update
 darkbox -kbh || goto :input

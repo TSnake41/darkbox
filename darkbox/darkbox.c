@@ -95,7 +95,7 @@ int main(int argc, char const *argv[])
 
 		if (parse_cmd(&cmd))
 			execute_cmd(cmd);
-	}
+    }
 
     /* Never reached */
     return 0;
@@ -137,9 +137,12 @@ bool parse_cmd(darkbox_cmd *command)
             /* do not break next line */
             return false;
 
-        char c = 0;
-        while (c != '\n')
+        int c = 0;
+        while (c != '\n' && c != EOF)
             putchar(c = getchar());
+
+        if (c == EOF)
+            exit(0);
 
         return false;
 	}
@@ -302,7 +305,7 @@ void input_server(int mode)
 
     core_input_event e;
 
-    while (!feof(stdin)) {
+    while (!feof(stdin) && !ferror(stdout)) {
         core_input_get_event(&e);
 
         switch (e.type) {
