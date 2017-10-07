@@ -26,14 +26,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static void _tiny_assert_exit(unsigned int line, char *file)
+static inline void tiny_assert_exit(unsigned int line, char *file)
 {
     fprintf(stderr, "%s:%u : Assertion Failed ! \n", file, line);
     exit(1);
 }
 
-static void _tiny_assert_exit(unsigned int line, char *file);
-
-#define tiny_assert(cond) ((cond) ? _tiny_assert_exit(__LINE__, __FILE__) : (void)0)
+#define tiny_assert(cond) ((cond) ? tiny_assert_exit(__LINE__, __FILE__) : (void)0)
 
 #endif /* H_TINY_ASSERT */

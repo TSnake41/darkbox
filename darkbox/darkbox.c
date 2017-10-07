@@ -40,6 +40,14 @@
 
 #include "darkbox.h"
 
+static bool parse_cmd(darkbox_cmd *command);
+static void execute_cmd(darkbox_cmd cmd);
+
+static void input_server(int mode);
+
+static int read_int(void);
+static void read_string(char *buffer, const size_t max_length);
+
 #define ENABLE_KEYBOARD 1
 #define ENABLE_MOUSE 2
 #define KNM_MODE (ENABLE_KEYBOARD | ENABLE_MOUSE)
@@ -121,7 +129,7 @@ int main(int argc, char const *argv[])
 /* Parse the command from stdin if this is not
    a command, print the current line to stdout
 */
-bool parse_cmd(darkbox_cmd *command)
+static bool parse_cmd(darkbox_cmd *command)
 {
     char *str = command_buffer;
 
@@ -174,7 +182,7 @@ bool parse_cmd(darkbox_cmd *command)
 }
 
 /* Execute a command, get args from stdin */
-void execute_cmd(darkbox_cmd cmd)
+static void execute_cmd(darkbox_cmd cmd)
 {
     for (int i = 0; i < cmd.count; i++) {
         char *str = cmd.cmd;
@@ -298,7 +306,7 @@ void execute_cmd(darkbox_cmd cmd)
 }
 
 /* Start input server */
-void input_server(int mode)
+static void input_server(int mode)
 {
     if (mode & ENABLE_MOUSE)
         core_mouse_initialize(true);
@@ -327,7 +335,7 @@ void input_server(int mode)
         core_mouse_terminate(true);
 }
 /* Read the next integer from stdin */
-int read_int(void)
+static int read_int(void)
 {
     char c;
     int pos = 0;
@@ -348,7 +356,7 @@ int read_int(void)
 }
 
 /* Read the next argument from stdin */
-void read_string(char *buffer, const size_t max_length)
+static void read_string(char *buffer, const size_t max_length)
 {
     char c;
     int pos = 0;

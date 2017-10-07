@@ -48,9 +48,9 @@ typedef struct {
 } _sthread_wrap_arg;
 
 #ifndef WIN32
-static void *_sthread_wrap(void *arg)
+static void *sthread_wrap(void *arg)
 #else
-static DWORD __stdcall _sthread_wrap(void *arg)
+static DWORD __stdcall sthread_wrap(void *arg)
 #endif
 {
     _sthread_wrap_arg *wrap_ptr = arg;
@@ -83,7 +83,7 @@ bool sthread_new(sthread *thread, sthread_start thread_start, void *arg)
     wrap_args->arg = arg;
 
     #ifndef WIN32
-    if (pthread_create(thread, NULL, _sthread_wrap, wrap_args) != 0)
+    if (pthread_create(thread, NULL, sthread_wrap, wrap_args) != 0)
         *thread = 0;
 
     return *thread == 0;

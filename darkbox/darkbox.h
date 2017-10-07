@@ -57,12 +57,4 @@ typedef struct darkbox_cmd {
     */
 } darkbox_cmd;
 
-bool parse_cmd(darkbox_cmd *command);
-void execute_cmd(darkbox_cmd cmd);
-
-void input_server(int mode);
-
-int read_int(void);
-void read_string(char *buffer, const size_t max_length);
-
 #endif /* H_DARKBOX */
