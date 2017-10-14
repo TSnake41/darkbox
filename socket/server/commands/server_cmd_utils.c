@@ -36,43 +36,86 @@
 
 #include "server_cmd_utils.h"
 
-id_socket_pair *server_get_pair(char *id, server_data *data, unsigned int *index)
+id_socket_pair *server_get_pair(server_data *data, char *id, unsigned int *index)
 {
-    if (index)
-        *index = 0;
+    smutex_lock(&data->pair_mutex);
 
-    smutex_lock(&data->sock_list_mutex);
-    fllist *l = data->sock_list;
+    for (unsigned int i = 0; i < data->pair_count; i++)
+        if (strcmp(id, data->pair_list[i]->id) == 0) {
 
-    while (l) {
-        id_socket_pair *pair = l->value;
-        if (strcmp(id, pair->id) == 0) {
-            smutex_unlock(&data->sock_list_mutex);
-            return pair;
+            smutex_unlock(&data->pair_mutex);
+
+            if (index)
+                *index = i;
+
+            smutex_unlock(&data->pair_mutex);
+            return data->pair_list[i];
         }
 
-        if (index)
-            (*index)++;
-
-        l = l->next;
-    }
-
-    smutex_unlock(&data->sock_list_mutex);
+    smutex_unlock(&data->pair_mutex);
     return NULL;
 }
 
-void server_add_pair(server_data *data, id_socket_pair *pair)
+bool server_add_pair(server_data *data, id_socket_pair *pair)
 {
-    smutex_lock(&data->sock_list_mutex);
-    data->sock_list = list_insert_begin(data->sock_list, pair);
-    smutex_unlock(&data->sock_list_mutex);
+    smutex_lock(&data->pair_mutex);
+
+    /* Resize pair_list to carry one more id_socket_pair. */
+    id_socket_pair **new_pair_list = realloc(data->pair_list,
+        sizeof(id_socket_pair *) * ++data->pair_count
+    );
+
+    if (new_pair_list == NULL) {
+        /* Realloc failed. */
+        smutex_unlock(&data->pair_mutex);
+        return true;
+    }
+
+    /* Add new pair to list. */
+    new_pair_list[data->pair_count - 1] = pair;
+
+    data->pair_list = new_pair_list;
+
+    smutex_unlock(&data->pair_mutex);
+    return false;
 }
 
 void server_remove_pair(server_data *data, unsigned int index)
 {
-    smutex_lock(&data->sock_list_mutex);
-    data->sock_list = list_remove_at(data->sock_list, index);
-    smutex_unlock(&data->sock_list_mutex);
+    smutex_lock(&data->pair_mutex);
+
+    if (index >= data->pair_count) {
+        /* Out of bounds */
+        smutex_unlock(&data->pair_mutex);
+        return;
+    }
+
+    /* Free pair */
+    free(data->pair_list[index]);
+
+    /* Override old pair with next members
+      (shift all next members to left).
+    */
+    memmove(
+        &data->pair_list[index],
+        &data->pair_list[index + 1],
+        (data->pair_count - index - 1) * sizeof(id_socket_pair *)
+    );
+
+    id_socket_pair **new_pair_list = realloc(data->pair_list,
+        sizeof(id_socket_pair *) * --data->pair_count
+    );
+
+    if (new_pair_list != NULL || data->pair_count == 0)
+        data->pair_list = new_pair_list;
+
+    /* In the case that new_pair_list is NULL (the realloc failed), old memory
+       still valid, however, there is just one excessing pair in allocation
+       unit (which do not affect behavior since data->pair_count determines the
+       number of pairs).
+    */
+
+    smutex_unlock(&data->pair_mutex);
 }
 
 int send_code(socket_int socket, uint8_t code)

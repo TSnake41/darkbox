@@ -49,18 +49,15 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
     }
 
     bool overwritten = false;
-    unsigned int old_node_index = 0;
+    unsigned int old_pair_index = 0;
 
     id_socket_pair *old_pair =
-        server_get_pair(msg.argv[1], data, &old_node_index);
+        server_get_pair(data, msg.argv[1], &old_pair_index);
 
     /* Remove previous bound socket. */
     if (old_pair != NULL) {
         close(old_pair->socket);
-        free(old_pair);
-
-        server_remove_pair(data, old_node_index);
-
+        server_remove_pair(data, old_pair_index);
         overwritten = true;
     }
 
@@ -82,8 +79,9 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
 
     /* Add the new socket to the list */
 
-    /* pair : Pair struct + ID string block */
-    id_socket_pair *pair = new_pair(strlen(msg.argv[1]));
+    id_socket_pair *pair =
+        malloc(sizeof(id_socket_pair) + strlen(msg.argv[1]) + 1);
+
     if (pair == NULL) {
         /* Out of memory */
         send_code(client, CMD_OUT_OF_MEMORY);
@@ -91,12 +89,18 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
         return;
     }
 
-    pair->socket = new_sock;
-    pair->id = get_id(pair);
-    pair->ipv6 = use_ipv6;
+    pair->id = get_str(pair);
     strcpy(pair->id, msg.argv[1]);
 
-    server_add_pair(data, pair);
+    pair->socket = new_sock;
+    pair->ipv6 = use_ipv6;
+
+    if (server_add_pair(data, pair)) {
+        send_code(client, CMD_OUT_OF_MEMORY);
+        close(new_sock);
+        free(pair);
+        return;
+    }
 
     send_code(client, overwritten ? CMD_OVERWRITTEN : CMD_SUCCESS);
 }

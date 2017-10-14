@@ -46,7 +46,7 @@ void server_cmd_info(socket_message msg, socket_int client, server_data *data)
         return;
     }
 
-    id_socket_pair *pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
 
     if (pair == NULL) {
         /* No pair found */

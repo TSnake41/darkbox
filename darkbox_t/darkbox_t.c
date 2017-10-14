@@ -186,7 +186,6 @@ int main(int argc, char const *argv[]) {
                 err = 0;
 
             while (rx >= ry) {
-
                 plot(x + rx, y + ry, color);
                 plot(x + ry, y + rx, color);
                 plot(x - ry, y + rx, color);
@@ -198,10 +197,10 @@ int main(int argc, char const *argv[]) {
 
                 if (err <= 0) {
                     ry++;
-                    err += 2*ry + 1;
+                    err += 2 * ry + 1;
                 } else {
                     rx--;
-                    err -= 2*rx + 1;
+                    err -= 2 * rx + 1;
                 }
             }
         }

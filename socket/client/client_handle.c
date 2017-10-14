@@ -104,7 +104,7 @@ void client_handle_recv(socket_int socket)
             exit(CMD_IPC_ERROR);
 
         fwrite(buffer, count, 1, stdout);
-    } while(count == 0xFFFF);
+    } while(count != 0);
 
     free(buffer);
     exit(CMD_SUCCESS);

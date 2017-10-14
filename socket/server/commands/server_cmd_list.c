@@ -42,20 +42,17 @@ void server_cmd_list(socket_message msg, socket_int client, server_data *data)
 {
     send_code(client, CMD_SUCCESS);
 
-    smutex_lock(&data->sock_list_mutex);
-    fllist *sock_list_node = data->sock_list;
+    smutex_lock(&data->pair_mutex);
 
-    while (sock_list_node != NULL) {
-        id_socket_pair *pair = sock_list_node->value;
+    for (size_t i = 0; i < data->pair_count; i++) {
+        id_socket_pair *pair = data->pair_list[i];
         /* Send id using nms. */
         char new_str[strlen(pair->id) + 2];
         sprintf(new_str, "%s\n", pair->id);
         nms_send(client, new_str, strlen(new_str));
-
-        sock_list_node = sock_list_node->next;
     }
 
     nms_send(client, NULL, 0);
 
-    smutex_unlock(&data->sock_list_mutex);
+    smutex_unlock(&data->pair_mutex);
 }

@@ -45,7 +45,7 @@ void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *dat
         return;
     }
 
-    id_socket_pair *pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
 
     if (pair == NULL) {
         /* No pair found */
@@ -79,7 +79,7 @@ void server_cmd_nms_send(socket_message msg, socket_int client, server_data *dat
         return;
     }
 
-    id_socket_pair *pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
 
     if (pair == NULL) {
         /* No pair found */

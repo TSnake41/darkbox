@@ -43,7 +43,7 @@ void server_cmd_free(socket_message msg, socket_int client, server_data *data)
     }
 
     unsigned int index;
-    id_socket_pair *pair = server_get_pair(msg.argv[1], data, &index);
+    id_socket_pair *pair = server_get_pair(data, msg.argv[1], &index);
 
     if (pair == NULL) {
         /* No pair found */
@@ -53,7 +53,6 @@ void server_cmd_free(socket_message msg, socket_int client, server_data *data)
 
     send_code(client, CMD_SUCCESS);
     close(pair->socket);
-    free(pair);
 
     server_remove_pair(data, index);
 }

@@ -49,7 +49,7 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
 
     bool id_arg_defined = msg.argc > 2;
 
-    id_socket_pair *listner_pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *listner_pair = server_get_pair(data, msg.argv[1], NULL);
 
     if (listner_pair == NULL) {
         /* No pair */
@@ -90,8 +90,9 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
     char *new_id = id_arg_defined ? msg.argv[2] : ip_port;
 
     /* Create a new pair */
-    id_socket_pair *new_pair = new_pair(strlen(new_id));
-
+    id_socket_pair *new_pair =
+        malloc(sizeof(id_socket_pair) + strlen(new_id) + 1);
+        
     if (new_pair == NULL) {
         /* Out of memory */
         send_code(client, CMD_OUT_OF_MEMORY);
@@ -99,13 +100,18 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
         return;
     }
 
+    new_pair->id = get_str(new_pair);
+    strcpy(new_pair->id, new_id);
+
     new_pair->socket = new_socket;
     new_pair->ipv6 = addr.ss_family == AF_INET6;
 
-    new_pair->id = get_id(new_pair);
-    strcpy(new_pair->id, new_id);
-
-    server_add_pair(data, new_pair);
+    if (server_add_pair(data, new_pair)) {
+        send_code(client, CMD_OUT_OF_MEMORY);
+        close(new_socket);
+        free(new_pair);
+        return;
+    }
 
     send_code(client, CMD_SUCCESS);
 

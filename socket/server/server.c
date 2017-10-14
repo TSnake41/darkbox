@@ -57,12 +57,13 @@ static void server_thread(void *_server_socket);
 void server(socket_args args)
 {
     server_data data;
-    smutex_new(&data.sock_list_mutex);
+    smutex_new(&data.pair_mutex);
     data.args = &args;
-    data.sock_list = NULL;
+    data.pair_list = NULL;
+    data.pair_count = 0;
 
-    data.ipc_server = socket_ipc_server_new(args.id, 5);
-    if (!socket_is_valid(data.ipc_server)) {
+    data.ipc_socket = socket_ipc_server_new(args.id, 5);
+    if (!socket_is_valid(data.ipc_socket)) {
         fputs("ERROR: Unable to create a new IPC server.\n", stderr);
         return;
     }
@@ -92,7 +93,7 @@ static void server_thread(void *_server_data)
     server_data *data = _server_data;
 
     while (true) {
-        socket_int c = accept(data->ipc_server, NULL, NULL);
+        socket_int c = accept(data->ipc_socket, NULL, NULL);
 
         socket_message msg;
 
@@ -112,5 +113,6 @@ static void server_thread(void *_server_data)
         }
 
         close(c);
+        message_free(msg);
     }
 }

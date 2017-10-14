@@ -42,8 +42,8 @@
 #include "../../cmd_codes.h"
 #include "../../message.h"
 
-id_socket_pair *server_get_pair(char *id, server_data *data, unsigned int *index);
-void server_add_pair(server_data *data, id_socket_pair *pair);
+id_socket_pair *server_get_pair(server_data *data, char *id, unsigned int *index);
+bool server_add_pair(server_data *data, id_socket_pair *pair);
 void server_remove_pair(server_data *data, unsigned int index);
 
 bool server_make_sockaddr(const char *ip, in_port_t port, bool ipv6, struct sockaddr **addr, socklen_t *len);
@@ -54,7 +54,6 @@ bool server_addr_to_str(char *output, struct sockaddr_storage *addr, socklen_t a
 int send_code(socket_int socket, uint8_t code);
 bool parse_bool(const char *str);
 
-#define new_pair(id_len) (calloc(sizeof(id_socket_pair) + (id_len) + 1, 1))
-#define get_id(pair) (((char *)pair) + sizeof(id_socket_pair))
+#define get_str(pair_ptr) ((char *)(pair_ptr + 1))
 
 #endif /* H_SERVER_CMD_UTILS */

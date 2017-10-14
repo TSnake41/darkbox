@@ -32,9 +32,8 @@
 #ifndef H_SERVER
 #define H_SERVER
 
+#include <stddef.h>
 #include <stdint.h>
-
-#include <fllist.h>
 #include <sthread.h>
 #include <socket.h>
 #include <socket_ipc.h>
@@ -48,10 +47,11 @@ typedef struct id_socket_pair {
 } id_socket_pair;
 
 typedef struct server_data {
-    socket_int ipc_server;
-    fllist *sock_list;
-    smutex sock_list_mutex;
+    socket_int ipc_socket;
     socket_args *args;
+    id_socket_pair **pair_list;
+    size_t pair_count;
+    smutex pair_mutex;
 } server_data;
 
 void server(socket_args args);

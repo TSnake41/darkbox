@@ -49,7 +49,7 @@ void server_cmd_bind(socket_message msg, socket_int client, server_data *data)
 
     in_port_t port = htons(strtoul(msg.argv[3], NULL, 0));
 
-    id_socket_pair *pair = server_get_pair(sock_id, data, NULL);
+    id_socket_pair *pair = server_get_pair(data, sock_id, NULL);
 
     if (pair == NULL) {
         /* No pair */

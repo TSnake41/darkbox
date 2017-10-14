@@ -40,20 +40,11 @@
 void server_cmd_exit(socket_message msg, socket_int client, server_data *data)
 {
     /* Close sockets, to be sure */
-    smutex_lock(&data->sock_list_mutex);
-    fllist *l = data->sock_list;
-
-    while (l) {
-        id_socket_pair *pair = l->value;
-        close(pair->socket);
-
-        l = queue_pop(l);
-    }
-
-    smutex_unlock(&data->sock_list_mutex);
+    while (data->pair_count)
+        server_remove_pair(data, 0);
 
     close(client);
-    close(data->ipc_server);
+    close(data->ipc_socket);
 
     /* Exit current process */
     exit(0);

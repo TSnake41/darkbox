@@ -59,9 +59,6 @@ int main(int argc, char **argv)
 {
     socket_init();
 
-    /* Define out of memory handler for fllist */
-    list_oom_handler = oom_handler;
-
     /* Parse args */
     socket_args args;
     if (parse_args(argv, argc, &args))

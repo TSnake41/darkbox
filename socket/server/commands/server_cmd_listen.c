@@ -44,7 +44,7 @@ void server_cmd_listen(socket_message msg, socket_int client, server_data *data)
         return;
     }
 
-    id_socket_pair *listner_pair = server_get_pair(msg.argv[1], data, NULL);
+    id_socket_pair *listner_pair = server_get_pair(data, msg.argv[1], NULL);
 
     if (listner_pair == NULL) {
         /* No pair */

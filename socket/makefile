@@ -36,9 +36,9 @@ libdir=../lib
 EXEC=socket$(exec_suffix)
 BINDIR=../bin
 
-lib_src=$(libdir)/sthread/sthread.c $(libdir)/fllist/fllist.c \
+lib_src=$(libdir)/sthread/sthread.c $(libdir)/core_i/core_i.c \
 	    $(libdir)/socket/socket.c $(libdir)/nms/nms.c \
-	 	$(libdir)/ipc/socket_ipc.c $(libdir)/core_i/core_i.c
+	 	$(libdir)/ipc/socket_ipc.c
 
 src=socket.c args_parser.c message.c \
 	client/*.c server/*.c \

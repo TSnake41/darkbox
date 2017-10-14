@@ -89,7 +89,7 @@ bool sthread_new(sthread *thread, sthread_start thread_start, void *arg)
     return *thread == 0;
     #else
     wrap_args->thread_id_ptr = &thread->id;
-    thread->handle = CreateThread(NULL, 0, _sthread_wrap, wrap_args, 0, NULL);
+    thread->handle = CreateThread(NULL, 0, sthread_wrap, wrap_args, 0, NULL);
 
     return thread->handle == 0;
     #endif
