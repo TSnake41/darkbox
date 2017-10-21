@@ -56,10 +56,11 @@ typedef unsigned short in_port_t;
 #define inet_pton inet_pton_win
 #define inet_ntop inet_ntop_win
 
-/* Avoid pointer warnings. */
+/* Avoid pointer warnings (since WinAPI uses char * instead of void *). */
 #ifdef AVOID_POINTER_WARNING
 #define send(s, b, l, f) send(s, (char *)(b), l, f)
 #define recv(s, b, l, f) recv(s, (char *)(b), l, f)
+#define setsockopt(s, l, n, v, ol) setsockopt(s, l, n, (char *)(v), ol)
 #define getsockopt(s, l, n, v, ol) getsockopt(s, l, n, (char *)(v), ol)
 #endif
 
@@ -70,6 +71,7 @@ void socket_init(void);
 void socket_end(void);
 int socket_available(socket_int);
 bool socket_set_blocking(socket_int socket, bool blocking);
+bool socket_set_read_timeout(socket_int socket, long timeout);
 
 #ifdef WIN32
 int inet_pton_win(int af, const char *src, void *dst);

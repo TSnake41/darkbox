@@ -46,7 +46,7 @@ void client(socket_args args)
     socket_int socket = socket_ipc_client_new(args.id);
     if (!socket_is_valid(socket)) {
         fputs("ERROR: Unable to connect to IPC server.\n", stderr);
-        return;
+        exit(1);
     }
 
     socket_message msg = {

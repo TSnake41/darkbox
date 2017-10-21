@@ -1,0 +1,32 @@
+# Copyright 2017 Astie Teddy
+#
+# Permission to use, copy, modify, and/or distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+{{Les flux standards}}
+
+    Dans un procéssus, on distingue 3 flux standards :
+        - stdout = 0
+        - stdin = 1
+        - stderr = 2
+
+    Parmis ces 3 flux, on différencie 2 flux de sortie et un flux d'entrée, en
+    effet, stdout et stderr sont des flux de sortie comme ils redirigent souvent
+    vers tampon de la console, ansi, toute donnée lue par stdout ou stderr est
+    écrite dans la console.
+
+    De même, le flux stdin est un flux d'entrée car il lit depuis le tampon de
+    l'entrée console les différents évènements (entrée sur forme de caractères
+    ou encore par extension, les évènements souris, ...).
+
+{{Les redirection}}

@@ -2,9 +2,11 @@
 setlocal enabledelayedexpansion
 title client
 
+pushd ..
 if defined DOS9_OS_TYPE (
-	set PATH=!CD!/..:!PATH!
-) else set PATH=!CD!\..;!PATH!
+	set PATH=!CD!:!PATH!
+) else set PATH=!CD!;!PATH!
+popd
 
 set /p IP=IP : 
 set /p PORT=PORT : 

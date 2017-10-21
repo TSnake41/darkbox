@@ -65,24 +65,28 @@ void server(socket_args args)
     data.ipc_socket = socket_ipc_server_new(args.id, 5);
     if (!socket_is_valid(data.ipc_socket)) {
         fputs("ERROR: Unable to create a new IPC server.\n", stderr);
-        return;
+        exit(1);
     }
 
+    /* We consider the main thread (currently running) as a server thread. */
     size_t thread_count = args.data.server.thread_count - 1;
 
-    /* Avoid undefined behavior when thread_count == 0. */
-    sthread threads[thread_count > 0 ? thread_count : 1];
+    sthread *threads = calloc(thread_count, sizeof(sthread));
+    if (threads == NULL) {
+        fputs("ERROR: Out of memory.\n", stderr);
+        exit(2);
+    }
 
     int i = 0;
     while (i < thread_count) {
         if (sthread_new(&threads[i], server_thread, &data)) {
             fputs("ERROR: Unable to create a threads.\n", stderr);
-            return;
+            exit(3);
         }
         i++;
     }
 
-    /* Use main thread too. */
+    /* Consider the main thread as a server thread.. */
     server_thread(&data);
 
     /* Never reached (server_thread never returns) */
@@ -102,14 +106,16 @@ static void server_thread(void *_server_data)
             continue;
         }
 
-        unsigned int i = 0;
-        while (i < server_cmds_count) {
-            if (stricmp(server_cmds[i].key, msg.argv[0]) == 0) {
-                server_cmds[i].cmd(msg, c, data);
-                break;
-            }
+        if (msg.argc != 0) {
+            unsigned int i = 0;
+            while (i < server_cmds_count) {
+                if (stricmp(server_cmds[i].key, msg.argv[0]) == 0) {
+                    server_cmds[i].cmd(msg, c, data);
+                    break;
+                }
 
-            i++;
+                i++;
+            }
         }
 
         close(c);

@@ -1,9 +1,11 @@
 @Echo off
 setlocal enabledelayedexpansion
 
+pushd ..
 if defined DOS9_OS_TYPE (
-	set PATH=!CD!/..:!PATH!
-) else set PATH=!CD!\..;!PATH!
+	set PATH=!CD!:!PATH!
+) else set PATH=!CD!;!PATH!
+popd
 
 (
     socket -id:bin_test -n

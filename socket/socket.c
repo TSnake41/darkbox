@@ -53,8 +53,6 @@
 static int fork_to_background_win(int argc, char **argv);
 #endif
 
-void oom_handler(void);
-
 int main(int argc, char **argv)
 {
     socket_init();
@@ -136,9 +134,3 @@ static int fork_to_background_win(int argc, char **argv)
     return argc;
 }
 #endif
-
-void oom_handler(void)
-{
-    fputs("CRITICAL: Out of memory error !\n", stderr);
-    exit(1);
-}

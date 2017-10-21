@@ -34,12 +34,12 @@
 
 #include "server_cmd_utils.h"
 
-/* Syntax : nms_recv sock_id
+/* Syntax : nms_recv sock_id [timeout]
    Usage : Recieve data from socket using NMS.
 */
 void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc != 2) {
+    if (msg.argc <= 2) {
         /* Invalid arguments */
         send_code(client, CMD_INVALID_ARGS);
         return;
@@ -52,6 +52,14 @@ void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *dat
         send_code(client, CMD_NOT_FOUND);
         return;
     }
+
+    #if 0
+    if (msg.argc <= 3) {
+        /* Set timeout */
+        long timeout
+        if (socket_set_read_timeout(pair->socket, ))
+    }
+    #endif
 
     /* Create buffer of 2^16-1 bytes. */
     uint16_t recieved;

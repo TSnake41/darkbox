@@ -42,9 +42,6 @@ id_socket_pair *server_get_pair(server_data *data, char *id, unsigned int *index
 
     for (unsigned int i = 0; i < data->pair_count; i++)
         if (strcmp(id, data->pair_list[i]->id) == 0) {
-
-            smutex_unlock(&data->pair_mutex);
-
             if (index)
                 *index = i;
 
@@ -83,7 +80,7 @@ bool server_add_pair(server_data *data, id_socket_pair *pair)
 void server_remove_pair(server_data *data, unsigned int index)
 {
     smutex_lock(&data->pair_mutex);
-
+    
     if (index >= data->pair_count) {
         /* Out of bounds */
         smutex_unlock(&data->pair_mutex);
