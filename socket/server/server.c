@@ -38,6 +38,7 @@
 #include <sthread.h>
 #include <socket.h>
 #include <socket_ipc.h>
+#include <tiny_assert.h>
 
 #include "server.h"
 #include "server_cmd.h"
@@ -64,7 +65,7 @@ void server(socket_args args)
 
     data.ipc_socket = socket_ipc_server_new(args.id, 5);
     if (!socket_is_valid(data.ipc_socket)) {
-        fputs("ERROR: Unable to create a new IPC server.\n", stderr);
+        fputs("ERROR: Unable to create the IPC server.\n", stderr);
         exit(1);
     }
 
@@ -72,17 +73,11 @@ void server(socket_args args)
     size_t thread_count = args.data.server.thread_count - 1;
 
     sthread *threads = calloc(thread_count, sizeof(sthread));
-    if (threads == NULL) {
-        fputs("ERROR: Out of memory.\n", stderr);
-        exit(2);
-    }
+    tiny_assert(threads == NULL); /* Check allocation. */
 
     int i = 0;
     while (i < thread_count) {
-        if (sthread_new(&threads[i], server_thread, &data)) {
-            fputs("ERROR: Unable to create a threads.\n", stderr);
-            exit(3);
-        }
+        tiny_assert(sthread_new(&threads[i], server_thread, &data));
         i++;
     }
 

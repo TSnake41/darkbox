@@ -29,7 +29,7 @@
 static inline void tiny_assert_exit(unsigned int line, char *file)
 {
     fprintf(stderr, "%s:%u : Assertion Failed ! \n", file, line);
-    exit(1);
+    exit(255);
 }
 
 #define tiny_assert(cond) ((cond) ? tiny_assert_exit(__LINE__, __FILE__) : (void)0)

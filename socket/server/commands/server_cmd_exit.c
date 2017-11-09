@@ -40,9 +40,9 @@
 void server_cmd_exit(socket_message msg, socket_int client, server_data *data)
 {
     /* Close sockets, to be sure */
-    while (data->pair_count)
-        if (server_remove_pair(data, 0))
-            break;
+    size_t i = data->pair_count;
+    while (i--)
+        server_remove_pair(data, 0);
 
     close(client);
     close(data->ipc_socket);

@@ -120,7 +120,7 @@ static int fork_to_background_win(int argc, char **argv)
 
         if (CreateProcess(NULL, cmdl, NULL, NULL,
             false, 0, NULL, NULL, &si, &pi) == -1)
-            fputs("ERROR: Unable to fork process\n", stderr);
+            tiny_assert(true);
 
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);

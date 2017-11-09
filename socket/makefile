@@ -26,8 +26,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-CFLAGS ?= -O2 -s
-LDFLAGS ?= -s
+CFLAGS ?= -O2
+LDFLAGS ?= -O2 -s
 
 LDFLAGS += -I$(libdir) -I. -lpthread
 

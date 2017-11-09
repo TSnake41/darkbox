@@ -25,7 +25,7 @@ tcc %CFLAGS% -o bin\darkbox_t.exe %darkbox_t_src%
 tcc %CFLAGS% -DAVOID_POINTER_WARNING -lkernel32 -lws2_32 -o bin\socket.exe %socket_src%
 tcc %CFLAGS% -o bin\makemenu.exe %makemenu_src%
 
-upx bin\*.exe
+:: upx bin\*.exe
 copy bin\*.exe tests\
 
 @echo off
