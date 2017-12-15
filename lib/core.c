@@ -85,7 +85,6 @@ void core_gotoxy_relative(int x, int y)
             x > 0 ? 'C' : 'D'
         );
 
-
     if (y != 0)
         printf("\033[%d%c",
             abs(y),

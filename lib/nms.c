@@ -21,6 +21,7 @@
 */
 
 /* Network Message System, a simple way to send framed data. */
+/* TODO: Possibility to use a timeout. */
 
 #include <stdlib.h>
 #include <stdbool.h>

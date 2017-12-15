@@ -35,7 +35,7 @@
 
 /*
     We need a wrapper because we use void as return type, to avoid crashes,
-    warnings and errors, we the wrap thread start to make it compatible with
+    warnings and errors, we the wrap thread_start to make it compatible with
     the Operating System threading system (both POSIX (pthread) and Win32 API).
 */
 

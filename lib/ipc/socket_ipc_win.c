@@ -30,6 +30,12 @@
 #include <socket.h>
 #include <socket_ipc.h>
 
+/*
+    Create a file named $socket_[id] that store the port.
+    This file will be read by the socket_client to establish
+    the connection with the server.
+*/
+
 static const char *file_id_prefix = "$socket_";
 
 static void get_file_id_path(const char *id, char *out)
@@ -67,6 +73,7 @@ socket_int socket_ipc_server_new(const char *id, int max_pending)
 
     int len = sizeof(sin);
     getsockname(s, (struct sockaddr *)&sin, &len);
+
     fwrite(&sin.sin_port, sizeof(unsigned short), 1, f);
     fclose(f);
 

@@ -24,7 +24,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-exec_suffix=
+exec_suffix ?=
 
 subdirs=choice
 
@@ -37,6 +37,6 @@ upx:
 	upx ./bin/* 2>/dev/null
 
 clean:
-	rm ./bin/choice*
+	-rm ./bin/choice*
 
 .PHONY: $(subdirs)

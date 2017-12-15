@@ -39,11 +39,11 @@ src=makemenu.c parser.c
 all: makemenu postbuild
 
 makemenu:
-	$(CC) -o $(EXEC) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS)
+	# $(CC) -o $(EXEC) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS)
 
 postbuild:
-	test -d $(BINDIR) || mkdir $(BINDIR)
-	mv $(EXEC) $(BINDIR)
-	cp $(BINDIR)/$(EXEC) ../tests/
+	# test -d $(BINDIR) || mkdir $(BINDIR)
+	# mv $(EXEC) $(BINDIR)
+	# cp $(BINDIR)/$(EXEC) ../tests/
 
 .PHONY: $(EXEC)

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2016-2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017 Teddy ASTIE (TSnake41)
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
     SOFTWARE.
 */
 
-#ifndef H_TINY_ASSERT
-#define H_TINY_ASSERT
+#include <stdio.h>
+#include <stdlib.h>
 
-void tiny_assert_exit(unsigned int line, char *file);
-
-#define tiny_assert(cond) ((cond) ? tiny_assert_exit(__LINE__, __FILE__) : (void)0)
-
-#endif /* H_TINY_ASSERT */
+void tiny_assert_exit(unsigned int line, char *file)
+{
+    fprintf(stderr, "%s:%u : Assertion Failed ! \n", file, line);
+    exit(255);
+}

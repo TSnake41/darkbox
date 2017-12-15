@@ -35,7 +35,7 @@ BINDIR=../bin
 EXEC_FR=choice_fr$(exec_suffix)
 EXEC_EN=choice_en$(exec_suffix)
 
-lib_src=$(libdir)/core/core.c $(libdir)/core_i/core_i.c
+lib_src=$(libdir)/core.c $(libdir)/core_i.c
 src=choice.c parse_args.c strcasechr.c
 
 all: choice_fr choice_en postbuild

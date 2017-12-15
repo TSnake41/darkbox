@@ -28,7 +28,7 @@
 
 #if !defined __DJGPP__ && !defined WIN32
 /* Declare getch() and kbhit()
-   See core_i/unix_conio.c
+   See core_i/unix_conio.c.
 */
 int getch();
 int kbhit();
@@ -71,7 +71,7 @@ enum {
 #define core_getkey getch
 #define core_kbhit kbhit
 
-void core_get_mouse(bool, unsigned int*, unsigned int*, unsigned int*);
+void core_get_mouse(bool, unsigned int *, unsigned int *, unsigned int *);
 void core_input_get_event(core_input_event *e);
 
 void core_mouse_initialize(bool on_move);

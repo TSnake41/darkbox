@@ -21,14 +21,14 @@
 */
 
 #if defined(__DJGPP__)
-#include "djgpp_mouse.c"
+#include "core_i/djgpp_mouse.c"
 /* DJGPP supports isatty and fileno. */
-#include "posix_core_i.c"
+#include "core_i/posix_core_i.c"
 #elif defined(WIN32)
-#include "win_mouse.c"
-#include "win_core_i.c"
+#include "core_i/win_mouse.c"
+#include "core_i/win_core_i.c"
 #else
-#include "posix_core_i.c"
-#include "posix_conio.c"
-#include "x11_mouse.c"
+#include "core_i/posix_core_i.c"
+#include "core_i/posix_conio.c"
+#include "core_i/x11_mouse.c"
 #endif

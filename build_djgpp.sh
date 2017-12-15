@@ -1,11 +1,13 @@
 #!/bin/sh
-exec_suffix=-dpmi_dos.exe
-CC=i686-pc-msdosdjgpp-gcc
+export CC=i686-pc-msdosdjgpp-gcc
 
-make CC=$CC exec_suffix=$exec_suffix darkbox darkbox_i darkbox_t makemnu
-make upx exec_suffix=$exec_suffix
+make darkbox exec_suffix=-dpmi_dos.exe
+make darkbox_i exec_suffix=-dpmi_dos.exe
+make darkbox_t exec_suffix=-dpmi_dos.exe
+
+upx bin/*-dpmi_dos.exe
 
 pushd extras
-make CC=$CC exec_suffix=$exec_suffix
-make postbuild upx exec_suffix=$exec_suffix
+make all postbuild exec_suffix=-dpmi_dos.exe
+upx bin/*-dpmi_dos.exe
 popd

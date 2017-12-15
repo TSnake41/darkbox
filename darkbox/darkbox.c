@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
             /* Start input server */
             case 'i': ;
                 #define m_arg (tolower(argv[1][2]))
-                
+
                 int mode = m_arg == 'k' ? ENABLE_KEYBOARD : /* Keyboard mode */
                            m_arg == 'm' ? ENABLE_MOUSE : /* Mouse mode */
                            KNM_MODE; /* Keyboard and Mouse mode */
