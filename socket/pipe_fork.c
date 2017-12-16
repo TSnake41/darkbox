@@ -55,20 +55,19 @@ int pipe_fork(int argc, char **argv)
     if (fork() != 0) {
         /* Wait until child wrote something in the pipe. */
         char b;
-        read(pipes[1], &b, 1);
+        read(pipes[0], &b, 1);
 
         /* Close write pipes. */
         close(pipes[0]);
         close(pipes[1]);
+
+        setsid();
         exit(0);
     }
 
     /* Close read pipe */
     close(pipes[0]);
-    int p = pipes[1];
-
-    setsid();
-    return p;
+    return pipes[1];
     #else
     if (strncmp(argv[1], ".pf:", 4) != 0) {
         /* Create pipes */
