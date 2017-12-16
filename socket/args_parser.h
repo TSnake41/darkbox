@@ -55,4 +55,6 @@ typedef struct socket_args {
 bool parse_args(char **argv, int argc, socket_args *args);
 void free_args(socket_args args);
 
+#define THREAD_COUNT 1
+
 #endif /* H_ARGS_PARSER */

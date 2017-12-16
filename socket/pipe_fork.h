@@ -29,31 +29,10 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef H_SERVER
-#define H_SERVER
+#ifndef H_PIPE_FORK
+#define H_PIPE_FORK
 
-#include <stddef.h>
-#include <stdint.h>
-#include <sthread.h>
-#include <socket.h>
-#include <socket_ipc.h>
+int pipe_fork(int, char **);
+void pipe_send(int);
 
-#include "../args_parser.h"
-
-typedef struct id_socket_pair {
-    char *id;
-    socket_int socket;
-    bool ipv6;
-} id_socket_pair;
-
-typedef struct server_data {
-    socket_int ipc_socket;
-    socket_args *args;
-    id_socket_pair **pair_list;
-    size_t pair_count;
-    smutex pair_mutex;
-} server_data;
-
-void server(socket_args args, int message_fd);
-
-#endif /* H_SERVER */
+#endif /* H_PIPE_FORK */

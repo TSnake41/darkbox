@@ -66,7 +66,7 @@ bool parse_args(char **argv, int argc, socket_args *args)
             case 'n':
                 context_defined = true;
                 args->new_instance = true;
-                args->data.server.thread_count = 1;
+                args->data.server.thread_count = THREAD_COUNT;
                 break;
 
             case 't':

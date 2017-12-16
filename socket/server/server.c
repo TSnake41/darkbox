@@ -46,6 +46,7 @@
 #include "../args_parser.h"
 #include "../message.h"
 #include "../socket.h"
+#include "../pipe_fork.h"
 
 #ifndef WIN32
 #include <strings.h>
@@ -55,7 +56,7 @@
 
 static void server_thread(void *_server_socket);
 
-void server(socket_args args)
+void server(socket_args args, int message_fd)
 {
     server_data data;
     smutex_new(&data.pair_mutex);
@@ -80,6 +81,9 @@ void server(socket_args args)
         tiny_assert(sthread_new(&threads[i], server_thread, &data));
         i++;
     }
+
+    /* Notify parent that server is ready. */
+    pipe_send(message_fd);
 
     /* Consider the main thread as a server thread.. */
     server_thread(&data);

@@ -30,28 +30,15 @@
 */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <fllist.h>
 #include <socket.h>
 
 #include <tiny_assert.h>
-
-/* #define NO_FORK */
-
-#ifndef WIN32
-#include <unistd.h>
-#else
-#include <windows.h>
-#endif
 
 #include "client/client.h"
 #include "server/server.h"
 #include "args_parser.h"
 
-#ifdef WIN32
-static int fork_to_background_win(int argc, char **argv);
-#endif
+int pipe_fork(int argc, char **argv);
 
 int main(int argc, char **argv)
 {
@@ -62,21 +49,9 @@ int main(int argc, char **argv)
     if (parse_args(argv, argc, &args))
         goto show_help;
 
-    if (args.new_instance) {
-        #ifndef NO_FORK
-        /* Fork to background */
-        #ifndef WIN32
-        if (fork() != 0)
-            exit(0);
-
-        setsid();
-        #else
-        argc = fork_to_background_win(argc, argv);
-        #endif
-        #endif
-
-        server(args);
-	} else
+    if (args.new_instance)
+        server(args, pipe_fork(argc, argv));
+	else
         client(args);
 
     socket_end();
@@ -93,44 +68,3 @@ int main(int argc, char **argv)
              "https://gitlab.com/TSnake41/darkbox/tree/master/socket/README\n");
         return 0;
 }
-
-#ifdef WIN32
-static int fork_to_background_win(int argc, char **argv)
-{
-    /* On Windows, no fork() = hell. */
-    if (strcmp(argv[argc - 1], "-bg") != 0) {
-        char cmdl[MAX_PATH + 5];
-        memset(cmdl, '\0', MAX_PATH + 5);
-
-        strcpy(cmdl, argv[0]);
-        STARTUPINFO si;
-        PROCESS_INFORMATION pi;
-        memset(&si, '\0', sizeof si);
-
-        strcpy(cmdl, argv[0]);
-
-        int i = 1;
-        while (i < argc) {
-            const char space = ' ';
-            strncat(cmdl, &space, 1);
-            strcat(cmdl, argv[i]);
-            i++;
-        }
-        strcat(cmdl, " -bg");
-
-        if (CreateProcess(NULL, cmdl, NULL, NULL,
-            false, 0, NULL, NULL, &si, &pi) == -1)
-            tiny_assert(true);
-
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
-
-        ExitProcess(0);
-    }
-
-    argv[argc - 1] = NULL;
-    argc--;
-
-    return argc;
-}
-#endif

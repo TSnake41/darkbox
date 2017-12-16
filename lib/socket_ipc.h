@@ -36,6 +36,6 @@
 
 socket_int socket_ipc_server_new(const char *id, int max_clients);
 socket_int socket_ipc_server_accept(socket_int server);
-socket_int socket_ipc_client_new(char *id);
+socket_int socket_ipc_client_new(const char *id);
 
 #endif /* H_IPC */

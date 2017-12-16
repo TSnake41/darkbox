@@ -70,7 +70,7 @@ socket_int socket_ipc_server_new(const char *id, int max_pending)
     return s;
 }
 
-socket_int socket_ipc_client_new(char *id)
+socket_int socket_ipc_client_new(const char *id)
 {
     socket_int s;
     struct sockaddr_un saun;
