@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
 #include <math.h>
@@ -53,7 +54,7 @@ int main(int argc, char const *argv[]) {
 
     if (1 == argc)
         /* No arguments specified, show help */
-        goto showHelp;
+        goto show_help;
 
     const char *arg = argv[1];
 
@@ -120,16 +121,24 @@ int main(int argc, char const *argv[]) {
             /* Code based on :
                https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C
             */
-            int dx = abs(Bx-Ax), sx = Ax<Bx ? 1 : -1;
-            int dy = abs(By-Ay), sy = Ay<By ? 1 : -1;
-            int err = (dx>dy ? dx : -dy)/2, e2;
+            int dx = abs(Bx-Ax), sx = Ax < Bx ? 1 : -1;
+            int dy = abs(By-Ay), sy = Ay < By ? 1 : -1;
+            int err = (dx > dy ? dx : -dy) / 2, e2;
 
-            while (1) {
+            while (true) {
                 plot(Ax, Ay, color);
-                if (Ax==Bx && Ay==By) break;
+                if (Ax == Bx && Ay == By)
+                    break;
                 e2 = err;
-                if (e2 >-dx) { err -= dy; Ax += sx; }
-                if (e2 < dy) { err += dx; Ay += sy; }
+                if (e2 >-dx) { 
+                    err -= dy; 
+                    Ax += sx;
+                }
+                
+                if (e2 < dy) { 
+                    err += dx;
+                    Ay += sy;
+                }
             }
         }
         break;
@@ -149,21 +158,20 @@ int main(int argc, char const *argv[]) {
                 w = strtol(argv[5], NULL, 0),
                 h = strtol(argv[6], NULL, 0);
 
-            char hollow = 0;
+            bool hollow = false;
 
-            if (argc > 7 && !strcmp(argv[7], "-h"))
-                hollow = 1;
+            if (argc > 7 && !strncmp(argv[7], "-h", 2))
+                hollow = true;
 
             g_plot_init(
                 hollow ? (w + h - 2) * 2 :
                          (w * h)
             );
 
-            int ix, iy;
-            for (ix = x; ix < (x + w); ix++)
-                for (iy = y; iy < (y + h); iy++)
-                    !hollow || (ix == x || ix == (x+w-1) || iy == y || iy == (y+h-1)) ?
-                        g_plot(ix, iy, color) : 0;
+            for (int ix = x; ix < (x + w); ix++)
+                for (int iy = y; iy < (y + h); iy++)
+                    if(!hollow || (ix == x || ix == (x+w-1) || iy == y || iy == (y+h-1)))
+                        g_plot(ix, iy, color);
         }
         break;
 
@@ -175,7 +183,7 @@ int main(int argc, char const *argv[]) {
             if (argc < 6)
                 return 1;
 
-            char color = *(argv[2]);
+            char color = argv[2][0];
 
             int x = strtol(argv[3], NULL, 0);
             int y = strtol(argv[4], NULL, 0);
@@ -207,12 +215,12 @@ int main(int argc, char const *argv[]) {
         break;
 
         default:
-            goto showHelp;
+            goto show_help;
     }
 
     return 0;
 
-    showHelp:
+    show_help:
         puts("darkbox_t - Darkbox toolkit module - Astie Teddy (TSnake41)\n"
              "Syntaxes :\n"
              "  (code) | darkbox_t -e [-bs:size]\n"
