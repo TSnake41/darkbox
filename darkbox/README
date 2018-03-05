@@ -174,15 +174,15 @@ Input callback reference:
         key: Key code.
 
 List of supported mouse buttons :
-    1: NOTHING (mouse movement)
-    2: LEFT_BUTTON
-    3: RIGHT_BUTTON
-    4: DOUBLE LEFT_BUTTON
-    5: DOUBLE RIGHT_BUTTON
-    6: MIDDLE_BUTTON
-    7: SCROLL_UP (portability issues known (Win32))
-    8: SCROLL_DOWN (portability issues known (Win32))
-    9: RELEASE
+    0: NOTHING (mouse movement)
+    1: LEFT_BUTTON
+    2: RIGHT_BUTTON
+    3: DOUBLE LEFT_BUTTON
+    4: DOUBLE RIGHT_BUTTON
+    5: MIDDLE_BUTTON
+    6: SCROLL_UP (portability issues known (Win32))
+    7: SCROLL_DOWN (portability issues known (Win32))
+    8: RELEASE
 
 See also:
     Official post : http://batch.xoo.it/t5526-Dev-Darkbox-TSnake41.htm
