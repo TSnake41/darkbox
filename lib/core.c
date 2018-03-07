@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "core.h"
 
@@ -100,7 +101,7 @@ void core_gotoxy_relative(int x, int y)
     #endif
 }
 
-void core_change_cursor_state(char state)
+void core_change_cursor_state(bool state)
 {
     #ifndef WIN32
     fputs (
@@ -115,7 +116,7 @@ void core_change_cursor_state(char state)
     if (!GetConsoleCursorInfo(stdout_handle, &cursor))
         return;
 
-    cursor.bVisible = (state > 0);
+    cursor.bVisible = state;
     SetConsoleCursorInfo(stdout_handle, &cursor);
     #endif
 }
@@ -190,7 +191,7 @@ void core_cwritecolor(unsigned char color, int c)
 }
 
 #ifndef WIN32
-void core_sleep(int ms)
+void core_sleep(unsigned long ms)
 {
     #ifdef __DJGPP__
     delay(ms);

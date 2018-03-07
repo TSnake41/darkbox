@@ -23,6 +23,8 @@
 #ifndef H_CORE
 #define H_CORE
 
+#include <stdbool.h>
+
 void core_init(void);
 
 void core_swritecolor(unsigned char color, const char *s);
@@ -31,12 +33,12 @@ void core_gotoxy_relative(int x_offset, int y_offset);
 
 void core_gotoxy(int x, int y);
 void core_change_color(unsigned char color);
-void core_change_cursor_state(char state);
+void core_change_cursor_state(bool state);
 void core_clear_console(void);
 void core_reset_color(void);
 
 #ifndef WIN32
-void core_sleep(int ms);
+void core_sleep(unsigned long ms);
 #else
 #include <windows.h>
 

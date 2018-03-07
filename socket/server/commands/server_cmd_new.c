@@ -41,7 +41,6 @@
 */
 void server_cmd_new(socket_message msg, socket_int client, server_data *data)
 {
-    /* TODO: Send ip:port to client. */
     if (msg.argc < 2) {
         /* Invalid arguments */
         send_code(client, CMD_INVALID_ARGS);
