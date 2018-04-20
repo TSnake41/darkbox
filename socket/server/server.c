@@ -70,7 +70,7 @@ void server(socket_args args, int message_fd)
         exit(1);
     }
 
-    /* We consider the main thread (currently running) as a server thread. */
+    /* We consider main thread (currently running) as a server thread. */
     size_t thread_count = args.data.server.thread_count - 1;
 
     sthread *threads = calloc(thread_count, sizeof(sthread));
@@ -85,7 +85,7 @@ void server(socket_args args, int message_fd)
     /* Notify parent that server is ready. */
     pipe_send(message_fd);
 
-    /* Consider the main thread as a server thread.. */
+    /* Consider the main thread as a server thread. */
     server_thread(&data);
 
     /* Never reached (server_thread never returns) */

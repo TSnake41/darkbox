@@ -106,8 +106,8 @@ void server_cmd_nms_send(socket_message msg, socket_int client, server_data *dat
 
     do {
         if (nms_recv_no_alloc(client, buffer, &recieved)) {
-            /* I assume that the IPC socket pipe is broken.
-               So, I will not send any message because it will *probably* fail.
+            /* Assumes that the IPC socket pipe is broken.
+               So, do not send any message because it will *probably* fail.
             */
             free(buffer);
             return;

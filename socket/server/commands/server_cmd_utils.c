@@ -80,7 +80,7 @@ bool server_add_pair(server_data *data, id_socket_pair *pair)
 void server_remove_pair(server_data *data, unsigned int index)
 {
     smutex_lock(&data->pair_mutex);
-    
+
     if (index >= data->pair_count) {
         /* Out of bounds */
         smutex_unlock(&data->pair_mutex);
@@ -106,9 +106,9 @@ void server_remove_pair(server_data *data, unsigned int index)
     if (new_pair_list != NULL || data->pair_count == 0)
         data->pair_list = new_pair_list;
 
-    /* In the case that new_pair_list is NULL (the realloc failed), old memory
-       still valid, however, there is just one excessing pair in allocation
-       unit (which do not affect behavior since data->pair_count determines the
+    /* In case new_pair_list is NULL (the realloc failed), old memory
+       still valid, however, only one pair in the allocation unit is surplus
+       (which does not affect behavior since data->pair_count determines the
        number of pairs).
     */
 

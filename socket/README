@@ -10,7 +10,7 @@ Syntaxes:
     2) socket -id:ID -c command [command args]
 
 1) Start new socket server.
-    If your ID override another server ID in the same directory, this server
+    If your ID overrides another server ID in the same directory, this server
     remains active but gets inaccessible (and must be killed manually).
 
 2) Connect to a IPC server to perform a command.
@@ -90,7 +90,7 @@ Commands list:
 
     exit:
         Syntax : exit
-        Usage : Ends server.
+        Usage : Kill server.
 
 errorlevels:
     0: No error
@@ -105,4 +105,4 @@ errorlevels:
     9: Data available (info)
     10: Client (socket command) internal out of memory
     11: 0-size NMS packet received (info)
-    12: IPC error (error between socket server and client).
+    12: IPC error (inter-process communication error).

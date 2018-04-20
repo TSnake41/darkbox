@@ -53,7 +53,7 @@ int pipe_fork(int argc, char **argv)
     pipe(pipes);
 
     if (fork() != 0) {
-        /* Wait until child wrote something in the pipe. */
+        /* Wait until child writes something in the pipe. */
         char b;
         read(pipes[0], &b, 1);
 
