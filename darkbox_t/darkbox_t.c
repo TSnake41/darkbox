@@ -66,7 +66,7 @@ int main(int argc, char const *argv[]) {
 
         /* Show help */
         case 'h':
-            goto showHelp;
+            goto show_help;
 
         /* Read stdout and convert output to darkbox commands
            Argument : [bs]
