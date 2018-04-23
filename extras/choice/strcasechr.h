@@ -26,4 +26,3 @@
 char *strcasechr(const char *, int);
 
 #endif /* H_STRCASECHR */
-
