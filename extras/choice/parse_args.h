@@ -34,16 +34,16 @@
 #include <stdbool.h>
 
 typedef struct choice_args {
-    char *keys,
-         *prompt;
+  char *keys,
+       *prompt;
 
-    unsigned char default_key;
-    int timeout;
+  unsigned char default_key;
+  int timeout;
 
-    bool display_choices;
-    bool case_sensitive;
+  bool display_choices;
+  bool case_sensitive;
 
-    bool display_help;
+  bool display_help;
 } choice_args;
 
 bool parse_args(int argc, char **argv, choice_args *args);

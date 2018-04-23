@@ -33,4 +33,3 @@ char *strcasechr(const char *str, int c)
 
 	return (void *)0;
 }
-
