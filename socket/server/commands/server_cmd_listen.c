@@ -38,27 +38,27 @@
 */
 void server_cmd_listen(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc < 2) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+  if (msg.argc < 2) {
+    /* Invalid arguments */
+    send_code(client, CMD_INVALID_ARGS);
+    return;
+  }
 
-    id_socket_pair *listner_pair = server_get_pair(data, msg.argv[1], NULL);
+  id_socket_pair *listner_pair = server_get_pair(data, msg.argv[1], NULL);
 
-    if (listner_pair == NULL) {
-        /* No pair */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
+  if (listner_pair == NULL) {
+    /* No pair */
+    send_code(client, CMD_NOT_FOUND);
+    return;
+  }
 
-    /* Define n (if not defined in args, define it to 0) */
-    int n = msg.argc > 2 ? strtol(msg.argv[2], NULL, 0) : 0;
+  /* Define n (if not defined in args, define it to 0) */
+  int n = msg.argc > 2 ? strtol(msg.argv[2], NULL, 0) : 0;
 
-    if (listen(listner_pair->socket, n) == -1) {
-        send_code(client, CMD_NETWORK_ERROR);
-        return;
-    }
+  if (listen(listner_pair->socket, n) == -1) {
+    send_code(client, CMD_NETWORK_ERROR);
+    return;
+  }
 
-    send_code(client, CMD_SUCCESS);
+  send_code(client, CMD_SUCCESS);
 }

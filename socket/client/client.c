@@ -44,27 +44,27 @@
 
 void client(socket_args args)
 {
-    socket_int socket = socket_ipc_client_new(args.id);
-    if (!socket_is_valid(socket)) {
-        fputs("ERROR: Unable to connect to IPC server.\n", stderr);
-        exit(1);
-    }
+  socket_int socket = socket_ipc_client_new(args.id);
+  if (!socket_is_valid(socket)) {
+    fputs("ERROR: Unable to connect to IPC server.\n", stderr);
+    exit(1);
+  }
 
-    socket_message msg = {
-        .argc = args.data.client.command_argc,
-        .argv = args.data.client.command_argv
-    };
+  socket_message msg = {
+    .argc = args.data.client.command_argc,
+    .argv = args.data.client.command_argv
+  };
 
-    tiny_assert(message_send(socket, msg));
+  tiny_assert(message_send(socket, msg));
 
-    /* Execute corresponding callback. */
-    unsigned int i = 0;
-    while (i < client_handles_count) {
-        client_handle handle = client_handles[i];
+  /* Execute corresponding callback. */
+  unsigned int i = 0;
+  while (i < client_handles_count) {
+    client_handle handle = client_handles[i];
 
-        if (strcmp(handle.cmd, msg.argv[0]) == 0)
-            handle.func(socket);
+    if (strcmp(handle.cmd, msg.argv[0]) == 0)
+      handle.func(socket);
 
-        i++;
-    }
+    i++;
+  }
 }

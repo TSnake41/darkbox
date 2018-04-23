@@ -36,23 +36,23 @@
 */
 void server_cmd_free(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc != 2) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+  if (msg.argc != 2) {
+    /* Invalid arguments */
+    send_code(client, CMD_INVALID_ARGS);
+    return;
+  }
 
-    unsigned int index;
-    id_socket_pair *pair = server_get_pair(data, msg.argv[1], &index);
+  unsigned int index;
+  id_socket_pair *pair = server_get_pair(data, msg.argv[1], &index);
 
-    if (pair == NULL) {
-        /* No pair found */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
+  if (pair == NULL) {
+    /* No pair found */
+    send_code(client, CMD_NOT_FOUND);
+    return;
+  }
 
-    send_code(client, CMD_SUCCESS);
-    close(pair->socket);
+  send_code(client, CMD_SUCCESS);
+  close(pair->socket);
 
-    server_remove_pair(data, index);
+  server_remove_pair(data, index);
 }

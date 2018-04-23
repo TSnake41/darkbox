@@ -54,19 +54,19 @@ void server_cmd_poll(socket_message, socket_int, server_data *);
 void server_cmd_exit(socket_message, socket_int, server_data *);
 
 const server_cmd server_cmds[] = {
-    { server_cmd_new, "new" },
-    { server_cmd_free, "free" },
-    { server_cmd_accept, "accept" },
-    { server_cmd_bind, "bind" },
-    { server_cmd_listen, "listen" },
-    { server_cmd_recv, "recv" },
-    { server_cmd_send, "send" },
-    { server_cmd_connect, "connect" },
-    { server_cmd_list, "list" },
-    { server_cmd_info, "info" },
-    { server_cmd_poll, "poll" },
-    { server_cmd_nms_recv, "nms_recv" },
-    { server_cmd_nms_send, "nms_send" },
-    { server_cmd_exit, "exit" },
+  { server_cmd_new, "new" },
+  { server_cmd_free, "free" },
+  { server_cmd_accept, "accept" },
+  { server_cmd_bind, "bind" },
+  { server_cmd_listen, "listen" },
+  { server_cmd_recv, "recv" },
+  { server_cmd_send, "send" },
+  { server_cmd_connect, "connect" },
+  { server_cmd_list, "list" },
+  { server_cmd_info, "info" },
+  { server_cmd_poll, "poll" },
+  { server_cmd_nms_recv, "nms_recv" },
+  { server_cmd_nms_send, "nms_send" },
+  { server_cmd_exit, "exit" },
 };
 const unsigned int server_cmds_count = sizeof(server_cmds) / sizeof(*server_cmds);

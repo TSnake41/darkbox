@@ -40,7 +40,7 @@ void core_get_mouse(bool m, unsigned int *x, unsigned int *y, unsigned int *b)
 
 void core_input_get_event(core_input_event *e)
 {
-    int c = core_getkey();
-    e->type = KEY_PRESS;
-    e->event.key_press = c;
+  int c = core_getkey();
+  e->type = KEY_PRESS;
+  e->event.key_press = c;
 }

@@ -39,101 +39,101 @@
 #include "message.h"
 
 /*
-    Messages follow this format :
-        uint arg_count
+  Messages follow this format :
+    uint arg_count
 
-        uint arg1_size
-        char arg1_data[arg1_size]
-        [...]
-        uint argN_size
-        char argN_data[argN_size]
+    uint arg1_size
+    char arg1_data[arg1_size]
+    [...]
+    uint argN_size
+    char argN_data[argN_size]
 */
 
 #define msg_flags socket_default_flags
 
 bool message_recv(socket_int socket, socket_message *message)
 {
-    if (message == NULL)
-        goto error;
+  if (message == NULL)
+    goto error;
 
-    /* Recieve the argument count. */
-    if (recv(socket, &message->argc, sizeof(unsigned int), msg_flags) == -1)
-        goto error;
+  /* Recieve the argument count. */
+  if (recv(socket, &message->argc, sizeof(unsigned int), msg_flags) == -1)
+    goto error;
 
-    message->argv = calloc(message->argc, sizeof(char *));
-    if (message->argv == NULL)
-        goto error;
+  message->argv = calloc(message->argc, sizeof(char *));
+  if (message->argv == NULL)
+    goto error;
 
-    unsigned int i = 0;
-    while (i < message->argc) {
-        /* Recieve the argument size (including NULL terminator). */
-        unsigned int size;
-        if (recv(socket, &size, sizeof(unsigned int), msg_flags) == -1)
-            goto error;
+  unsigned int i = 0;
+  while (i < message->argc) {
+    /* Recieve the argument size (including NULL terminator). */
+    unsigned int size;
+    if (recv(socket, &size, sizeof(unsigned int), msg_flags) == -1)
+      goto error;
 
-        /* Allocate memory for argument */
-        message->argv[i] = malloc(size);
-        if (message->argv[i] == NULL)
-            goto error;
+    /* Allocate memory for argument */
+    message->argv[i] = malloc(size);
+    if (message->argv[i] == NULL)
+      goto error;
 
-        /* Recieve and store the argument */
-        if (recv(socket, message->argv[i], size, msg_flags) == -1)
-            goto error;
+    /* Recieve and store the argument */
+    if (recv(socket, message->argv[i], size, msg_flags) == -1)
+      goto error;
 
-		i++;
+    i++;
+  }
+
+  return false;
+
+  error:
+    /* Cleanup all variables allocated in message */
+    if (message->argc) {
+      unsigned int i = 0;
+      while (i < message->argc) {
+        if (message->argv[i])
+          free(message->argv);
+
+        i++;
+      }
     }
 
-    return false;
+    if (message->argv)
+      free(message->argv);
 
-    error:
-        /* Cleanup all variables allocated in message */
-        if (message->argc) {
-            unsigned int i = 0;
-            while (i < message->argc) {
-                if (message->argv[i])
-                    free(message->argv);
-
-                i++;
-            }
-        }
-
-        if (message->argv)
-            free(message->argv);
-
-        return true;
+    return true;
 }
 
 bool message_send(socket_int socket, socket_message message)
 {
-    if (send(socket, &message.argc, sizeof(unsigned int), msg_flags) == -1)
-        return true;
+  if (send(socket, &message.argc, sizeof(unsigned int), msg_flags) == -1)
+    return true;
 
-    int i = 0;
-    while (i < message.argc) {
-        char *str = message.argv[i];
-        unsigned int l = strlen(str) + 1;
+  int i = 0;
+  while (i < message.argc) {
+    char *str = message.argv[i];
+    unsigned int l = strlen(str) + 1;
 
-        if (send(socket, &l, sizeof(unsigned int), msg_flags) == -1)
-            return true;
+    if (send(socket, &l, sizeof(unsigned int), msg_flags) == -1)
+      return true;
 
-        if (send(socket, str, l, msg_flags) == -1)
-            return true;
+    if (send(socket, str, l, msg_flags) == -1)
+      return true;
 
-        i++;
-    }
+    i++;
+  }
 
-    return false;
+  return false;
 }
 
 void message_free(socket_message message)
 {
-    int c = message.argc;
+  int c = message.argc;
 
-    int i = 0;
-    while (c > i) {
-        free(message.argv[i]);
-        i++;
-    }
+  int i = 0;
+  while (c > i) {
+    free(message.argv[i]);
+    i++;
+  }
 
-    free(message.argv);
+  free(message.argv);
 }

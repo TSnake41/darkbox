@@ -58,66 +58,66 @@ static void server_thread(void *_server_socket);
 
 void server(socket_args args, int message_fd)
 {
-    server_data data;
-    smutex_new(&data.pair_mutex);
-    data.args = &args;
-    data.pair_list = NULL;
-    data.pair_count = 0;
+  server_data data;
+  smutex_new(&data.pair_mutex);
+  data.args = &args;
+  data.pair_list = NULL;
+  data.pair_count = 0;
 
-    data.ipc_socket = socket_ipc_server_new(args.id, 5);
-    if (!socket_is_valid(data.ipc_socket)) {
-        fputs("ERROR: Unable to create the IPC server.\n", stderr);
-        exit(1);
-    }
+  data.ipc_socket = socket_ipc_server_new(args.id, 5);
+  if (!socket_is_valid(data.ipc_socket)) {
+    fputs("ERROR: Unable to create the IPC server.\n", stderr);
+    exit(1);
+  }
 
-    /* We consider main thread (currently running) as a server thread. */
-    size_t thread_count = args.data.server.thread_count - 1;
+  /* We consider main thread (currently running) as a server thread. */
+  size_t thread_count = args.data.server.thread_count - 1;
 
-    sthread *threads = calloc(thread_count, sizeof(sthread));
-    tiny_assert(threads == NULL); /* Check allocation. */
+  sthread *threads = calloc(thread_count, sizeof(sthread));
+  tiny_assert(threads == NULL); /* Check allocation. */
 
-    int i = 0;
-    while (i < thread_count) {
-        tiny_assert(sthread_new(&threads[i], server_thread, &data));
-        i++;
-    }
+  int i = 0;
+  while (i < thread_count) {
+    tiny_assert(sthread_new(&threads[i], server_thread, &data));
+    i++;
+  }
 
-    /* Notify parent that server is ready. */
-    pipe_send(message_fd);
+  /* Notify parent that server is ready. */
+  pipe_send(message_fd);
 
-    /* Consider the main thread as a server thread. */
-    server_thread(&data);
+  /* Consider the main thread as a server thread. */
+  server_thread(&data);
 
-    /* Never reached (server_thread never returns) */
+  /* Never reached (server_thread never returns) */
 }
 
 static void server_thread(void *_server_data)
 {
-    server_data *data = _server_data;
+  server_data *data = _server_data;
 
-    while (true) {
-        socket_int c = accept(data->ipc_socket, NULL, NULL);
+  while (true) {
+    socket_int c = accept(data->ipc_socket, NULL, NULL);
 
-        socket_message msg;
+    socket_message msg;
 
-        if (message_recv(c, &msg)) {
-            close(c);
-            continue;
-        }
-
-        if (msg.argc != 0) {
-            unsigned int i = 0;
-            while (i < server_cmds_count) {
-                if (stricmp(server_cmds[i].key, msg.argv[0]) == 0) {
-                    server_cmds[i].cmd(msg, c, data);
-                    break;
-                }
-
-                i++;
-            }
-        }
-
-        close(c);
-        message_free(msg);
+    if (message_recv(c, &msg)) {
+      close(c);
+      continue;
     }
+
+    if (msg.argc != 0) {
+      unsigned int i = 0;
+      while (i < server_cmds_count) {
+        if (stricmp(server_cmds[i].key, msg.argv[0]) == 0) {
+          server_cmds[i].cmd(msg, c, data);
+          break;
+        }
+
+        i++;
+      }
+    }
+
+    close(c);
+    message_free(msg);
+  }
 }

@@ -56,27 +56,27 @@ int _setmode(int, int);
 #define client_handle_nms_send client_handle_send
 
 const client_handle client_handles[] = {
-    { client_handle_code, "new" },
-    { client_handle_code, "free" },
-    { client_handle_nms_recv, "accept" },
-    { client_handle_code, "bind" },
-    { client_handle_code, "listen" },
-    { client_handle_recv, "recv" },
-    { client_handle_send, "send" },
-    { client_handle_code, "connect" },
-    { client_handle_recv, "list" },
-    { client_handle_nms_recv, "info" },
-    { client_handle_poll, "poll" },
-    { client_handle_nms_recv, "nms_recv" },
-    { client_handle_nms_send, "nms_send" },
+  { client_handle_code, "new" },
+  { client_handle_code, "free" },
+  { client_handle_nms_recv, "accept" },
+  { client_handle_code, "bind" },
+  { client_handle_code, "listen" },
+  { client_handle_recv, "recv" },
+  { client_handle_send, "send" },
+  { client_handle_code, "connect" },
+  { client_handle_recv, "list" },
+  { client_handle_nms_recv, "info" },
+  { client_handle_poll, "poll" },
+  { client_handle_nms_recv, "nms_recv" },
+  { client_handle_nms_send, "nms_send" },
 };
 const unsigned int client_handles_count = sizeof(client_handles) / sizeof(*client_handles);
 
 /** Recieve code from socket, and use it as exit code. */
 void client_handle_code(socket_int socket)
 {
-    uint8_t code = recv_code(socket);
-    exit(code);
+  uint8_t code = recv_code(socket);
+  exit(code);
 }
 
 /* First recieve code from IPC socket, then (if sucess)
@@ -84,58 +84,58 @@ void client_handle_code(socket_int socket)
  */
 void client_handle_recv(socket_int socket)
 {
-    uint8_t code = recv_code(socket);
-    if (code != CMD_SUCCESS)
-        /* Is an error. */
-        exit(code);
+  uint8_t code = recv_code(socket);
+  if (code != CMD_SUCCESS)
+    /* Is an error. */
+    exit(code);
 
-    #ifdef WIN32
-	/* Set stdout to binary mode */
-    set_bin_mode(stdout);
-    #endif
+  #ifdef WIN32
+  /* Set stdout to binary mode */
+  set_bin_mode(stdout);
+  #endif
 
-    uint16_t count = 0;
-    char *buffer = malloc(0xFFFF);
-    if (buffer == NULL)
-        exit(CMD_CLIENT_OOM);
+  uint16_t count = 0;
+  char *buffer = malloc(0xFFFF);
+  if (buffer == NULL)
+    exit(CMD_CLIENT_OOM);
 
-    do {
-        if (nms_recv_no_alloc(socket, buffer, &count))
-            exit(CMD_IPC_ERROR);
+  do {
+    if (nms_recv_no_alloc(socket, buffer, &count))
+      exit(CMD_IPC_ERROR);
 
-        fwrite(buffer, count, 1, stdout);
-    } while(count != 0);
+    fwrite(buffer, count, 1, stdout);
+  } while(count != 0);
 
-    free(buffer);
-    exit(CMD_SUCCESS);
+  free(buffer);
+  exit(CMD_SUCCESS);
 }
 
 /** Send to IPC socket data from stdin. */
 void client_handle_send(socket_int socket)
 {
-    setvbuf(stdin, NULL, _IONBF, 0);
+  setvbuf(stdin, NULL, _IONBF, 0);
 
-    #ifdef WIN32
+  #ifdef WIN32
 	/* Set stdin to binary mode */
-    set_bin_mode(stdin);
-    #endif
+  set_bin_mode(stdin);
+  #endif
 
-    uint16_t count = 0;
-    char *buffer = malloc(0xFFFF);
-    if (buffer == NULL)
-        exit(CMD_CLIENT_OOM);
+  uint16_t count = 0;
+  char *buffer = malloc(0xFFFF);
+  if (buffer == NULL)
+    exit(CMD_CLIENT_OOM);
 
-    do {
-        count = fread(buffer, 1, 0xFFFF, stdin);
+  do {
+    count = fread(buffer, 1, 0xFFFF, stdin);
 
-        if (nms_send(socket, buffer, count))
-            exit(CMD_IPC_ERROR);
-    } while(count == 0xFFFF);
+    if (nms_send(socket, buffer, count))
+      exit(CMD_IPC_ERROR);
+  } while(count == 0xFFFF);
 
-    free(buffer);
+  free(buffer);
 
-    uint8_t code = recv_code(socket);
-    exit(code);
+  uint8_t code = recv_code(socket);
+  exit(code);
 }
 
 /** Recieve code from IPC socket, then (if success)
@@ -143,30 +143,30 @@ void client_handle_send(socket_int socket)
  */
 void client_handle_nms_recv(socket_int socket)
 {
-    uint8_t code = recv_code(socket);
-    if (code != CMD_SUCCESS)
-        /* Is an error. */
-        exit(code);
+  uint8_t code = recv_code(socket);
+  if (code != CMD_SUCCESS)
+    /* Is an error. */
+    exit(code);
 
-    #ifdef WIN32
-    /* Set stdout to binary mode */
-    set_bin_mode(stdout);
-    #endif
+  #ifdef WIN32
+  /* Set stdout to binary mode */
+  set_bin_mode(stdout);
+  #endif
 
-    uint16_t recieved = 0;
-    void *buffer;
+  uint16_t recieved = 0;
+  void *buffer;
 
-    if (nms_recv(socket, &buffer, &recieved))
-        exit(CMD_IPC_ERROR);
-    else
-        fwrite(buffer, 1, recieved, stdout);
+  if (nms_recv(socket, &buffer, &recieved))
+    exit(CMD_IPC_ERROR);
+  else
+    fwrite(buffer, 1, recieved, stdout);
 
-    free(buffer);
-    exit(recieved ? CMD_SUCCESS : CMD_NMS_ZERO_SIZE);
+  free(buffer);
+  exit(recieved ? CMD_SUCCESS : CMD_NMS_ZERO_SIZE);
 }
 
 /** Implementation needed */
 void client_handle_poll(socket_int socket)
 {
-    /* TODO */
+  /* TODO */
 }

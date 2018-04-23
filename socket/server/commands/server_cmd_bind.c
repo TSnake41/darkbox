@@ -38,40 +38,40 @@
 */
 void server_cmd_bind(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc != 4) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+  if (msg.argc != 4) {
+    /* Invalid arguments */
+    send_code(client, CMD_INVALID_ARGS);
+    return;
+  }
 
-    char *sock_id = msg.argv[1],
-         *ip = msg.argv[2];
+  char *sock_id = msg.argv[1],
+       *ip = msg.argv[2];
 
-    in_port_t port = htons(strtoul(msg.argv[3], NULL, 0));
+  in_port_t port = htons(strtoul(msg.argv[3], NULL, 0));
 
-    id_socket_pair *pair = server_get_pair(data, sock_id, NULL);
+  id_socket_pair *pair = server_get_pair(data, sock_id, NULL);
 
-    if (pair == NULL) {
-        /* No pair */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
+  if (pair == NULL) {
+    /* No pair */
+    send_code(client, CMD_NOT_FOUND);
+    return;
+  }
 
-    socklen_t len;
-    struct sockaddr *addr;
+  socklen_t len;
+  struct sockaddr *addr;
 
-    if (server_make_sockaddr(ip, port, pair->ipv6, &addr, &len)) {
-        /* Invalid host */
-        send_code(client, CMD_INVALID_HOST);
-        return;
-    }
+  if (server_make_sockaddr(ip, port, pair->ipv6, &addr, &len)) {
+    /* Invalid host */
+    send_code(client, CMD_INVALID_HOST);
+    return;
+  }
 
-    if (bind(pair->socket, addr, len) == -1) {
-        /* Failed to bind to port. */
-        send_code(client, CMD_BIND_ERROR);
-        free(addr);
-        return;
-    }
+  if (bind(pair->socket, addr, len) == -1) {
+    /* Failed to bind to port. */
+    send_code(client, CMD_BIND_ERROR);
+    free(addr);
+    return;
+  }
 
-    send_code(client, CMD_SUCCESS);
+  send_code(client, CMD_SUCCESS);
 }

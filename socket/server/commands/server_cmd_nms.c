@@ -39,41 +39,41 @@
 */
 void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc < 1) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+  if (msg.argc < 1) {
+    /* Invalid arguments */
+    send_code(client, CMD_INVALID_ARGS);
+    return;
+  }
 
-    id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
+  id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
 
-    if (pair == NULL) {
-        /* No pair found */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
+  if (pair == NULL) {
+    /* No pair found */
+    send_code(client, CMD_NOT_FOUND);
+    return;
+  }
 
-    #if 0
-    if (msg.argc < 2) {
-        /* Set timeout */
-        long timeout
-        if (socket_set_read_timeout(pair->socket, ))
-    }
-    #endif
+  #if 0
+  if (msg.argc < 2) {
+    /* Set timeout */
+    long timeout
+    if (socket_set_read_timeout(pair->socket, ))
+  }
+  #endif
 
-    /* Create buffer of 2^16-1 bytes. */
-    uint16_t recieved;
-    void *buffer;
+  /* Create buffer of 2^16-1 bytes. */
+  uint16_t recieved;
+  void *buffer;
 
-    if (nms_recv(pair->socket, &buffer, &recieved))
-        send_code(client, CMD_NETWORK_ERROR);
-    else {
-        send_code(client, CMD_SUCCESS);
+  if (nms_recv(pair->socket, &buffer, &recieved))
+    send_code(client, CMD_NETWORK_ERROR);
+  else {
+    send_code(client, CMD_SUCCESS);
 
-        /* Send back recieved data. */
-        nms_send(client, buffer, recieved);
-        free(buffer);
-    }
+    /* Send back recieved data. */
+    nms_send(client, buffer, recieved);
+    free(buffer);
+  }
 }
 
 /* Syntax : nms_send sock_id
@@ -81,47 +81,47 @@ void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *dat
 */
 void server_cmd_nms_send(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc != 2) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
+  if (msg.argc != 2) {
+    /* Invalid arguments */
+    send_code(client, CMD_INVALID_ARGS);
+    return;
+  }
+
+  id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
+
+  if (pair == NULL) {
+    /* No pair found */
+    send_code(client, CMD_NOT_FOUND);
+    return;
+  }
+
+  uint16_t recieved;
+  void *buffer = malloc(0xFFFF);
+
+  if (buffer == NULL) {
+    /* Out of memory. */
+    send_code(client, CMD_OUT_OF_MEMORY);
+    return;
+  }
+
+  do {
+    if (nms_recv_no_alloc(client, buffer, &recieved)) {
+      /* Assumes that the IPC socket pipe is broken.
+         So, do not send any message because it will *probably* fail.
+      */
+      free(buffer);
+      return;
     }
 
-    id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
-
-    if (pair == NULL) {
-        /* No pair found */
-        send_code(client, CMD_NOT_FOUND);
-        return;
+    /* Send data to socket */
+    if (nms_send(pair->socket, buffer, recieved)) {
+      /* Unable to send data to client. */
+      send_code(client, CMD_NETWORK_ERROR);
+      free(buffer);
+      return;
     }
+  } while (recieved == 0xFFFF);
 
-    uint16_t recieved;
-    void *buffer = malloc(0xFFFF);
-
-    if (buffer == NULL) {
-        /* Out of memory. */
-        send_code(client, CMD_OUT_OF_MEMORY);
-        return;
-    }
-
-    do {
-        if (nms_recv_no_alloc(client, buffer, &recieved)) {
-            /* Assumes that the IPC socket pipe is broken.
-               So, do not send any message because it will *probably* fail.
-            */
-            free(buffer);
-            return;
-        }
-
-        /* Send data to socket */
-        if (nms_send(pair->socket, buffer, recieved)) {
-            /* Unable to send data to client. */
-            send_code(client, CMD_NETWORK_ERROR);
-            free(buffer);
-            return;
-        }
-    } while (recieved == 0xFFFF);
-
-    send_code(client, CMD_SUCCESS);
-    free(buffer);
+  send_code(client, CMD_SUCCESS);
+  free(buffer);
 }

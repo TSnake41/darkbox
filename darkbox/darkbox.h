@@ -50,11 +50,11 @@
 /* --- End of user configuration --- */
 
 typedef struct darkbox_cmd {
-    char *cmd;
-    int count;
-    /* no argv nor argc because they are parsed
-       from stdin to get the parsing more responsive
-    */
+  char *cmd;
+  int count;
+  /* no argv nor argc because they are parsed
+     from stdin to get the parsing more responsive
+  */
 } darkbox_cmd;
 
 #endif /* H_DARKBOX */

@@ -30,5 +30,5 @@
 
 bool core_is_stdin_console(void)
 {
-    return isatty(fileno(stdin));
+  return isatty(fileno(stdin));
 }

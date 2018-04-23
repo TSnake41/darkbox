@@ -31,79 +31,79 @@
 
 int getch(void)
 {
-    struct termios oldattr, newattr;
-    int ch;
-    tcgetattr(fileno(stdin), &oldattr);
-    newattr = oldattr;
-    newattr.c_lflag &= ~( ICANON | ECHO );
-    tcsetattr(fileno(stdin), TCSANOW, &newattr);
-    ch = getchar();
-    tcsetattr(fileno(stdin), TCSANOW, &oldattr);
+  struct termios oldattr, newattr;
+  int ch;
+  tcgetattr(fileno(stdin), &oldattr);
+  newattr = oldattr;
+  newattr.c_lflag &= ~( ICANON | ECHO );
+  tcsetattr(fileno(stdin), TCSANOW, &newattr);
+  ch = getchar();
+  tcsetattr(fileno(stdin), TCSANOW, &oldattr);
 
-    /* Handle special chracters */
-    if (ch == '\033' && getch() == '[')
-            switch (getch()) {
-                case 'A': /* up arrow */
-                    return 72;
-                    break;
-                case 'B': /* down arrow */
-                    return 80;
-                    break;
-                case 'C': /* right arrow */
-                    return 77;
-                    break;
-                case 'D': /* left arrow */
-                    return 75;
-                    break;
-                case 'F': /* end */
-                    return 79;
-                    break;
-                case 'H': /* begin */
-                    return 71;
-                    break;
+  /* Handle special chracters */
+  if (ch == '\033' && getch() == '[')
+    switch (getch()) {
+      case 'A': /* up arrow */
+        return 72;
+        break;
+      case 'B': /* down arrow */
+        return 80;
+        break;
+      case 'C': /* right arrow */
+        return 77;
+        break;
+      case 'D': /* left arrow */
+        return 75;
+        break;
+      case 'F': /* end */
+        return 79;
+        break;
+      case 'H': /* begin */
+        return 71;
+        break;
 
-                case '2': /* insert */
-                    getch(); /* ignore the next character */
-                    return 82;
-                    break;
-                case '3': /* delete */
-                    getch();
-                    return 83;
-                    break;
-                case '5': /* page up */
-                    getch();
-                    return 73;
-                    break;
-                case '6': /* page down */
-                    getch();
-                    return 81;
-                    break;
+      case '2': /* insert */
+        getch(); /* ignore the next character */
+        return 82;
+        break;
+      case '3': /* delete */
+        getch();
+        return 83;
+        break;
+      case '5': /* page up */
+        getch();
+        return 73;
+        break;
+      case '6': /* page down */
+        getch();
+        return 81;
+        break;
 
-                default:
-                    return -2; /* unmanaged/unknown key */
-                    break;
-            }
+      default:
+        return -2; /* unmanaged/unknown key */
+        break;
+    }
 
-    else return ch;
+  else
+    return ch;
 }
 
 /* Morgan McGuire, morgan@cs.brown.edu */
 int kbhit(void)
 {
-    static char initialized = 0;
+  static char initialized = 0;
 
-    if (! initialized) {
-        // Use termios to turn off line buffering
-        struct termios term;
-        tcgetattr(fileno(stdin), &term);
-        term.c_lflag &= ~ICANON;
-        tcsetattr(fileno(stdin), TCSANOW, &term);
-        setbuf(stdin, NULL);
-        initialized = 1;
-    }
+  if (! initialized) {
+    // Use termios to turn off line buffering
+    struct termios term;
+    tcgetattr(fileno(stdin), &term);
+    term.c_lflag &= ~ICANON;
+    tcsetattr(fileno(stdin), TCSANOW, &term);
+    setbuf(stdin, NULL);
+    initialized = 1;
+  }
 
-    int bytesWaiting;
-    ioctl(fileno(stdin), FIONREAD, &bytesWaiting);
-    return bytesWaiting;
-
+  int bytesWaiting;
+  ioctl(fileno(stdin), FIONREAD, &bytesWaiting);
+  return bytesWaiting;
 }

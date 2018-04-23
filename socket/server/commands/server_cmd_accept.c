@@ -41,80 +41,79 @@
 */
 void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc < 2) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+  if (msg.argc < 2) {
+    /* Invalid arguments */
+    send_code(client, CMD_INVALID_ARGS);
+    return;
+  }
 
-    bool id_arg_defined = msg.argc > 2;
+  bool id_arg_defined = msg.argc > 2;
 
-    id_socket_pair *listner_pair = server_get_pair(data, msg.argv[1], NULL);
+  id_socket_pair *listner_pair = server_get_pair(data, msg.argv[1], NULL);
 
-    if (listner_pair == NULL) {
-        /* No pair */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
+  if (listner_pair == NULL) {
+    /* No pair */
+    send_code(client, CMD_NOT_FOUND);
+    return;
+  }
 
-    struct sockaddr_storage addr = { 0 };
-    socklen_t addr_len = sizeof(addr);
+  struct sockaddr_storage addr = { 0 };
+  socklen_t addr_len = sizeof(addr);
 
-    socket_int new_socket =
-        accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
+  socket_int new_socket =
+    accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
 
-    if (new_socket == -1) {
-        /* accept() error */
-        send_code(client, CMD_NETWORK_ERROR);
-        return;
-    }
+  if (new_socket == -1) {
+    /* accept() error */
+    send_code(client, CMD_NETWORK_ERROR);
+    return;
+  }
 
-    #ifdef WIN32
-    /* I have some doubts for Windows whether the sure
-       socket is blocking or not, so I prefer be
-       (for *NIX, this is defined by standards).
-    */
-    socket_set_blocking(new_socket, true);
-    #endif
+  #ifdef WIN32
+  /* I have some doubts for Windows whether the sure
+     socket is blocking or not, so I prefer be
+     (for *NIX, this is defined by standards).
+  */
+  socket_set_blocking(new_socket, true);
+  #endif
 
-    char ip_port[INET6_ADDRSTRLEN + 6];
+  char ip_port[INET6_ADDRSTRLEN + 6];
 
-    /* Convert addr to ip:port */
-    if (server_addr_to_str(ip_port, &addr, addr_len)) {
-        send_code(client, CMD_INTERNAL_ERROR);
-        close(new_socket);
-        return;
-    }
+  /* Convert addr to ip:port */
+  if (server_addr_to_str(ip_port, &addr, addr_len)) {
+    send_code(client, CMD_INTERNAL_ERROR);
+    close(new_socket);
+    return;
+  }
 
-    /* Define ID with ip_port or new_sock_id if defined */
-    char *new_id = id_arg_defined ? msg.argv[2] : ip_port;
+  /* Define ID with ip_port or new_sock_id if defined */
+  char *new_id = id_arg_defined ? msg.argv[2] : ip_port;
 
-    /* Create a new pair */
-    id_socket_pair *new_pair =
-        malloc(sizeof(id_socket_pair) + strlen(new_id) + 1);
-        
-    if (new_pair == NULL) {
-        /* Out of memory */
-        send_code(client, CMD_OUT_OF_MEMORY);
-        close(new_socket);
-        return;
-    }
+  /* Create a new pair */
+  id_socket_pair *new_pair = malloc(sizeof(id_socket_pair) + strlen(new_id) + 1);
 
-    new_pair->id = get_str(new_pair);
-    strcpy(new_pair->id, new_id);
+  if (new_pair == NULL) {
+    /* Out of memory */
+    send_code(client, CMD_OUT_OF_MEMORY);
+    close(new_socket);
+    return;
+  }
 
-    new_pair->socket = new_socket;
-    new_pair->ipv6 = addr.ss_family == AF_INET6;
+  new_pair->id = get_str(new_pair);
+  strcpy(new_pair->id, new_id);
 
-    if (server_add_pair(data, new_pair)) {
-        send_code(client, CMD_OUT_OF_MEMORY);
-        close(new_socket);
-        free(new_pair);
-        return;
-    }
+  new_pair->socket = new_socket;
+  new_pair->ipv6 = addr.ss_family == AF_INET6;
 
-    send_code(client, CMD_SUCCESS);
+  if (server_add_pair(data, new_pair)) {
+    send_code(client, CMD_OUT_OF_MEMORY);
+    close(new_socket);
+    free(new_pair);
+    return;
+  }
 
-    /* Send ip:port to client. */
-    nms_send(client, ip_port, strlen(ip_port));
+  send_code(client, CMD_SUCCESS);
+
+  /* Send ip:port to client. */
+  nms_send(client, ip_port, strlen(ip_port));
 }

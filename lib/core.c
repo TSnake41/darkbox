@@ -42,8 +42,8 @@ static CONSOLE_SCREEN_BUFFER_INFO csbi;
 #include <time.h>
 
 const char Ansi_Table[8] = {
-    0, 4, 2, 6,
-    1, 5, 3, 7,
+  0, 4, 2, 6,
+  1, 5, 3, 7,
 };
 
 #endif
@@ -58,67 +58,67 @@ const char Ansi_Table[8] = {
 
 void core_init(void)
 {
-    #ifdef WIN32
-    stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
-    GetConsoleScreenBufferInfo(stdout_handle, &csbi);
-    #endif
+  #ifdef WIN32
+  stdout_handle = GetStdHandle(STD_OUTPUT_HANDLE);
+  GetConsoleScreenBufferInfo(stdout_handle, &csbi);
+  #endif
 }
 
 void core_gotoxy(int x, int y)
 {
-    if (x < 0 || y < 0)
-        return;
+  if (x < 0 || y < 0)
+    return;
 
-    #ifndef WIN32
-    printf("\033[%d;%df", y + 1, x + 1);
-    #else
-    COORD c = { x, y };
-    SetConsoleCursorPosition(stdout_handle, c);
-    #endif
+  #ifndef WIN32
+  printf("\033[%d;%df", y + 1, x + 1);
+  #else
+  COORD c = { x, y };
+  SetConsoleCursorPosition(stdout_handle, c);
+  #endif
 }
 
 void core_gotoxy_relative(int x, int y)
 {
-    #ifndef WIN32
-    if (x != 0)
-        printf("\033[%d%c",
-            abs(x),
-            x > 0 ? 'C' : 'D'
-        );
-
-    if (y != 0)
-        printf("\033[%d%c",
-            abs(y),
-            y > 0 ? 'B' : 'A'
-        );
-    #else
-    GetConsoleScreenBufferInfo(stdout_handle, &csbi);
-
-    core_gotoxy(
-        max(0, csbi.dwCursorPosition.X + x),
-        max(0, csbi.dwCursorPosition.Y + y)
+  #ifndef WIN32
+  if (x != 0)
+    printf("\033[%d%c",
+      abs(x),
+      x > 0 ? 'C' : 'D'
     );
-    #endif
+
+  if (y != 0)
+    printf("\033[%d%c",
+      abs(y),
+      y > 0 ? 'B' : 'A'
+    );
+  #else
+  GetConsoleScreenBufferInfo(stdout_handle, &csbi);
+
+  core_gotoxy(
+    max(0, csbi.dwCursorPosition.X + x),
+    max(0, csbi.dwCursorPosition.Y + y)
+  );
+  #endif
 }
 
 void core_change_cursor_state(bool state)
 {
-    #ifndef WIN32
-    fputs (
-        state ?
-        "\033[?25h" : /* hide */
-        "\033[?25l",  /* show */
-        stdout
-    );
-    #else
-    CONSOLE_CURSOR_INFO cursor;
+  #ifndef WIN32
+  fputs (
+    state ?
+    "\033[?25h" : /* hide */
+    "\033[?25l",  /* show */
+    stdout
+  );
+  #else
+  CONSOLE_CURSOR_INFO cursor;
 
-    if (!GetConsoleCursorInfo(stdout_handle, &cursor))
-        return;
+  if (!GetConsoleCursorInfo(stdout_handle, &cursor))
+    return;
 
-    cursor.bVisible = state;
-    SetConsoleCursorInfo(stdout_handle, &cursor);
-    #endif
+  cursor.bVisible = state;
+  SetConsoleCursorInfo(stdout_handle, &cursor);
+  #endif
 }
 
 
@@ -138,7 +138,7 @@ void core_clear_console(void)
     dwConSize = csbi.dwSize.X * csbi.dwSize.Y;
 
     FillConsoleOutputCharacter( stdout_handle, (TCHAR) ' ',
-       dwConSize, coordScreen, &cCharsWritten );
+      dwConSize, coordScreen, &cCharsWritten );
 
     GetConsoleScreenBufferInfo( stdout_handle, &csbi );
     FillConsoleOutputAttribute( stdout_handle, csbi.wAttributes, dwConSize, coordScreen, &cCharsWritten );
@@ -149,60 +149,60 @@ void core_clear_console(void)
 
 void core_change_color(unsigned char color)
 {
-    #ifndef WIN32
-    char bc = color & 0xF;
-    char fc = color >> 4;
+  #ifndef WIN32
+  char bc = color & 0xF;
+  char fc = color >> 4;
 
-    printf("\033[0m\033[%s3%dm\033[%s4%dm",
-        bc > 7 ? "1;" : "", Ansi_Table[bc % 8],
-        fc > 7 ? "1;" : "", Ansi_Table[fc % 8]
-    );
-    #else
-    SetConsoleTextAttribute(stdout_handle, color);
-    #endif
+  printf("\033[0m\033[%s3%dm\033[%s4%dm",
+    bc > 7 ? "1;" : "", Ansi_Table[bc % 8],
+    fc > 7 ? "1;" : "", Ansi_Table[fc % 8]
+  );
+  #else
+  SetConsoleTextAttribute(stdout_handle, color);
+  #endif
 }
 
 void core_reset_color(void)
 {
-    #ifndef WIN32
-    fputs("\033[39m\033[49m", stdout);
-    #else
-    SetConsoleTextAttribute(stdout_handle, csbi.wAttributes);
-    #endif
+  #ifndef WIN32
+  fputs("\033[39m\033[49m", stdout);
+  #else
+  SetConsoleTextAttribute(stdout_handle, csbi.wAttributes);
+  #endif
 }
 
 void core_swritecolor(unsigned char color, const char *s)
 {
-    if (!s)
-        return;
+  if (!s)
+    return;
 
-    core_change_color(color);
-    fputs(s, stdout);
+  core_change_color(color);
+  fputs(s, stdout);
 
-    core_reset_color();
+  core_reset_color();
 }
 
 void core_cwritecolor(unsigned char color, int c)
 {
-    core_change_color(color);
-    putchar(c);
+  core_change_color(color);
+  putchar(c);
 
-    core_reset_color();
+  core_reset_color();
 }
 
 #ifndef WIN32
 void core_sleep(unsigned long ms)
 {
-    #ifdef __DJGPP__
-    delay(ms);
-    #else
-    struct timespec req;
-    time_t sec = (int)(ms / 1000);
-    ms -= sec * 1000;
-    req.tv_sec = sec;
-    req.tv_nsec = ms * 1e+6L;
-    while (nanosleep(&req, &req) == -1)
-        continue;
-    #endif
+  #ifdef __DJGPP__
+  delay(ms);
+  #else
+  struct timespec req;
+  time_t sec = (int)(ms / 1000);
+  ms -= sec * 1000;
+  req.tv_sec = sec;
+  req.tv_nsec = ms * 1e+6L;
+  while (nanosleep(&req, &req) == -1)
+    continue;
+  #endif
 }
 #endif

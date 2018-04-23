@@ -41,17 +41,17 @@
 #include "../args_parser.h"
 
 typedef struct id_socket_pair {
-    char *id;
-    socket_int socket;
-    bool ipv6;
+  char *id;
+  socket_int socket;
+  bool ipv6;
 } id_socket_pair;
 
 typedef struct server_data {
-    socket_int ipc_socket;
-    socket_args *args;
-    id_socket_pair **pair_list;
-    size_t pair_count;
-    smutex pair_mutex;
+  socket_int ipc_socket;
+  socket_args *args;
+  id_socket_pair **pair_list;
+  size_t pair_count;
+  smutex pair_mutex;
 } server_data;
 
 void server(socket_args args, int message_fd);

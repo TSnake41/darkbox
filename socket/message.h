@@ -36,8 +36,8 @@
 #include <socket.h>
 
 typedef struct socket_message {
-    unsigned int argc;
-    char **argv;
+  unsigned int argc;
+  char **argv;
 } socket_message;
 
 /**

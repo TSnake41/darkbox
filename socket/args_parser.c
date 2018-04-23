@@ -39,87 +39,87 @@
 
 bool parse_args(char **argv, int argc, socket_args *args)
 {
-    bool context_defined = false;
-    memset(args, '\0', sizeof(socket_args));
+  bool context_defined = false;
+  memset(args, '\0', sizeof(socket_args));
 
-    int i = 0;
-    while (i < argc) {
-        if (argv[i][0] != '-') {
-            /* Invalid argument */
-            i++;
-            continue;
-        }
-
-        char *s = argv[i] + 1,
-             *v = strchr(s, ':');
-
-        switch (tolower(*s)) {
-            case 'i':
-                if (v != NULL)
-                    args->id = v + 1;
-                else {
-                    fputs("ERROR: ID defined without value.\n", stderr);
-                    return true;
-                }
-                break;
-
-            case 'n':
-                context_defined = true;
-                args->new_instance = true;
-                args->data.server.thread_count = THREAD_COUNT;
-                break;
-
-            case 't':
-                if (!args->new_instance) {
-                    fputs("ERROR: Attempted to define 't' in non-server context.\n", stderr);
-                    return true;
-                }
-
-				if (v != NULL)
-					args->data.server.thread_count = strtol(v + 1, NULL, 0);
-				else {
-					fputs("ERROR: 't' defined without value.\n", stderr);
-					return true;
-				}
-                break;
-
-            case 'c':
-                context_defined = true;
-                client_request_data *client_data = &(args->data.client);
-                i++;
-
-                /* Begin client command list */
-                int c_argc = client_data->command_argc = argc - i;
-                client_data->command_argv = calloc(c_argc, sizeof(char *));
-
-                int j = 0;
-                while (j < c_argc) {
-                    client_data->command_argv[j] = argv[i + j];
-                    j++;
-                }
-
-                goto skip_loop;
-        }
-
-        i++;
+  int i = 0;
+  while (i < argc) {
+    if (argv[i][0] != '-') {
+      /* Invalid argument */
+      i++;
+      continue;
     }
 
-    skip_loop:
-        if (args->id == NULL) {
-            fputs("ERROR: ID not defined.\n", stderr);
-            return true;
+    char *s = argv[i] + 1,
+         *v = strchr(s, ':');
+
+    switch (tolower(*s)) {
+      case 'i':
+          if (v != NULL)
+              args->id = v + 1;
+          else {
+              fputs("ERROR: ID defined without value.\n", stderr);
+              return true;
+          }
+          break;
+
+      case 'n':
+          context_defined = true;
+          args->new_instance = true;
+          args->data.server.thread_count = THREAD_COUNT;
+          break;
+
+      case 't':
+        if (!args->new_instance) {
+          fputs("ERROR: Attempted to define 't' in non-server context.\n", stderr);
+          return true;
         }
 
-        if (!context_defined) {
-            fputs("INFO: No context defined.\n", stderr);
-            return true;
+    		if (v != NULL)
+    			args->data.server.thread_count = strtol(v + 1, NULL, 0);
+    		else {
+    			fputs("ERROR: 't' defined without value.\n", stderr);
+    			return true;
+    		}
+        break;
+
+      case 'c':
+        context_defined = true;
+        client_request_data *client_data = &(args->data.client);
+        i++;
+
+        /* Begin client command list */
+        int c_argc = client_data->command_argc = argc - i;
+        client_data->command_argv = calloc(c_argc, sizeof(char *));
+
+        int j = 0;
+        while (j < c_argc) {
+          client_data->command_argv[j] = argv[i + j];
+          j++;
         }
 
-        return false;
+        goto skip_loop;
+    }
+
+    i++;
+  }
+
+  skip_loop:
+    if (args->id == NULL) {
+      fputs("ERROR: ID not defined.\n", stderr);
+      return true;
+    }
+
+    if (!context_defined) {
+      fputs("INFO: No context defined.\n", stderr);
+      return true;
+    }
+
+    return false;
 }
 
 void free_args(socket_args args)
 {
-    if (!args.new_instance && args.data.client.command_argv != NULL)
-        free(args.data.client.command_argv);
+  if (!args.new_instance && args.data.client.command_argv != NULL)
+    free(args.data.client.command_argv);
 }

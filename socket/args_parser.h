@@ -35,21 +35,21 @@
 #include <stdbool.h>
 
 typedef struct client_request_data {
-    int command_argc;
-    char **command_argv;
+  int command_argc;
+  char **command_argv;
 } client_request_data;
 
 typedef struct new_server_data {
-    int thread_count;
+  int thread_count;
 } new_server_data;
 
 typedef struct socket_args {
-    char *id;
-    bool new_instance;
-    union {
-        client_request_data client;
-        new_server_data server;
-    } data;
+  char *id;
+  bool new_instance;
+  union {
+    client_request_data client;
+    new_server_data server;
+  } data;
 } socket_args;
 
 bool parse_args(char **argv, int argc, socket_args *args);

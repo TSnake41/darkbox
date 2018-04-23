@@ -38,33 +38,33 @@
 #include "server/server.h"
 #include "args_parser.h"
 
-int pipe_fork(int argc, char **argv);
+#include "pipe_fork.h"
 
 int main(int argc, char **argv)
 {
-    socket_init();
+  socket_init();
 
-    /* Parse args */
-    socket_args args;
-    if (parse_args(argv, argc, &args))
-        goto show_help;
+  /* Parse args */
+  socket_args args;
+  if (parse_args(argv, argc, &args))
+    goto show_help;
 
-    if (args.new_instance)
-        server(args, pipe_fork(argc, argv));
-	else
-        client(args);
+  if (args.new_instance)
+    server(args, pipe_fork(argc, argv));
+  else
+    client(args);
 
-    socket_end();
+  socket_end();
+  return 0;
+
+  show_help:
+    puts("socket - Portable TCP and NMS Network IO interface - Astie Teddy (TSnake41)\n"
+         "Syntaxes :\n"
+         "  1: socket -id:ID -n [-t thread_count]\n"
+         "  2: socket -id:ID -c command [command args]\n\n"
+         "1: Start new socket server.\n"
+         "2: Connect to a IPC server to perform a command.\n\n"
+         "For more informations, see README at:\n"
+         "https://gitlab.com/TSnake41/darkbox/tree/master/socket/README\n");
     return 0;
-
-    show_help:
-        puts("socket - Portable TCP and NMS Network IO interface - Astie Teddy (TSnake41)\n"
-             "Syntaxes :\n"
-             "  1: socket -id:ID -n [-t thread_count]\n"
-             "  2: socket -id:ID -c command [command args]\n\n"
-             "1: Start new socket server.\n"
-             "2: Connect to a IPC server to perform a command.\n\n"
-             "For more informations, see README at:\n"
-             "https://gitlab.com/TSnake41/darkbox/tree/master/socket/README\n");
-        return 0;
 }

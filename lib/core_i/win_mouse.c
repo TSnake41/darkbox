@@ -32,31 +32,31 @@ static bool on_move, mouse_enabled = false;
 
 void core_mouse_initialize(bool on_move_arg)
 {
-    HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
-    mouse_enabled = true;
-    on_move = on_move_arg;
+  HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
+  mouse_enabled = true;
+  on_move = on_move_arg;
 
-    /* Save old flags */
-    GetConsoleMode(hin, &flags);
+  /* Save old flags */
+  GetConsoleMode(hin, &flags);
 
-    /* Set new flags */
-    const DWORD new_flags =
-        ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT;
+  /* Set new flags */
+  const DWORD new_flags =
+    ENABLE_EXTENDED_FLAGS | ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT;
 
-    SetConsoleMode(hin, new_flags);
+  SetConsoleMode(hin, new_flags);
 }
 
 void core_mouse_terminate(bool on_move)
 {
-    HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
-    mouse_enabled = false;
-    SetConsoleMode(hin, flags);
+  HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
+  mouse_enabled = false;
+  SetConsoleMode(hin, flags);
 }
 
 void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int *b)
 {
-    core_mouse_initialize(on_move);
-    HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
+  core_mouse_initialize(on_move);
+  HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
 
 	DWORD e;
 	INPUT_RECORD ir;
@@ -64,7 +64,6 @@ void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int
 	*b = NOTHING;
 
 	do {
-
 		do
 			ReadConsoleInput(hin, &ir, 1, &e);
 		while (ir.EventType != MOUSE_EVENT);
@@ -74,7 +73,6 @@ void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int
 		*y = mouse_pos.Y;
 
 		*b = tomouse_b(ir.Event.MouseEvent.dwButtonState, ir.Event.MouseEvent.dwEventFlags);
-
 	} while (!on_move && *b == NOTHING);
 
     core_mouse_terminate(on_move);
@@ -82,10 +80,10 @@ void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int
 
 static char tomouse_b(DWORD m_bs, DWORD m_ef)
 {
-    static char latest = NOTHING;
+  static char latest = NOTHING;
 
-    /* Redefine latest and return button. */
-    #define return_button(button) return (latest = (button))
+  /* Redefine latest and return button. */
+  #define return_button(button) return (latest = (button))
 
 	if (m_bs & FROM_LEFT_1ST_BUTTON_PRESSED) /* left clic */
 		return_button((m_ef & DOUBLE_CLICK) ? D_LEFT_BUTTON : LEFT_BUTTON);
@@ -100,59 +98,58 @@ static char tomouse_b(DWORD m_bs, DWORD m_ef)
 		return (int)m_bs < 0 ? SCROLL_UP : SCROLL_DOWN;
 
 	else {
-        /* mouse moved */
-        if (latest != NOTHING) {
-            /* Button release */
-            latest = NOTHING;
-            return RELEASE;
-        }
-
-		return NOTHING;
+    /* mouse moved */
+    if (latest != NOTHING) {
+      /* Button release */
+      latest = NOTHING;
+      return RELEASE;
     }
+
+  	return NOTHING;
+  }
 }
 
 void core_input_get_event(core_input_event *ie)
 {
-    HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
-    DWORD e;
-    INPUT_RECORD ir;
+  HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
+  DWORD e;
+  INPUT_RECORD ir;
 
-    bool event_pulled = false;
+  bool event_pulled = false;
 
-    do {
-		ReadConsoleInput(hin, &ir, 1, &e);
+  do {
+    ReadConsoleInput(hin, &ir, 1, &e);
 
-		switch (ir.EventType) {
-			case MOUSE_EVENT:
-                if (!mouse_enabled)
-                    /* Mouse mode disabled, skip event. */
-                    continue;
+    switch (ir.EventType) {
+      case MOUSE_EVENT:
+        if (!mouse_enabled)
+          /* Mouse mode disabled, skip event. */
+          continue;
 
-				COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
-				ie->type = MOUSE;
-				ie->event.mouse.x = mouse_pos.X;
-				ie->event.mouse.y = mouse_pos.Y;
+    		COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
+    		ie->type = MOUSE;
+    		ie->event.mouse.x = mouse_pos.X;
+    		ie->event.mouse.y = mouse_pos.Y;
 
-				DWORD m_bs = ir.Event.MouseEvent.dwButtonState,
-					  m_ef = ir.Event.MouseEvent.dwEventFlags;
+    		DWORD m_bs = ir.Event.MouseEvent.dwButtonState,
+    			  m_ef = ir.Event.MouseEvent.dwEventFlags;
 
-				ie->event.mouse.b = tomouse_b(m_bs, m_ef);
+    		ie->event.mouse.b = tomouse_b(m_bs, m_ef);
+        event_pulled = true;
+    		break;
 
-                event_pulled = true;
-				break;
+    	case KEY_EVENT:
+    		if (!ir.Event.KeyEvent.bKeyDown)
+    			continue;
 
-			case KEY_EVENT:
-				if (!ir.Event.KeyEvent.bKeyDown)
-					continue;
+    		ie->type = KEY_PRESS;
+    		/* Of course, this is an hack */
+    		ie->event.key_press = ir.Event.KeyEvent.uChar.AsciiChar
+    			? ir.Event.KeyEvent.uChar.AsciiChar
+    			: ir.Event.KeyEvent.wVirtualScanCode;
 
-				ie->type = KEY_PRESS;
-				/* Of course, this is an hack */
-				ie->event.key_press = ir.Event.KeyEvent.uChar.AsciiChar
-					? ir.Event.KeyEvent.uChar.AsciiChar
-					: ir.Event.KeyEvent.wVirtualScanCode;
-
-                event_pulled = true;
-				break;
-        }
+        event_pulled = true;
+    		break;
+    }
 	} while (!event_pulled);
 }

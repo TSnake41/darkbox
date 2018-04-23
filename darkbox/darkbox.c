@@ -59,71 +59,70 @@ int origin_x, origin_y;
 
 int main(int argc, char const *argv[])
 {
-    if (argc > 1 && (argv[1][0] == '-' || argv[1][0] == '/'))
-        switch (argv[1][1]) {
+  if (argc > 1 && (argv[1][0] == '-' || argv[1][0] == '/'))
+    switch (argv[1][1]) {
+      /* Get help */
+      case '?':
+        goto show_help;
 
-            /* Get help */
-            case '?':
-                goto show_help;
+      /* Start input server */
+      case 'i': ;
+        #define m_arg (tolower(argv[1][2]))
 
-            /* Start input server */
-            case 'i': ;
-                #define m_arg (tolower(argv[1][2]))
+        int mode = m_arg == 'k' ? ENABLE_KEYBOARD : /* Keyboard mode */
+                   m_arg == 'm' ? ENABLE_MOUSE : /* Mouse mode */
+                   KNM_MODE; /* Keyboard and Mouse mode */
 
-                int mode = m_arg == 'k' ? ENABLE_KEYBOARD : /* Keyboard mode */
-                           m_arg == 'm' ? ENABLE_MOUSE : /* Mouse mode */
-                           KNM_MODE; /* Keyboard and Mouse mode */
+        #undef m_arg
 
-                #undef m_arg
+        input_server(mode);
+        return 0;
 
-                input_server(mode);
-                return 0;
+      /* Returns a non-zero value if data is
+         available in stdin otherwise, return 0
+      */
+      case 'k':
+        return core_peek_stdin();
+        break;
 
-            /* Returns a non-zero value if data is
-               available in stdin otherwise, return 0
-            */
-            case 'k':
-                return core_peek_stdin();
-                break;
+      case 'w': ;
+        if (argc < 2)
+          return 1;
 
-            case 'w': ;
-                if (argc < 2)
-                    return 1;
-
-                core_sleep(strtol(argv[2], NULL, 10));
-                return 0;
-        }
-
-    /* Initialize Console IO */
-    core_init();
-
-	/* Main loop */
-    while (true) {
-		darkbox_cmd cmd;
-
-		if (parse_cmd(&cmd))
-			execute_cmd(cmd);
+        core_sleep(strtol(argv[2], NULL, 10));
+        return 0;
     }
 
-    /* Never reached */
-    return 0;
+  /* Initialize Console IO */
+  core_init();
 
-    show_help:
-        puts("darkbox - Fast Portable Console IO Server - Astie Teddy (TSnake41)\n"
-             "Syntaxes :\n"
-             "  1: (code) | darkbox\n"
-             "  2: darkbox -i[k/m] | (code)\n"
-             "  3: darkbox -w t\n"
-             "  4: darkbox -k\n\n"
-             " 1: Start darkbox as output server\n"
-             " 2: Start darkbox as input server\n"
-             "    k: Keyboard-only, m: Mouse-only\n"
-             " 3: Wait t ms\n"
-             " 4: Return a non-nul value if data is avaialble in stdin.\n\n"
-             "NOTE: darkbox support both '-' and '/' as command prefixes.\n"
-             "For more informations, see README at:\n"
-             "https://gitlab.com/TSnake41/darkbox/blob/master/darkbox/README\n");
-        return 0;
+  /* Main loop */
+  while (true) {
+  	darkbox_cmd cmd;
+
+  	if (parse_cmd(&cmd))
+  		execute_cmd(cmd);
+  }
+
+  /* Never reached */
+  return 0;
+
+  show_help:
+    puts("darkbox - Fast Portable Console IO Server - Astie Teddy (TSnake41)\n"
+         "Syntaxes :\n"
+         "  1: (code) | darkbox\n"
+         "  2: darkbox -i[k/m] | (code)\n"
+         "  3: darkbox -w t\n"
+         "  4: darkbox -k\n\n"
+         " 1: Start darkbox as output server\n"
+         " 2: Start darkbox as input server\n"
+         "    k: Keyboard-only, m: Mouse-only\n"
+         " 3: Wait t ms\n"
+         " 4: Return a non-nul value if data is avaialble in stdin.\n\n"
+         "NOTE: darkbox support both '-' and '/' as command prefixes.\n"
+         "For more informations, see README at:\n"
+         "https://gitlab.com/TSnake41/darkbox/blob/master/darkbox/README\n");
+    return 0;
 }
 
 /* Parse the command from stdin if this is not
@@ -131,261 +130,259 @@ int main(int argc, char const *argv[])
 */
 static bool parse_cmd(darkbox_cmd *command)
 {
-    char *str = command_buffer;
+  char *str = command_buffer;
 
-    read_string(str, MAX_COMMAND_SIZE);
+  read_string(str, MAX_COMMAND_SIZE);
 
-    if (*str != COMMAND_START_CHR &&
-        *str != COMMAND_START_CHR2) {
-		/* No command. */
-		fputs(str, stdout);
-        putchar(' ');
+  if (*str != COMMAND_START_CHR &&
+      *str != COMMAND_START_CHR2) {
+    /* No command. */
+    fputs(str, stdout);
+    putchar(' ');
 
-        if (strchr(str, '\n') != 0)
-            /* do not break next line */
-            return false;
+    if (strchr(str, '\n') != 0)
+      /* do not break next line */
+      return false;
 
-        int c = 0;
-        while (c != '\n' && c != EOF)
-            putchar(c = getchar());
+    int c = 0;
+    while (c != '\n' && c != EOF)
+      putchar(c = getchar());
 
-        if (c == EOF)
-            exit(0);
+    if (c == EOF)
+      exit(0);
 
-        return false;
+    return false;
 	}
 
-    str++;
+  str++;
 
-    /* use the count if specified in command */
-    command->count = isdigit(*str)
-        ? strtol(str, &str, 10) : 1;
+  /* use the count if specified in command */
+  command->count = isdigit(*str)
+      ? strtol(str, &str, 10) : 1;
 
-    if (isalpha(*str)) {
-        /* define literals */
-        command->cmd = str;
+  if (isalpha(*str)) {
+    /* define literals */
+    command->cmd = str;
 
-        /* check literals */
-        while (*str) {
-            if (!isalpha(*str)) {
-                fputs("Parsing error: Invalid litterals", stderr);
-                return false;
-            }
-            str++;
-        }
-    } else {
-        fputs("Parsing error: No command specified", stderr);
+    /* check literals */
+    while (*str) {
+      if (!isalpha(*str)) {
+        fputs("Parsing error: Invalid litterals", stderr);
         return false;
+      }
+      str++;
     }
+  } else {
+    fputs("Parsing error: No command specified", stderr);
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
 /* Execute a command, get args from stdin */
 static void execute_cmd(darkbox_cmd cmd)
 {
-    for (int i = 0; i < cmd.count; i++) {
-        char *str = cmd.cmd;
+  for (unsigned int i = 0; i < cmd.count; i++) {
+    char *str = cmd.cmd;
 
-        while (*str) {
+    while (*str) {
+      switch (tolower(*str)) {
+        case 'a':
+          /* Syntax : -a Integer
+             Usage : Print the character
+             corresponding to the integer
+          */
 
-            switch (tolower(*str)) {
+          putchar(read_int());
+          break;
 
-                case 'a':
-                    /* Syntax : -a Integer
-                       Usage : Print the character
-                       corresponding to the integer
-                    */
+        case 'd':
+          /* Syntax : -d Text
+             Usage : Display Text
+          */
 
-                    putchar(read_int());
-                    break;
+          read_string(text_buffer, MAX_TEXT_LENGTH);
+          fputs(text_buffer, stdout);
+          break;
 
-                case 'd':
-                    /* Syntax : -d Text
-                       Usage : Display Text
-                    */
+        case 'n':
+          /* Syntax : -n
+             Usage : Go to the next line
+          */
 
-                    read_string(text_buffer, MAX_TEXT_LENGTH);
-                    fputs(text_buffer, stdout);
-                    break;
+          putchar('\n');
+          break;
 
-                case 'n':
-                    /* Syntax : -n
-                       Usage : Go to the next line
-                    */
+        case 'c':
+          /* Syntax : -c color
+             color is in hexadecimal format.
 
-                    putchar('\n');
-                    break;
+             Usage : Change the current color
+                     0xF0 : Background
+                     0x0F : Foreground
+          */
+          core_change_color(read_int());
+          break;
 
-                case 'c':
-                    /* Syntax : -c color
-                       color is in hexadecimal format.
+        case 'g':
+          /* Syntax : -g x y
+             Usage : Move cursor to (x;y)
+          */
 
-                       Usage : Change the current color
-                               0xF0 : Background
-                               0x0F : Foreground
-                    */
-                    core_change_color(read_int());
-                    break;
+          core_gotoxy(origin_x + read_int(), origin_y + read_int());
+          break;
 
-                case 'g':
-                    /* Syntax : -g x y
-                       Usage : Move cursor to (x;y)
-                    */
+        case 'h':
+          /* Syntax : -h 0/1
+             Usage : Hide or show cursor
+          */
 
-                    core_gotoxy(origin_x + read_int(), origin_y + read_int());
-                    break;
+          core_change_cursor_state(read_int());
+          break;
 
-                case 'h':
-                    /* Syntax : -h 0/1
-                       Usage : Hide or show cursor
-                    */
+        case 's':
+          /* Syntax : -s
+             Usage : Clear console
+          */
 
-                    core_change_cursor_state(read_int());
-                    break;
+          core_clear_console();
+          break;
 
-                case 's':
-                    /* Syntax : -s
-                       Usage : Clear console
-                    */
+        case 'o':
+          /* Syntax : -o x y
+             Usage : Change goto origin
+          */
 
-                    core_clear_console();
-                    break;
+          origin_x = read_int();
+          origin_y = read_int();
+          break;
 
-                case 'o':
-                    /* Syntax : -o x y
-                       Usage : Change goto origin
-                    */
+        case 'r':
+          /* Syntax : -r
+             Usage : Reset foreground and background colors
+          */
 
-                    origin_x = read_int();
-                    origin_y = read_int();
-                    break;
+          core_reset_color();
+          break;
 
-                case 'r':
-                    /* Syntax : -r
-                       Usage : Reset foreground and background colors
-                    */
+        case 'q':
+          /* Syntax : -q
+             Usage : Properly stop darkbox
+          */
 
-                    core_reset_color();
-                    break;
+          /* free_buffers(); */
+          exit(0);
+          break;
 
-                case 'q':
-                    /* Syntax : -q
-                       Usage : Properly stop darkbox
-                    */
+        case 'w':
+          /* Syntax : -w t
+             Usage : Wait t miliseconds
+          */
 
-                    /* free_buffers(); */
-                    exit(0);
-                    break;
+          /* Flush stdout (display any "waiting" stuff) */
+          fflush(stdout);
+          core_sleep(read_int());
+          break;
 
-                case 'w':
-                    /* Syntax : -w t
-                       Usage : Wait t miliseconds
-                    */
+        /*
+            case 'b': ;
+              Syntax : -b
+              Usage : Back mode; return stdin
+                      until a line start with '-d' or '/d'
 
-                    /* Flush stdout (display any "waiting" stuff) */
-                    fflush(stdout);
-                    core_sleep(read_int());
-                    break;
+              Deprecated: Replaced by -e in darkbox_t
 
-                /*
-                    case 'b': ;
-                        Syntax : -b
-                        Usage : Back mode; return stdin
-                                until a line start with '-d' or '/d'
+              type test.txt | darkbox_t -e
+        */
+      }
 
-                        Deprecated: Replaced by -e in darkbox_t
-
-                        type test.txt | darkbox_t -e
-                */
-            }
-
-            str++;
-        }
+      str++;
     }
+  }
 }
 
 /* Start input server */
 static void input_server(int mode)
 {
-    if (mode & ENABLE_MOUSE)
-        core_mouse_initialize(true);
+  if (mode & ENABLE_MOUSE)
+    core_mouse_initialize(true);
 
-    core_input_event e;
+  core_input_event e;
 
-    while (!feof(stdin) && !ferror(stdout)) {
-        core_input_get_event(&e);
+  while (!feof(stdin) && !ferror(stdout)) {
+    core_input_get_event(&e);
 
-        switch (e.type) {
-            case KEY_PRESS:
-                if (mode & ENABLE_KEYBOARD)
-                    /* Mode allow keyboard event. */
-                    printf("k %d\n", e.event.key_press);
-                break;
+    switch (e.type) {
+      case KEY_PRESS:
+        if (mode & ENABLE_KEYBOARD)
+            /* Mode allow keyboard event. */
+            printf("k %d\n", e.event.key_press);
+        break;
 
-            case MOUSE:
-                printf("m %d %d %d\n", e.event.mouse.x, e.event.mouse.y, e.event.mouse.b);
-                break;
-        }
-
-        fflush(stdout);
+      case MOUSE:
+        printf("m %d %d %d\n", e.event.mouse.x, e.event.mouse.y, e.event.mouse.b);
+        break;
     }
 
-    if (mode & ENABLE_MOUSE)
-        core_mouse_terminate(true);
+    fflush(stdout);
+  }
+
+  if (mode & ENABLE_MOUSE)
+    core_mouse_terminate(true);
 }
 /* Read the next integer from stdin */
 static int read_int(void)
 {
-    char c;
-    int pos = 0;
+  char c;
+  int pos = 0;
 
-    /* skip beginning spaces */
-    do
-        c = getchar();
-    while (isspace(c));
+  /* skip beginning spaces */
+  do
+      c = getchar();
+  while (isspace(c));
 
-    while (!isspace(c) && pos < MAX_TEXT_LENGTH) {
-        text_buffer[pos] = c;
-        pos++;
-        c = getchar();
-    }
-    text_buffer[pos++] = '\0';
+  while (!isspace(c) && pos < MAX_TEXT_LENGTH) {
+    text_buffer[pos] = c;
+    pos++;
+    c = getchar();
+  }
 
-    return strtol(text_buffer, NULL, 0);
+  text_buffer[pos++] = '\0';
+
+  return strtol(text_buffer, NULL, 0);
 }
 
 /* Read the next argument from stdin */
 static void read_string(char *buffer, const size_t max_length)
 {
-    char c;
-    int pos = 0;
+  char c;
+  int pos = 0;
 
-    /* skip beginning spaces */
-    do
-        c = getchar();
-    while (isspace(c));
+  /* skip beginning spaces */
+  do
+    c = getchar();
+  while (isspace(c));
 
-    /* quote mode */
-    bool quote = c == '"';
+  /* quote mode */
+  bool quote = c == '"';
 
-    if (quote)
-        /* skip quote chracter */
-        c = getchar();
+  if (quote)
+    /* skip quote chracter */
+    c = getchar();
 
-    char *end_chars = quote ? "\"" : " \n\r\t";
+  char *end_chars = quote ? "\"" : " \n\r\t";
 
-    while (!strchr(end_chars, c) && (pos < max_length) ) {
+  while (!strchr(end_chars, c) && (pos < max_length) ) {
+    if (c == '\\')
+      /* skip escape chracter, the next chracter is not interpreted */
+      c = getchar();
 
-        if (c == '\\')
-            /* skip escape chracter, the next chracter is not interpreted */
-            c = getchar();
+    buffer[pos] = c;
+    pos++;
 
-        buffer[pos] = c;
-        pos++;
+    c = getchar();
+  }
 
-        c = getchar();
-    }
-
-    buffer[pos++] = '\0';
+  buffer[pos++] = '\0';
 }

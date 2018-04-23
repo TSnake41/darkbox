@@ -40,60 +40,60 @@
 */
 void server_cmd_info(socket_message msg, socket_int client, server_data *data)
 {
-    if (msg.argc != 2) {
-        /* Invalid arguments */
-        send_code(client, CMD_INVALID_ARGS);
-        return;
-    }
+  if (msg.argc != 2) {
+    /* Invalid arguments */
+    send_code(client, CMD_INVALID_ARGS);
+    return;
+  }
 
-    id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
+  id_socket_pair *pair = server_get_pair(data, msg.argv[1], NULL);
 
-    if (pair == NULL) {
-        /* No pair found */
-        send_code(client, CMD_NOT_FOUND);
-        return;
-    }
+  if (pair == NULL) {
+    /* No pair found */
+    send_code(client, CMD_NOT_FOUND);
+    return;
+  }
 
-    /* Get other informations */
-    bool listening = false;
-    char local_addr[INET6_ADDRSTRLEN + 6] = { 0 };
-    char peer_addr[INET6_ADDRSTRLEN + 6] = { 0 };
+  /* Get other informations */
+  bool listening = false;
+  char local_addr[INET6_ADDRSTRLEN + 6] = { 0 };
+  char peer_addr[INET6_ADDRSTRLEN + 6] = { 0 };
 
-    /* Check if socket is listening */
-    int v;
-    socklen_t len = sizeof(v);
+  /* Check if socket is listening */
+  int v;
+  socklen_t len = sizeof(v);
 
-    getsockopt(pair->socket, SOL_SOCKET, SO_ACCEPTCONN, &v, &len);
-    listening = v;
+  getsockopt(pair->socket, SOL_SOCKET, SO_ACCEPTCONN, &v, &len);
+  listening = v;
 
-    /* Define each ip_port */
-    struct sockaddr_storage addr;
-    socklen_t addr_len = sizeof(addr);
+  /* Define each ip_port */
+  struct sockaddr_storage addr;
+  socklen_t addr_len = sizeof(addr);
 
-    /* Get local addr. */
-    if (getsockname(pair->socket, (struct sockaddr *)&addr, &addr_len) != -1)
-        server_addr_to_str(local_addr, &addr, addr_len);
+  /* Get local addr. */
+  if (getsockname(pair->socket, (struct sockaddr *)&addr, &addr_len) != -1)
+    server_addr_to_str(local_addr, &addr, addr_len);
 
-    /* Get peer addr. */
-    if (getpeername(pair->socket, (struct sockaddr *)&addr, &addr_len) != -1)
-        server_addr_to_str(peer_addr, &addr, addr_len);
+  /* Get peer addr. */
+  if (getpeername(pair->socket, (struct sockaddr *)&addr, &addr_len) != -1)
+    server_addr_to_str(peer_addr, &addr, addr_len);
 
-    char *buffer = malloc(0xFFFF);
-    if (buffer == NULL) {
-        /* No pair found */
-        send_code(client, CMD_OUT_OF_MEMORY);
-        return;
-    }
+  char *buffer = malloc(0xFFFF);
+  if (buffer == NULL) {
+    /* No pair found */
+    send_code(client, CMD_OUT_OF_MEMORY);
+    return;
+  }
 
-    unsigned short s = snprintf(buffer, 0xFFFF,
-        "id:%s\nlistening:%s\nlocal_addr:%s\npeer_addr:%s\n",
-        pair->id, listening ? "true" : "false",
-        local_addr, peer_addr);
+  unsigned short s = snprintf(buffer, 0xFFFF,
+    "id:%s\nlistening:%s\nlocal_addr:%s\npeer_addr:%s\n",
+    pair->id, listening ? "true" : "false",
+    local_addr, peer_addr);
 
-    /* Send code before data. */
-    send_code(client, CMD_SUCCESS);
+  /* Send code before data. */
+  send_code(client, CMD_SUCCESS);
 
-    nms_send(client, buffer, s);
+  nms_send(client, buffer, s);
 
-    free(buffer);
+  free(buffer);
 }

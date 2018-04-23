@@ -40,5 +40,5 @@
 */
 void server_cmd_poll(socket_message msg, socket_int client, server_data *data)
 {
-    puts("Not implemented...");
+  puts("Not implemented...");
 }

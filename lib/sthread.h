@@ -38,8 +38,8 @@
 #endif
 
 enum sthread_return {
-    sthread_success = false,
-    sthread_error = true,
+  sthread_success = false,
+  sthread_error = true,
 };
 
 #ifndef WIN32
@@ -47,8 +47,8 @@ typedef pthread_t sthread;
 typedef pthread_mutex_t smutex;
 #else
 typedef struct {
-    HANDLE handle;
-    DWORD id;
+  HANDLE handle;
+  DWORD id;
 } sthread;
 typedef CRITICAL_SECTION smutex;
 #endif

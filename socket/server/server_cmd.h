@@ -38,8 +38,8 @@
 typedef void (*server_cmd_func)(socket_message, socket_int, server_data *);
 
 typedef struct server_cmd {
-    server_cmd_func cmd;
-    char *key;
+  server_cmd_func cmd;
+  char *key;
 } server_cmd;
 
 extern const unsigned int server_cmds_count;

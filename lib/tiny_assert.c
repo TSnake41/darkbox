@@ -25,6 +25,6 @@
 
 void tiny_assert_exit(unsigned int line, char *file)
 {
-    fprintf(stderr, "%s:%u : Assertion Failed ! \n", file, line);
-    exit(255);
+  fprintf(stderr, "%s:%u : Assertion Failed ! \n", file, line);
+  exit(255);
 }

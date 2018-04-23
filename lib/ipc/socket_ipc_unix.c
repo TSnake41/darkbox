@@ -30,58 +30,58 @@
 #include <socket_ipc.h>
 
 static socket_int socket_ipc_create_socket(const char *id,
-    struct sockaddr_un *saun_o)
+  struct sockaddr_un *saun_o)
 {
-    const char *f_path_prefix = ".socket_";
-    strcpy(saun_o->sun_path, f_path_prefix);
-    strcat(saun_o->sun_path, id);
+  const char *f_path_prefix = ".socket_";
+  strcpy(saun_o->sun_path, f_path_prefix);
+  strcat(saun_o->sun_path, id);
 
-    saun_o->sun_family = AF_UNIX;
+  saun_o->sun_family = AF_UNIX;
 
-    if ((strlen(id) + strlen(f_path_prefix) + 1) > 108) {
-        fputs("IPC: ID too long !\n", stderr);
-        return -1;
-    }
+  if ((strlen(id) + strlen(f_path_prefix) + 1) > 108) {
+    fputs("IPC: ID too long !\n", stderr);
+    return -1;
+  }
 
-    socket_int s;
-    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
-        return -1;
+  socket_int s;
+  if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+    return -1;
 
-    return s;
+  return s;
 }
 
 socket_int socket_ipc_server_new(const char *id, int max_pending)
 {
-    socket_int s;
-    struct sockaddr_un saun;
-    if ((s = socket_ipc_create_socket(id, &saun)) == 0)
-        return -1;
+  socket_int s;
+  struct sockaddr_un saun;
+  if ((s = socket_ipc_create_socket(id, &saun)) == 0)
+    return -1;
 
-    socklen_t l = sizeof(saun.sun_family) + strlen(saun.sun_path);
+  socklen_t l = sizeof(saun.sun_family) + strlen(saun.sun_path);
 
-    unlink(saun.sun_path);
+  unlink(saun.sun_path);
 
-    if (bind(s, (const struct sockaddr *)&saun, l) < 0) {
-        close(s);
-        return -1;
-    }
+  if (bind(s, (const struct sockaddr *)&saun, l) < 0) {
+    close(s);
+    return -1;
+  }
 
-    listen(s, max_pending);
-    return s;
+  listen(s, max_pending);
+  return s;
 }
 
 socket_int socket_ipc_client_new(const char *id)
 {
-    socket_int s;
-    struct sockaddr_un saun;
+  socket_int s;
+  struct sockaddr_un saun;
 
-    if ((s = socket_ipc_create_socket(id, &saun)) == -1)
-        return -1;
+  if ((s = socket_ipc_create_socket(id, &saun)) == -1)
+    return -1;
 
-    if (connect(s, (struct sockaddr *)&saun, sizeof(struct sockaddr_un)) == -1){
-        close(s);
-        return -1;
-    }
+  if (connect(s, (struct sockaddr *)&saun, sizeof(struct sockaddr_un)) == -1){
+    close(s);
+    return -1;
+  }
 
-    return s;
+  return s;
 }

@@ -40,89 +40,89 @@ static const char *file_id_prefix = "$socket_";
 
 static void get_file_id_path(const char *id, char *out)
 {
-    strcpy(out, file_id_prefix);
-    strcat(out, id);
+  strcpy(out, file_id_prefix);
+  strcat(out, id);
 }
 
 socket_int socket_ipc_server_new(const char *id, int max_pending)
 {
-    char f_path[strlen(file_id_prefix) + strlen(id) + 1];
-    get_file_id_path(id, f_path);
+  char f_path[strlen(file_id_prefix) + strlen(id) + 1];
+  get_file_id_path(id, f_path);
 
-    socket_int s = socket(AF_INET, SOCK_STREAM, 0);
-    if (s == INVALID_SOCKET)
-        return INVALID_SOCKET;
+  socket_int s = socket(AF_INET, SOCK_STREAM, 0);
+  if (s == INVALID_SOCKET)
+    return INVALID_SOCKET;
 
-    struct sockaddr_in sin = { 0 };
-    sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-    sin.sin_family = AF_INET;
-    sin.sin_port = 0x0000;
+  struct sockaddr_in sin = { 0 };
+  sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+  sin.sin_family = AF_INET;
+  sin.sin_port = 0x0000;
 
-    if(bind(s, (struct sockaddr *)&sin, sizeof(sin)) == SOCKET_ERROR) {
-        closesocket(s);
-        return INVALID_SOCKET;
-    }
+  if(bind(s, (struct sockaddr *)&sin, sizeof(sin)) == SOCKET_ERROR) {
+    closesocket(s);
+    return INVALID_SOCKET;
+  }
 
-    FILE *f = fopen(f_path, "w");
-    if (f == NULL) {
-        closesocket(s);
-        return INVALID_SOCKET;
-    }
+  FILE *f = fopen(f_path, "w");
+  if (f == NULL) {
+    closesocket(s);
+    return INVALID_SOCKET;
+  }
 
-    listen(s, max_pending);
+  listen(s, max_pending);
 
-    int len = sizeof(sin);
-    getsockname(s, (struct sockaddr *)&sin, &len);
+  int len = sizeof(sin);
+  getsockname(s, (struct sockaddr *)&sin, &len);
 
-    fwrite(&sin.sin_port, sizeof(unsigned short), 1, f);
-    fclose(f);
+  fwrite(&sin.sin_port, sizeof(unsigned short), 1, f);
+  fclose(f);
 
-    return s;
+  return s;
 }
 
 socket_int socket_ipc_client_new(const char *id)
 {
-    char f_path[strlen(file_id_prefix) + strlen(id) + 1];
-    get_file_id_path(id, f_path);
+  char f_path[strlen(file_id_prefix) + strlen(id) + 1];
+  get_file_id_path(id, f_path);
 
-    unsigned short port;
+  unsigned short port;
 
-    FILE *f = fopen(f_path, "r");
-    if (f == NULL)
-        return INVALID_SOCKET;
+  FILE *f = fopen(f_path, "r");
+  if (f == NULL)
+    return INVALID_SOCKET;
 
-    fread(&port, sizeof(unsigned short), 1, f);
-    fclose(f);
+  fread(&port, sizeof(unsigned short), 1, f);
+  fclose(f);
 
-    socket_int s;
-    if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
-        return INVALID_SOCKET;
+  socket_int s;
+  if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
+    return INVALID_SOCKET;
 
-    struct sockaddr_in sin = { 0 };
-    sin.sin_family = AF_INET;
-    sin.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
-    sin.sin_port = port;
+  struct sockaddr_in sin = { 0 };
+  sin.sin_family = AF_INET;
+  sin.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
+  sin.sin_port = port;
 
-    if (connect(s, (struct sockaddr *)&sin,
-        sizeof(struct sockaddr)) == SOCKET_ERROR) {
+  if (connect(s, (struct sockaddr *)&sin,
+    sizeof(struct sockaddr)) == SOCKET_ERROR) {
 
-        closesocket(s);
-        return INVALID_SOCKET;
-    }
+    closesocket(s);
+    return INVALID_SOCKET;
+  }
 
-    /* Set non-blocking */
-    u_long non_blocking = 0;
-    ioctlsocket((int)socket, FIONBIO, &non_blocking);
-    return s;
+  /* Set non-blocking */
+  u_long non_blocking = 0;
+  ioctlsocket((int)socket, FIONBIO, &non_blocking);
+  return s;
 }
 
 socket_int socket_ipc_server_accept(socket_int server)
 {
-    socket_int s = accept(server, NULL, NULL);
-    if (socket_is_valid(s)) {
-        u_long non_blocking = 0;
-        ioctlsocket((int)s, FIONBIO, &non_blocking);
-    }
+  socket_int s = accept(server, NULL, NULL);
+  if (socket_is_valid(s)) {
+    u_long non_blocking = 0;
+    ioctlsocket((int)s, FIONBIO, &non_blocking);
+  }
 
-    return s;
+  return s;
 }

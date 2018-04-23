@@ -37,8 +37,8 @@
 typedef void (*client_handle_func)(socket_int);
 
 typedef struct client_handle {
-    client_handle_func func;
-    char *cmd;
+  client_handle_func func;
+  char *cmd;
 } client_handle;
 
 void client_handle_code(socket_int socket);
