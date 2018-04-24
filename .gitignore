@@ -8,3 +8,4 @@ tests/socket*
 tests/dos9
 tests/misc
 bin/
+doc/tea

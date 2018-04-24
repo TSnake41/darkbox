@@ -5,21 +5,17 @@
 Darkbox - A Fast and Portable Console IO Server
 
 Repository structure :
-    - bin : Darkbox binaries :
-        + Windows binaries compilated using custom tcc (see tcc)
-        + Linux binaries compilated using clang 3.9.1 with flags : "-O2 -m32 -s"
-        + MS-DOS DPMI binaries compilated using DJGPP with GCC 6.1.0 and flags "-O2 -s"
+    - bin : Darkbox binaries (Windows binaries are built using the given tcc)
     - lib : Some libraries used in some darkbox projects.
     - darkbox : Darkbox server source code.
     - darkbox_i : Darkbox Standalone Input module
     - darkbox_t : Darkbox Toolkit module
-    - darkbox_s : Darkbox Audio module (WIP)
     - makemenu : Darkbox Menu module (WIP)
     - socket : Portable TCP and NMS Network IO interface (WIP).
     - tcc : Customised Tiny C Compiler for Windows
     - tests : Some tests for darkbox and misc.
 
-Useful links : 
+Useful links :
  - Dos9 Project : dos9.org
  - TheBATeam website : thebateam.org
  - dostips forum : dostips.com/forum/viewforum.php?f=3
