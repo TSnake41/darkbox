@@ -36,6 +36,6 @@
 
 #include "../args_parser.h"
 
-void client(socket_args args);
+bool client(socket_args args);
 
 #endif /* H_CLIENT */

@@ -105,10 +105,8 @@ int pipe_fork(int argc, char **argv)
 
 void pipe_send(int fd)
 {
-  if (fd) {
-    /* Notify parent */
-    char b = 1;
-    write(fd, &b, 1);
-    close(fd);
-  }
+  /* Notify parent */
+  char b = 1;
+  write(fd, &b, 1);
+  close(fd);
 }

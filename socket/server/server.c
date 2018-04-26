@@ -56,7 +56,7 @@
 
 static void server_thread(void *_server_socket);
 
-void server(socket_args args, int message_fd)
+bool server(socket_args args, int message_fd)
 {
   server_data data;
   smutex_new(&data.pair_mutex);
@@ -67,7 +67,7 @@ void server(socket_args args, int message_fd)
   data.ipc_socket = socket_ipc_server_new(args.id, 5);
   if (!socket_is_valid(data.ipc_socket)) {
     fputs("ERROR: Unable to create the IPC server.\n", stderr);
-    exit(1);
+    return true;
   }
 
   /* We consider main thread (currently running) as a server thread. */
@@ -89,6 +89,7 @@ void server(socket_args args, int message_fd)
   server_thread(&data);
 
   /* Never reached (server_thread never returns) */
+  return false;
 }
 
 static void server_thread(void *_server_data)

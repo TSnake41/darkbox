@@ -129,6 +129,9 @@ bool server_make_sockaddr(const char *ip, in_port_t port, bool ipv6,
   if (ipv6) {
     /* Create sockaddr_in6 */
     struct sockaddr_in6 *sin6 = calloc(sizeof(struct sockaddr_in6), 1);
+    if (sin6 == NULL)
+      return true;
+
     *addr = (void *)sin6;
 
     *len = sizeof(struct sockaddr_in6);
@@ -143,8 +146,10 @@ bool server_make_sockaddr(const char *ip, in_port_t port, bool ipv6,
   } else {
     /* Create sockaddr_in */
     struct sockaddr_in *sin = calloc(sizeof(struct sockaddr_in), 1);
-    *addr = (void *)sin;
+    if (sin == NULL)
+      return true;
 
+    *addr = (void *)sin;
     *len = sizeof(struct sockaddr_in);
 
     if (server_get_sockaddr_in(ip, sin)) {

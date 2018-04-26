@@ -73,5 +73,6 @@ void server_cmd_connect(socket_message msg, socket_int client, server_data *data
     return;
   }
 
+  free(addr);
   send_code(client, CMD_SUCCESS);
 }

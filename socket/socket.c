@@ -49,15 +49,19 @@ int main(int argc, char **argv)
   if (parse_args(argv, argc, &args))
     goto show_help;
 
-  if (args.new_instance)
-    server(args, pipe_fork(argc, argv));
-  else
-    client(args);
+  bool status;
 
+  if (args.new_instance)
+    status = server(args, pipe_fork(argc, argv));
+  else
+    status = client(args);
+
+  free_args(args);
   socket_end();
-  return 0;
+  return status;
 
   show_help:
+    free_args(args);
     puts("socket - Portable TCP and NMS Network IO interface - Astie Teddy (TSnake41)\n"
          "Syntaxes :\n"
          "  1: socket -id:ID -n [-t thread_count]\n"

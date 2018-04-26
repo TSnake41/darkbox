@@ -54,6 +54,6 @@ typedef struct server_data {
   smutex pair_mutex;
 } server_data;
 
-void server(socket_args args, int message_fd);
+bool server(socket_args args, int message_fd);
 
 #endif /* H_SERVER */

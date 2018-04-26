@@ -55,19 +55,19 @@ bool parse_args(char **argv, int argc, socket_args *args)
 
     switch (tolower(*s)) {
       case 'i':
-          if (v != NULL)
-              args->id = v + 1;
-          else {
-              fputs("ERROR: ID defined without value.\n", stderr);
-              return true;
-          }
-          break;
+        if (v != NULL)
+          args->id = v + 1;
+        else {
+          fputs("ERROR: ID defined without value.\n", stderr);
+          return true;
+        }
+        break;
 
       case 'n':
-          context_defined = true;
-          args->new_instance = true;
-          args->data.server.thread_count = THREAD_COUNT;
-          break;
+        context_defined = true;
+        args->new_instance = true;
+        args->data.server.thread_count = THREAD_COUNT;
+        break;
 
       case 't':
         if (!args->new_instance) {
@@ -76,7 +76,7 @@ bool parse_args(char **argv, int argc, socket_args *args)
         }
 
     		if (v != NULL)
-    			args->data.server.thread_count = strtol(v + 1, NULL, 0);
+    			args->data.server.thread_count = strtoul(v + 1, NULL, 0);
     		else {
     			fputs("ERROR: 't' defined without value.\n", stderr);
     			return true;
@@ -90,7 +90,18 @@ bool parse_args(char **argv, int argc, socket_args *args)
 
         /* Begin client command list */
         int c_argc = client_data->command_argc = argc - i;
+
+        if (c_argc < 1) {
+          fputs("ERROR: Command expected.\n", stderr);
+          return true;
+        }
+
         client_data->command_argv = calloc(c_argc, sizeof(char *));
+
+        if (client_data->command_argv == NULL) {
+          fputs("ERROR: Out of memory.\n", stderr);
+          return true;
+        }
 
         int j = 0;
         while (j < c_argc) {

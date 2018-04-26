@@ -42,12 +42,12 @@
 
 #include "client_handle.h"
 
-void client(socket_args args)
+bool client(socket_args args)
 {
   socket_int socket = socket_ipc_client_new(args.id);
   if (!socket_is_valid(socket)) {
     fputs("ERROR: Unable to connect to IPC server.\n", stderr);
-    exit(1);
+    return true;
   }
 
   socket_message msg = {
@@ -67,4 +67,6 @@ void client(socket_args args)
 
     i++;
   }
+
+  return false;
 }

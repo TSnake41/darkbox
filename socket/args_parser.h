@@ -40,7 +40,7 @@ typedef struct client_request_data {
 } client_request_data;
 
 typedef struct new_server_data {
-  int thread_count;
+  unsigned int thread_count;
 } new_server_data;
 
 typedef struct socket_args {

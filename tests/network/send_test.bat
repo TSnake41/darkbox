@@ -25,7 +25,6 @@ goto :loop
 
 :error
 echo An error occured
-goto :end_loop
 
 :end_loop
 echo Terminated
