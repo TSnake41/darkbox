@@ -54,7 +54,7 @@ static char tomouse_b(int mouse_char)
 
 		case '"': /* Right button */
 		case 'B':
-            return_button_dc(RIGHT_BUTTON);
+      return_button_dc(RIGHT_BUTTON);
 
 		case '!': /* Middle button */
 		case 'A':
@@ -68,7 +68,7 @@ static char tomouse_b(int mouse_char)
 
 		case '#': /* Mouse release */
 			/* Do not redefine *latest */
-            return RELEASE;
+      return RELEASE;
 
 		case 'C': /* Nothing (1003 mode only) */
 			return_button(NOTHING);
