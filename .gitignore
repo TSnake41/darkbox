@@ -9,3 +9,5 @@ tests/dos9
 tests/misc
 bin/
 doc/tea
+
+tests/network/bin_output

@@ -47,6 +47,9 @@ void server_cmd_exit(socket_message msg, socket_int client, server_data *data)
   close(client);
   close(data->ipc_socket);
 
+  /* Free message (eventually) */
+  message_free(msg);
+
   /* Exit current process */
   exit(0);
 }

@@ -49,12 +49,16 @@
     char argN_data[argN_size]
 */
 
+/* TODO: Use struct VLA instead of double pointer. */
+
 #define msg_flags socket_default_flags
 
 bool message_recv(socket_int socket, socket_message *message)
 {
   if (message == NULL)
     goto error;
+
+  memset(message, '\0', sizeof(socket_message));
 
   /* Recieve the argument count. */
   if (recv(socket, &message->argc, sizeof(unsigned int), msg_flags) == -1)
@@ -87,17 +91,17 @@ bool message_recv(socket_int socket, socket_message *message)
 
   error:
     /* Cleanup all variables allocated in message */
-    if (message->argc) {
+    if (message->argc > 0) {
       unsigned int i = 0;
       while (i < message->argc) {
         if (message->argv[i])
-          free(message->argv);
+          free(message->argv[i]);
 
         i++;
       }
     }
 
-    if (message->argv)
+    if (message->argv != NULL)
       free(message->argv);
 
     return true;
@@ -127,7 +131,7 @@ bool message_send(socket_int socket, socket_message message)
 
 void message_free(socket_message message)
 {
-  int c = message.argc;
+  unsigned int c = message.argc;
 
   int i = 0;
   while (c > i) {

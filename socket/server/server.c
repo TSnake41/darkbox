@@ -73,12 +73,10 @@ void server(socket_args args, int message_fd)
   /* We consider main thread (currently running) as a server thread. */
   size_t thread_count = args.data.server.thread_count - 1;
 
-  sthread *threads = calloc(thread_count, sizeof(sthread));
-  tiny_assert(threads == NULL); /* Check allocation. */
-
   int i = 0;
   while (i < thread_count) {
-    tiny_assert(sthread_new(&threads[i], server_thread, &data));
+    sthread thread;
+    tiny_assert(sthread_new(&thread, server_thread, &data));
     i++;
   }
 
