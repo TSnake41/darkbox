@@ -39,7 +39,7 @@
 */
 void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *data)
 {
-  if (msg.argc < 1) {
+  if (msg.argc < 2) {
     /* Invalid arguments */
     send_code(client, CMD_INVALID_ARGS);
     return;
@@ -81,7 +81,7 @@ void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *dat
 */
 void server_cmd_nms_send(socket_message msg, socket_int client, server_data *data)
 {
-  if (msg.argc != 2) {
+  if (msg.argc < 2) {
     /* Invalid arguments */
     send_code(client, CMD_INVALID_ARGS);
     return;

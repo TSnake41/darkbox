@@ -38,7 +38,7 @@
 */
 void server_cmd_connect(socket_message msg, socket_int client, server_data *data)
 {
-  if (msg.argc != 4) {
+  if (msg.argc < 4) {
     /* Invalid args */
     send_code(client, CMD_INVALID_ARGS);
     return;

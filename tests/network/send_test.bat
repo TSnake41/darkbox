@@ -23,6 +23,10 @@ set /p msg=Message to send :
 echo Sent
 goto :loop
 
+:error
+echo An error occured
+goto :end_loop
+
 :end_loop
 echo Terminated
 socket -id:client -c exit

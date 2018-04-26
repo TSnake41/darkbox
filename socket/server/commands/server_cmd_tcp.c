@@ -37,7 +37,7 @@
 #include "server_cmd_utils.h"
 
 /* No need of a oversized buffer. */
-#define RECV_BUFFER_SIZE 0x7000
+#define RECV_BUFFER_SIZE 0xFFFF
 
 /* Syntax : recv sock_id [<blocking> <count>]
 
@@ -49,7 +49,9 @@
 */
 void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 {
-  if (msg.argc == 1 || msg.argc == 3) {
+  #define reset_socket(s) socket_set_blocking((s), true)
+
+  if (msg.argc != 2 && msg.argc < 4) {
     /* Invalid arguments */
     send_code(client, CMD_INVALID_ARGS);
     return;
@@ -63,7 +65,7 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
     return;
   }
 
-  uint16_t recieved;
+  long recieved = 0;
   void *buffer = malloc(RECV_BUFFER_SIZE);
 
   if (buffer == NULL) {
@@ -74,7 +76,7 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 
   send_code(client, CMD_SUCCESS);
 
-  if (msg.argc == 1) {
+  if (msg.argc == 2) {
     /* Read as much as possible bytes. */
 
     /* Set as non-blocking. */
@@ -82,16 +84,19 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 
     do {
       recieved = recv(pair->socket, buffer, RECV_BUFFER_SIZE, socket_default_flags);
+      if (recieved == -1)
+        break;
 
-      if (nms_send(client, buffer, recieved)) {
-          free(buffer);
-          return;
-      }
-    } while(recieved != RECV_BUFFER_SIZE);
+      if (nms_send(client, buffer, recieved))
+        break;
+
+    } while (recieved == RECV_BUFFER_SIZE);
+
+    nms_send(client, buffer, 0);
 
     /* Reset socket at it's initial state. */
-    socket_set_blocking(pair->socket, true);
-  } else { /* msg.argc == 3 */
+    reset_socket(pair->socket);
+  } else { /* msg.argc == 4 */
     /* Read <count> bytes in blocking or non-blocking modes. */
     bool blocking = parse_bool(msg.argv[2]);
     size_t count = strtoul(msg.argv[3], NULL, 0);
@@ -100,14 +105,16 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
       /* Set as non-blocking. */
       socket_set_blocking(pair->socket, false);
 
-    unsigned int recv_count = RECV_BUFFER_SIZE / count,
-                 remaining = RECV_BUFFER_SIZE % count;
+    unsigned int recv_count = count / RECV_BUFFER_SIZE,
+                 remaining = count - (RECV_BUFFER_SIZE * recv_count);
 
-    while (recv_count-- || recieved != RECV_BUFFER_SIZE) {
-      recieved = recv(pair->socket, buffer,
-        RECV_BUFFER_SIZE, socket_default_flags);
+    while (recv_count-- || recieved == RECV_BUFFER_SIZE) {
+      recieved = recv(pair->socket, buffer, RECV_BUFFER_SIZE, socket_default_flags);
+      if (recieved == -1)
+        break;
 
       if (nms_send(client, buffer, recieved)) {
+        reset_socket(pair->socket);
         free(buffer);
         return;
       }
@@ -115,14 +122,18 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 
     recieved = recv(pair->socket, buffer, remaining, socket_default_flags);
 
-    if (nms_send(client, buffer, recieved)) {
+    if (recieved != -1 && nms_send(client, buffer, recieved)) {
+      reset_socket(pair->socket);
       free(buffer);
       return;
     }
 
-    if (!blocking)
-      /* Reset socket. */
-      socket_set_blocking(pair->socket, true);
+    if (recieved != 0)
+      /* Send a 0-size packet. */
+      nms_send(client, buffer, 0);
+
+    /* Reset socket. */
+    reset_socket(pair->socket);
   }
 
   free(buffer);
@@ -161,12 +172,13 @@ void server_cmd_send(socket_message msg, socket_int client, server_data *data)
   do {
     if (nms_recv_no_alloc(client, buffer, &recieved)) {
       /* Broken IPC pipe ? */
+      send_code(client, CMD_IPC_ERROR);
       free(buffer);
       return;
     }
 
     /* Send data to socket */
-    if (send(pair->socket, buffer, recieved, socket_default_flags)) {
+    if (send(pair->socket, buffer, recieved, socket_default_flags) == -1) {
       /* Unable to send data to socket. */
       send_code(client, CMD_NETWORK_ERROR);
       free(buffer);

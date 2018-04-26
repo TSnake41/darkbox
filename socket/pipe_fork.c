@@ -29,8 +29,6 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* #define NO_FORK */
-
 #include <stdio.h>
 #include <stdlib.h>
 

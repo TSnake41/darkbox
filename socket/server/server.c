@@ -82,8 +82,10 @@ void server(socket_args args, int message_fd)
     i++;
   }
 
+  #ifndef NO_FORK
   /* Notify parent that server is ready. */
   pipe_send(message_fd);
+  #endif
 
   /* Consider the main thread as a server thread. */
   server_thread(&data);

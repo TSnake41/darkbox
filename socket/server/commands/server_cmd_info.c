@@ -40,7 +40,7 @@
 */
 void server_cmd_info(socket_message msg, socket_int client, server_data *data)
 {
-  if (msg.argc != 2) {
+  if (msg.argc < 2) {
     /* Invalid arguments */
     send_code(client, CMD_INVALID_ARGS);
     return;
