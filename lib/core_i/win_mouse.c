@@ -139,15 +139,16 @@ void core_input_get_event(core_input_event *ie)
     		break;
 
     	case KEY_EVENT:
-    		if (!ir.Event.KeyEvent.bKeyDown)
-    			continue;
+        if (!ir.Event.KeyEvent.bKeyDown)
+          continue;
+
+        /* Push event to the stack (to get working
+           getch()), however, it breaks input order.
+        */
+        WriteConsoleInputA(hin, &ir, 1, &e);
 
     		ie->type = KEY_PRESS;
-    		/* Of course, this is an hack */
-    		ie->event.key_press = ir.Event.KeyEvent.uChar.AsciiChar
-    			? ir.Event.KeyEvent.uChar.AsciiChar
-    			: ir.Event.KeyEvent.wVirtualScanCode;
-
+    		ie->event.key_press = getch();
         event_pulled = true;
     		break;
     }

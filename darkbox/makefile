@@ -28,7 +28,7 @@
 libdir=../lib
 
 CFLAGS ?= -O2 -s
-LDFLAGS ?= -s
+LDFLAGS ?= -s -lm
 
 CFLAGS += -I$(libdir)
 
