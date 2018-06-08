@@ -249,7 +249,7 @@ static void execute_cmd(darkbox_cmd cmd)
           core_change_color(read_int());
           break;
 
-        case 'g':
+        case 'g': ;
           /* Syntax : -g x y
              Usage : Move cursor to (x;y)
           */
