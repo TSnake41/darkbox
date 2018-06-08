@@ -15,7 +15,9 @@ popd
 ) || goto :error
 
 socket -id:tcp_rq -c send c < request
-pause
+
+:: Wait for response.
+darkbox -w 150
 socket -id:tcp_rq -c recv c
 goto :end_loop
 

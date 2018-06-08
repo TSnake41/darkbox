@@ -32,7 +32,6 @@
 #include <stdio.h>
 #include <socket.h>
 #include <nms.h>
-#include <math.h>
 
 #include "server_cmd_utils.h"
 
@@ -41,11 +40,11 @@
 
 /* Syntax : recv sock_id [<blocking> <count>]
 
-   Usage : Recieve data from socket.
-           If arguments are specified :
-                - Read <count> bytes in blocking or non-blocking modes.
-           Otherwise :
-                - Read as much as possible bytes.
+  Usage : Recieve data from socket.
+    If arguments are specified :
+      - Read <count> bytes in blocking or non-blocking modes.
+    Otherwise :
+      - Read as much as possible bytes.
 */
 void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 {
@@ -93,9 +92,6 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
     } while (recieved == RECV_BUFFER_SIZE);
 
     nms_send(client, buffer, 0);
-
-    /* Reset socket at it's initial state. */
-    reset_socket(pair->socket);
   } else { /* msg.argc == 4 */
     /* Read <count> bytes in blocking or non-blocking modes. */
     bool blocking = parse_bool(msg.argv[2]);
@@ -113,29 +109,22 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
       if (recieved == -1)
         break;
 
-      if (nms_send(client, buffer, recieved)) {
-        reset_socket(pair->socket);
-        free(buffer);
-        return;
-      }
+      if (nms_send(client, buffer, recieved))
+        goto error;
     }
 
     recieved = recv(pair->socket, buffer, remaining, socket_default_flags);
 
-    if (recieved != -1 && nms_send(client, buffer, recieved)) {
-      reset_socket(pair->socket);
-      free(buffer);
-      return;
-    }
+    if (recieved != -1 && nms_send(client, buffer, recieved))
+      goto error;
 
     if (recieved != 0)
       /* Send a 0-size packet. */
       nms_send(client, buffer, 0);
-
-    /* Reset socket. */
-    reset_socket(pair->socket);
   }
 
+  error:
+  reset_socket(pair->socket);
   free(buffer);
 }
 

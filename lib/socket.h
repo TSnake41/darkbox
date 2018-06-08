@@ -55,6 +55,7 @@ typedef unsigned short in_port_t;
 #define close closesocket
 #define inet_pton inet_pton_win
 #define inet_ntop inet_ntop_win
+#define poll WSAPoll
 
 /* Avoid pointer warnings (since WinAPI uses char * instead of void *). */
 #ifdef AVOID_POINTER_WARNING

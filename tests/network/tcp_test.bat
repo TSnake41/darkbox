@@ -29,6 +29,8 @@ goto :end_loop
 echo error !
 
 :end_loop
+echo.
 echo Terminated
 socket -id:tcp_test -c exit
+pause>nul
 goto :eof

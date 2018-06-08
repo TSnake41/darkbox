@@ -33,12 +33,19 @@
 
 #include "server_cmd_utils.h"
 
-/* Syntax : poll mode timeout sock_id_1 [...] [sock_id_N]
-   mode : 'I' for input mode, 'O' for output mode.
-
-   Usage : Poll input or output from sockets using a timeout.
+/* Syntax : poll timeout sock_id_1 [...] [sock_id_N]
+   Usage :
+     Poll for input from sockets using a timeout.
+     Returns (by output) the available socket.
 */
 void server_cmd_poll(socket_message msg, socket_int client, server_data *data)
 {
-  puts("Not implemented...");
+  unsigned int sock_count = msg.argc - 2;
+
+  #if (!defined(WIN32) || defined(FORCE_POLL)) && !defined(FORCE_SELECT)
+  /* Use poll function */
+
+  #else
+
+  #endif
 }
