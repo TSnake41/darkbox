@@ -253,8 +253,9 @@ static void execute_cmd(darkbox_cmd cmd)
           /* Syntax : -g x y
              Usage : Move cursor to (x;y)
           */
-
-          core_gotoxy(origin_x + read_int(), origin_y + read_int());
+          /* Read X first. */
+          int gx = origin_x + read_int();
+          core_gotoxy(gx, origin_y + read_int());
           break;
 
         case 'h':
@@ -316,10 +317,10 @@ static void execute_cmd(darkbox_cmd cmd)
           /* Syntax : -l Ax Ay Bx By
              Usage : Draw a line from A to B.
           */
-          int Ax = read_int(),
-              Ay = read_int(),
-              Bx = read_int(),
-              By = read_int();
+          int Ax = read_int();
+          int Ay = read_int();
+          int Bx = read_int();
+          int By = read_int();
 
           /* Code based on :
              https://rosettacode.org/wiki/Bitmap/Bresenham%27s_line_algorithm#C
