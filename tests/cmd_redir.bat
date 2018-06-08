@@ -3,13 +3,13 @@
     echo -s
 
     echo -nc 0xa
-    darkbox -? | darkbox_t -e
+    darkbox -? | darkbox -e
 
     echo -nc 0xb
-    darkbox_i -? | darkbox_t -e
+    darkbox_i -? | darkbox -e
 
     echo -nc 0xd
-    darkbox_t | darkbox_t -e
+    darkbox_t | darkbox -e
 
     echo -rq
 ) | darkbox

@@ -101,9 +101,12 @@ int main(int argc, char const *argv[])
             for (unsigned long i = 0; i < MAX_TEXT_LENGTH; i++) {
               int c;
 
-              if ((c = getchar()) == EOF)
+              if ((c = getchar()) == EOF) {
                 /* no more characters */
-                break;
+                /* Terminate string */
+                putchar('"');
+                return 0;
+              }
 
               if (c == '\\' || c == '"')
                 /* Escape '\' and '"' */
@@ -114,7 +117,6 @@ int main(int argc, char const *argv[])
             fputs("\" ", stdout);
           }
           break;
-
     }
 
   /* Initialize Console IO */
