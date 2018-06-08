@@ -148,7 +148,10 @@ void core_input_get_event(core_input_event *ie)
         WriteConsoleInputA(hin, &ir, 1, &e);
 
     		ie->type = KEY_PRESS;
-    		ie->event.key_press = getch();
+        int input = getch();
+        if (input == 224)
+          input = getch();
+    		ie->event.key_press = input;
         event_pulled = true;
     		break;
     }
