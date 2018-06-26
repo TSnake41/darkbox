@@ -43,6 +43,8 @@
 #include "../../message.h"
 
 id_socket_pair *server_get_pair(server_data *data, char *id, unsigned int *index);
+id_socket_pair *server_get_pair_unlocked(server_data *data, char *id, unsigned int *index);
+
 bool server_add_pair(server_data *data, id_socket_pair *pair);
 void server_remove_pair(server_data *data, unsigned int index);
 

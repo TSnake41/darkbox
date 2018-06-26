@@ -66,7 +66,7 @@ const client_handle client_handles[] = {
   { client_handle_code, "connect" },
   { client_handle_recv, "list" },
   { client_handle_nms_recv, "info" },
-  { client_handle_poll, "poll" },
+  { client_handle_recv, "poll" },
   { client_handle_nms_recv, "nms_recv" },
   { client_handle_nms_send, "nms_send" },
 };
@@ -163,10 +163,4 @@ void client_handle_nms_recv(socket_int socket)
 
   free(buffer);
   exit(recieved ? CMD_SUCCESS : CMD_NMS_ZERO_SIZE);
-}
-
-/** Implementation needed */
-void client_handle_poll(socket_int socket)
-{
-  /* TODO */
 }

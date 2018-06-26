@@ -61,18 +61,40 @@ Commands list:
         Remarks:
             Output might be piped or redirected.
 
-    nms_send: (testing, might change)
+    nms_send:
         Syntax : nms_send sock_id
         Usage : Send bytes to socket using NMS.
 
         Remarks:
             Input might be piped or redirected.
 
-    recv: (in draft)
+    recv:
+        Syntax : recv sock_id [<blocking> <count>]
+        Usage : Recieve data from socket.
+            If arguments are specified :
+              - Read <count> bytes in blocking or non-blocking modes.
+            Otherwise :
+              - Read as much as possible bytes.
 
-    send: (in draft)
+        Remarks: Output might be piped or redirected.
 
-    poll: (in draft)
+    send:
+        Syntax : send sock_id
+        Usage : Send bytes to socket.
+
+        Remarks:
+            Input might be piped or redirected.
+
+    poll:
+        Syntax : poll timeout sock_id_1 [...] [sock_id_N]
+        Usage :
+            Poll for input from sockets using a timeout.
+            Returns (by output) availables sockets.
+
+        Example:
+            for %%A /f "tokens=*" in ('socket -id:id -c poll -1 a b c') do (
+                call :read_from %%A
+            )
 
     info:
         Syntax : info sock_id

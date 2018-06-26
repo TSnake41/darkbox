@@ -36,21 +36,25 @@
 
 #include "server_cmd_utils.h"
 
-id_socket_pair *server_get_pair(server_data *data, char *id, unsigned int *index)
+id_socket_pair *server_get_pair_unlocked(server_data *data, char *id, unsigned int *index)
 {
-  smutex_lock(&data->pair_mutex);
-
   for (unsigned int i = 0; i < data->pair_count; i++)
     if (strcmp(id, data->pair_list[i]->id) == 0) {
       if (index)
         *index = i;
 
-      smutex_unlock(&data->pair_mutex);
       return data->pair_list[i];
     }
 
-  smutex_unlock(&data->pair_mutex);
   return NULL;
+}
+
+id_socket_pair *server_get_pair(server_data *data, char *id, unsigned int *index)
+{
+  smutex_lock(&data->pair_mutex);
+  id_socket_pair *pair = server_get_pair_unlocked(data, id, index);
+  smutex_unlock(&data->pair_mutex);
+  return pair;
 }
 
 bool server_add_pair(server_data *data, id_socket_pair *pair)
