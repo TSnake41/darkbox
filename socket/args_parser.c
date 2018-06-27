@@ -75,12 +75,12 @@ bool parse_args(char **argv, int argc, socket_args *args)
           return true;
         }
 
-    		if (v != NULL)
-    			args->data.server.thread_count = strtoul(v + 1, NULL, 0);
-    		else {
-    			fputs("ERROR: 't' defined without value.\n", stderr);
-    			return true;
-    		}
+        if (v != NULL)
+            args->data.server.thread_count = strtoul(v + 1, NULL, 0);
+        else {
+            fputs("ERROR: 't' defined without value.\n", stderr);
+            return true;
+        }
         break;
 
       case 'c':
