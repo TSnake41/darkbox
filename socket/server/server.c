@@ -45,7 +45,6 @@
 
 #include "../args_parser.h"
 #include "../message.h"
-#include "../socket.h"
 #include "../pipe_fork.h"
 
 #ifndef WIN32
@@ -109,7 +108,7 @@ static void server_thread(void *_server_data)
     if (msg.argc != 0) {
       unsigned int i = 0;
       while (i < server_cmds_count) {
-        if (stricmp(server_cmds[i].key, msg.argv[0]) == 0) {
+        if (strcasecmp(server_cmds[i].key, msg.argv[0]) == 0) {
           server_cmds[i].cmd(msg, c, data);
           break;
         }

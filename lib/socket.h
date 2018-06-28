@@ -58,6 +58,10 @@ typedef unsigned short in_port_t;
 #define inet_ntop inet_ntop_win
 #define poll WSAPoll
 
+#define SHUT_WR SD_SEND
+#define SHUT_RD SD_RECEIVE
+#define SHUT_RDWR SD_BOTH
+
 /* Avoid pointer warnings (since WinAPI uses char * instead of void *). */
 #ifdef AVOID_POINTER_WARNING
 #define send(s, b, l, f) send(s, (char *)(b), l, f)
@@ -74,6 +78,8 @@ void socket_end(void);
 int socket_available(socket_int);
 bool socket_set_blocking(socket_int socket, bool blocking);
 bool socket_set_read_timeout(socket_int socket, long timeout);
+bool socket_set_keepalive(socket_int socket, int keepalive);
+void socket_graceful_close(socket_int socket);
 
 #ifdef WIN32
 int inet_pton_win(int af, const char *src, void *dst);

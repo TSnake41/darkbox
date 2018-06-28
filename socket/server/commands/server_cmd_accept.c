@@ -47,6 +47,7 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
     return;
   }
 
+  bool overwritten = false;
   bool id_arg_defined = msg.argc > 2;
 
   id_socket_pair *listner_pair = server_get_pair(data, msg.argv[1], NULL);
@@ -70,12 +71,15 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
   }
 
   #ifdef WIN32
-  /* I have some doubts for Windows whether the sure
-     socket is blocking or not, so I prefer be
-     (for *NIX, this is defined by standards).
+  /* I have some doubts for Windows whether the sure socket is blocking
+    or not, so I prefer be (for *NIX, this is defined by standards).
   */
   socket_set_blocking(new_socket, true);
   #endif
+
+  /* Enable keepalive */
+  int keepalive = true;
+  setsockopt(new_socket, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(int));
 
   char ip_port[INET6_ADDRSTRLEN + 6];
 
@@ -99,6 +103,18 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
     return;
   }
 
+  smutex_lock(&data->pair_mutex);
+  unsigned int index;
+  id_socket_pair *old_pair = server_get_pair_unlocked(data, new_id, &index);
+
+  if (old_pair) {
+    /* Overwritte old pair. */
+    overwritten = true;
+    socket_graceful_close(old_pair->socket);
+    server_remove_pair_unlocked(data, index);
+  }
+  smutex_unlock(&data->pair_mutex);
+
   new_pair->id = get_str(new_pair);
   strcpy(new_pair->id, new_id);
 
@@ -112,7 +128,7 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
     return;
   }
 
-  send_code(client, CMD_SUCCESS);
+  send_code(client, overwritten ? CMD_OVERWRITTEN : CMD_SUCCESS);
 
   /* Send ip:port to client. */
   nms_send(client, ip_port, strlen(ip_port));

@@ -34,6 +34,16 @@
 #include <windows.h>
 #endif
 
+#ifndef GRACEFUL_CLOSE_TIMEOUT
+#define GRACEFUL_CLOSE_TIMEOUT 20000
+#endif
+
+#if (!defined(WIN32) || defined(FORCE_POLL)) && !defined(FORCE_SELECT)
+#define USE_POLL
+#else
+#define USE_SELECT
+#endif
+
 void socket_init(void)
 {
   #ifdef WIN32
@@ -50,19 +60,6 @@ void socket_end(void)
   #ifdef WIN32
   WSACleanup();
   #endif
-}
-
-int socket_available(socket_int socket)
-{
-  int c;
-
-  #ifndef WIN32
-  int e = fcntl(socket, FIONREAD, &c);
-  #else
-  int e = ioctlsocket(socket, FIONREAD, (u_long *)&c);
-  #endif
-
-  return e != -1 ? c : -1;
 }
 
 bool socket_set_read_timeout(socket_int socket, long timeout)
@@ -93,6 +90,43 @@ bool socket_set_blocking(socket_int socket, bool blocking)
   unsigned long mode = !blocking;
   return !ioctlsocket(socket, FIONBIO, &mode);
   #endif
+}
+
+void socket_graceful_close(socket_int socket)
+{
+  if (shutdown(socket, SHUT_RDWR) == 0) {
+    /* Okay, we shutdowned socket, now, we have to wait until all on-fly
+       data are received by pair, however, we must make sure that this check
+       does not idle eternally using a timeout (with polling ;)).
+    */
+    #ifdef USE_POLL
+    struct pollfd fd = {
+      .fd = socket,
+      .events = POLLIN
+    };
+
+    int ret = poll(&fd, 1, GRACEFUL_CLOSE_TIMEOUT);
+    if (ret == 1)
+      /* Make sure peer received everything. */
+      recv(socket, NULL, 0, 0);
+    #else /* USE_SELECTs */
+    fd_set set;
+    FD_ZERO(&set);
+
+    FD_SET(socket, &set);
+
+    struct timeval tv;
+    tv.tv_sec = GRACEFUL_CLOSE_TIMEOUT / 1000;
+    tv.tv_usec = (GRACEFUL_CLOSE_TIMEOUT % 1000) * 1000;
+
+    int ret = select(1, &set, NULL, NULL, &tv);
+    if (ret == 1)
+      /* Make sure peer received everything. */
+      recv(socket, NULL, 0, 0);
+    #endif
+  }
+  /* Either the socket is not connected or something went wrong, just close it. */
+  close(socket);
 }
 
 #ifdef WIN32

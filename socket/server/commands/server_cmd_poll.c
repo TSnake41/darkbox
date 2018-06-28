@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -34,12 +34,6 @@
 #include <nms.h>
 
 #include "server_cmd_utils.h"
-
-#if (!defined(WIN32) || defined(FORCE_POLL)) && !defined(FORCE_SELECT)
-#define USE_POLL
-#else
-#define USE_SELECT
-#endif
 
 /* Syntax : poll timeout sock_id_1 [...] [sock_id_N]
    Usage :
@@ -111,15 +105,36 @@ void server_cmd_poll(socket_message msg, socket_int client, server_data *data)
 
   /* Check fds */
   for (size_t i = 0; i < count; i++) {
+    char status = 0;
+
     #ifdef USE_POLL
-    if (fds[i].revents & POLLIN) {
+    if (fds[i].revents & POLLIN)
+      /* Input available. */
+      status = 'I';
+    else if ((fds[i].revents & POLLERR) || (fds[i].revents & POLLHUP))
+      /* Disconnected/errored peer. */
+      status = 'D';
     #else
     if (FD_ISSET(fds[i], &set)) {
+      /* Check if socket is listening (a listening socket cannot be disconnected) */
+      int listening;
+      socklen_t len = sizeof(listening);
+      getsockopt(fds[i], SOL_SOCKET, SO_ACCEPTCONN, &listening, &len);
+
+      if (!listening && recv(fds[i], NULL, 0, 0) < 0)
+        /* No data can be received from peer. */
+        status = 'D';
+      else
+        /* Data can be received form peer. */
+        status = 'I';
+    }
     #endif
+
+    if (status) {
       /* Send id using nms. */
       char *id = ids[i];
-      char new_str[strlen(id) + 2];
-      sprintf(new_str, "%s\n", id);
+      char new_str[strlen(id) + 4]; /* 'X ' + id + '\n\0'*/
+      sprintf(new_str, "%c %s\n", status, id);
       nms_send(client, new_str, strlen(new_str));
     }
   }

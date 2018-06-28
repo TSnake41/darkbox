@@ -79,8 +79,8 @@ void client_handle_code(socket_int socket)
   exit(code);
 }
 
-/* First recieve code from IPC socket, then (if sucess)
- * read message write them to stdout until count!=0xFFFF
+/** First recieve code from IPC socket, then (if sucess)
+ *  read message write them to stdout until count!=0xFFFF
  */
 void client_handle_recv(socket_int socket)
 {

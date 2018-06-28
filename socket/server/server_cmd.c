@@ -56,6 +56,7 @@ void server_cmd_exit(socket_message, socket_int, server_data *);
 const server_cmd server_cmds[] = {
   { server_cmd_new, "new" },
   { server_cmd_free, "free" },
+  { server_cmd_free, "close" }, /* free alias */
   { server_cmd_accept, "accept" },
   { server_cmd_bind, "bind" },
   { server_cmd_listen, "listen" },

@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@
 
 #include "server_cmd_utils.h"
 
-/* No need of a oversized buffer. */
+/* Min: 1, Max: 0xFFFF */
 #define RECV_BUFFER_SIZE 0xFFFF
 
 /* Syntax : recv sock_id [<blocking> <count>]
@@ -89,7 +89,7 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
       if (nms_send(client, buffer, recieved))
         break;
 
-    } while (recieved == RECV_BUFFER_SIZE);
+    } while (recieved != 0);
 
     nms_send(client, buffer, 0);
   } else { /* msg.argc == 4 */

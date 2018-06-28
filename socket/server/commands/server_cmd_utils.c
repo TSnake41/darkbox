@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -81,15 +81,11 @@ bool server_add_pair(server_data *data, id_socket_pair *pair)
   return false;
 }
 
-void server_remove_pair(server_data *data, unsigned int index)
+void server_remove_pair_unlocked(server_data *data, unsigned int index)
 {
-  smutex_lock(&data->pair_mutex);
-
-  if (index >= data->pair_count) {
+  if (index >= data->pair_count)
     /* Out of bounds */
-    smutex_unlock(&data->pair_mutex);
     return;
-  }
 
   /* Free pair */
   free(data->pair_list[index]);
@@ -113,7 +109,12 @@ void server_remove_pair(server_data *data, unsigned int index)
      (which does not affect behavior since data->pair_count determines the
      number of pairs).
   */
+}
 
+void server_remove_pair(server_data *data, unsigned int index)
+{
+  smutex_lock(&data->pair_mutex);
+  server_remove_pair_unlocked(data, index);
   smutex_unlock(&data->pair_mutex);
 }
 

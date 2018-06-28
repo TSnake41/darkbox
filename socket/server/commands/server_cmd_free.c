@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -42,17 +42,26 @@ void server_cmd_free(socket_message msg, socket_int client, server_data *data)
     return;
   }
 
+  /* Lock pair list. */
+  smutex_lock(&data->pair_mutex);
+
   unsigned int index;
-  id_socket_pair *pair = server_get_pair(data, msg.argv[1], &index);
+  id_socket_pair *pair = server_get_pair_unlocked(data, msg.argv[1], &index);
 
   if (pair == NULL) {
     /* No pair found */
+    smutex_unlock(&data->pair_mutex);
     send_code(client, CMD_NOT_FOUND);
     return;
   }
 
-  send_code(client, CMD_SUCCESS);
-  close(pair->socket);
+  socket_int socket = pair->socket;
 
   server_remove_pair(data, index);
+
+  /* We can unlock mutex since pair no longer exists in list. */
+  smutex_unlock(&data->pair_mutex);
+
+  socket_graceful_close(socket);
+  send_code(client, CMD_SUCCESS);
 }

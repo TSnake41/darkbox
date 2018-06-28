@@ -39,17 +39,19 @@
 */
 void server_cmd_exit(socket_message msg, socket_int client, server_data *data)
 {
-    /* Close sockets, to be sure */
-  size_t i = data->pair_count;
-  while (i--)
-    server_remove_pair(data, 0);
+  /* Lock mutex (lock other thread). */
+  smutex_unlock(&data->pair_mutex);
 
+  /* Close IPC socket, thus disabling IPC. */
   close(client);
   close(data->ipc_socket);
 
-  /* Free message and args (eventually) */
-  message_free(msg);
-  free_args(*data->args);
+  /* Force all sockets to close. */
+  size_t i = data->pair_count;
+  while (i--) {
+    close(data->pair_list[0]->socket);
+    server_remove_pair_unlocked(data, 0);
+  }
 
   /* Exit current process */
   exit(0);

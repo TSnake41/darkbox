@@ -43,7 +43,6 @@ void server_cmd_list(socket_message msg, socket_int client, server_data *data)
   send_code(client, CMD_SUCCESS);
 
   smutex_lock(&data->pair_mutex);
-
   for (size_t i = 0; i < data->pair_count; i++) {
     id_socket_pair *pair = data->pair_list[i];
     /* Send id using nms. */
@@ -51,8 +50,7 @@ void server_cmd_list(socket_message msg, socket_int client, server_data *data)
     sprintf(new_str, "%s\n", pair->id);
     nms_send(client, new_str, strlen(new_str));
   }
+  smutex_unlock(&data->pair_mutex);
 
   nms_send(client, NULL, 0);
-
-  smutex_unlock(&data->pair_mutex);
 }

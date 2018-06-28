@@ -49,8 +49,6 @@
     char argN_data[argN_size]
 */
 
-/* TODO: Use struct VLA instead of double pointer. */
-
 #define msg_flags socket_default_flags
 
 bool message_recv(socket_int socket, socket_message *message)

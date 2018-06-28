@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without

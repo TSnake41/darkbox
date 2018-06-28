@@ -128,3 +128,20 @@ errorlevels:
     10: Client (socket command) internal out of memory
     11: 0-size NMS packet received (info)
     12: IPC error (inter-process communication error).
+
+Build defines :
+    FORCE_POLL :
+        Force the use of poll() in server_cmd_poll().
+
+    FORCE_SELECT :
+        Force the use of select() in server_cmd_poll().
+
+    NO_FORK :
+        Disable the "forking" ability of socket thus improving debugger support.
+
+    AVOID_POINTER_WARNING : (Windows only)
+        Remove warnings caused by char's pointers of winsock2 functions.
+        Use it if you get warnings about pointer type.
+
+    GRACEFUL_CLOSE_TIMEOUT (ms) :
+        Change max timeout when shutdowning then closing a socket.

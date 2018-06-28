@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -74,6 +74,10 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
   /* See server_cmd_accept for more infos */
   socket_set_blocking(new_sock, true);
   #endif
+
+  /* Enable keepalive */
+  int keepalive = true;
+  setsockopt(new_sock, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(int));
 
   /* Add the new socket to the list */
   id_socket_pair *pair = malloc(sizeof(id_socket_pair) + strlen(msg.argv[1]) + 1);
