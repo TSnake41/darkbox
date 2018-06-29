@@ -20,34 +20,8 @@
     SOFTWARE.
 */
 
-/* Network Message System, a simple way to send framed data. */
-
-#ifndef H_NMS
-#define H_NMS
-
-#include <stdbool.h>
-#include <stdint.h>
-
-#include "znsock.h"
-
-/**
- * Send a Network Message to 'socket'.
- * Returns true on fail.
- */
-bool nms_send(znsock socket, const void *buffer, uint16_t length);
-
-/**
- * Recieve a Network Message from 'socket'.
- * NOTE: You need to manually free buffer.
- * Returns true on fail.
- */
-bool nms_recv(znsock socket, void **buffer, uint16_t *length);
-
-/**
- * Recieve a Network Message from 'socket'.
- * NOTE: Size of buffer must be at least of 2^16-1 bytes.
- * Returns true on fail.
- */
-bool nms_recv_no_alloc(znsock socket, void *buffer, uint16_t *received);
-
-#endif /* H_NMS */
+#include "znsock/compat.c"
+#include "znsock/init.c"
+#include "znsock/ipc.c"
+#include "znsock/socket.c"
+#include "znsock/options.c"

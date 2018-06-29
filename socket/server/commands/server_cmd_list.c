@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@
 /* Syntax : list
    Usage : Get socket list.
 */
-void server_cmd_list(socket_message msg, socket_int client, server_data *data)
+void server_cmd_list(socket_message msg, znsock client, server_data *data)
 {
   send_code(client, CMD_SUCCESS);
 

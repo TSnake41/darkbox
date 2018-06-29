@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -30,26 +30,26 @@
 */
 
 #include <stdlib.h>
-#include <socket_ipc.h>
+#include <znsock.h>
 
 #include "server_cmd_utils.h"
 
 /* Syntax : exit
    Usage : Ends server.
 */
-void server_cmd_exit(socket_message msg, socket_int client, server_data *data)
+void server_cmd_exit(socket_message msg, znsock client, server_data *data)
 {
   /* Lock mutex (lock other thread). */
   smutex_unlock(&data->pair_mutex);
 
   /* Close IPC socket, thus disabling IPC. */
-  close(client);
-  close(data->ipc_socket);
+  znsock_close(close(client), true);
+  znsock_close(data->ipc_socket, true);
 
   /* Force all sockets to close. */
   size_t i = data->pair_count;
   while (i--) {
-    close(data->pair_list[0]->socket);
+    znsock_close(data->pair_list[0]->socket, false);
     server_remove_pair_unlocked(data, 0);
   }
 

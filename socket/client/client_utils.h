@@ -33,10 +33,10 @@
 #define H_CLIENT_UTILS
 
 #include <stdint.h>
-#include <socket.h>
+#include <znsock.h>
 
 #include "client.h"
 
-uint8_t recv_code(socket_int socket);
+uint8_t recv_code(znsock socket);
 
 #endif /* H_CLIENT_UTILS */

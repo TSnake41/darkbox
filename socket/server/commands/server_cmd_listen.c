@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@
 /* Syntax : listen sock_id [n]
    Usage : Prepare to accept connections, allow n pending requests.
 */
-void server_cmd_listen(socket_message msg, socket_int client, server_data *data)
+void server_cmd_listen(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 2) {
     /* Invalid arguments */

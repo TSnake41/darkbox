@@ -36,7 +36,7 @@
 /* Syntax : connect sock_id ip port
    Usage : Connect sock_id to ip:port.
 */
-void server_cmd_connect(socket_message msg, socket_int client, server_data *data)
+void server_cmd_connect(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 4) {
     /* Invalid args */

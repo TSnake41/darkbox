@@ -32,8 +32,7 @@
 #ifndef H_MESSAGE
 #define H_MESSAGE
 
-#include <socket_ipc.h>
-#include <socket.h>
+#include <znsock.h>
 
 typedef struct socket_message {
   unsigned int argc;
@@ -45,12 +44,12 @@ typedef struct socket_message {
  * 'message', allocate recieved arguments
  * (which need to be freed using message_free())
  */
-bool message_recv(socket_int socket, socket_message *message);
+bool message_recv(znsock socket, socket_message *message);
 
 /**
  * Send a message to s.
  */
-bool message_send(socket_int socket, socket_message message);
+bool message_send(znsock socket, socket_message message);
 
 /**
  * Free all variables of message allocated by message_recv.

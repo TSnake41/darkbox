@@ -35,12 +35,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <socket.h>
+#include <znsock.h>
 
 #include "../server.h"
 
 #include "../../cmd_codes.h"
 #include "../../message.h"
+
+#define server_default_flags (MSG_NOSIGNAL)
 
 /**
  * Get a pair pointer and index by it's id.
@@ -92,7 +94,7 @@ bool server_addr_to_str(char *output, struct sockaddr_storage *addr, socklen_t a
 /**
  * Send a single byte (should be used as status reporting with IPC).
  */
-int send_code(socket_int socket, uint8_t code);
+int send_code(znsock socket, uint8_t code);
 
 bool parse_bool(const char *str);
 

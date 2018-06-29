@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    znsock tiny socket library.
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +25,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <fcntl.h>
-#include <sys/un.h>
 
-#include <socket_ipc.h>
+#include <znsock.h>
 
-static socket_int socket_ipc_create_socket(const char *id,
+static znsock znsock_ipc_socket(const char *id,
   struct sockaddr_un *saun_o)
 {
   const char *f_path_prefix = ".socket_";
@@ -43,18 +42,18 @@ static socket_int socket_ipc_create_socket(const char *id,
     return -1;
   }
 
-  socket_int s;
+  znsock s;
   if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
     return -1;
 
   return s;
 }
 
-socket_int socket_ipc_server_new(const char *id, int max_pending)
+znsock znsock_ipc_server(const char *id, int max_pending)
 {
-  socket_int s;
+  znsock s;
   struct sockaddr_un saun;
-  if ((s = socket_ipc_create_socket(id, &saun)) == 0)
+  if ((s = znsock_ipc_socket(id, &saun)) == 0)
     return -1;
 
   socklen_t l = sizeof(saun.sun_family) + strlen(saun.sun_path);
@@ -70,12 +69,12 @@ socket_int socket_ipc_server_new(const char *id, int max_pending)
   return s;
 }
 
-socket_int socket_ipc_client_new(const char *id)
+znsock znsock_ipc_client(const char *id)
 {
-  socket_int s;
+  znsock s;
   struct sockaddr_un saun;
 
-  if ((s = socket_ipc_create_socket(id, &saun)) == -1)
+  if ((s = znsock_ipc_socket(id, &saun)) == -1)
     return -1;
 
   if (connect(s, (struct sockaddr *)&saun, sizeof(struct sockaddr_un)) == -1){
@@ -84,4 +83,19 @@ socket_int socket_ipc_client_new(const char *id)
   }
 
   return s;
+}
+
+znsock znsock_ipc_accept(znsock s)
+{
+  znsock new_sock = accept(s, NULL, NULL);
+
+  if (znsock_is_valid(new_sock))
+    znsock_set_blocking(s, true);
+
+  return new_sock;
+}
+
+void znsock_ipc_close(znsock s)
+{
+  znsock_close(s, true);
 }

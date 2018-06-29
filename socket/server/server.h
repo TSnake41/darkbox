@@ -35,19 +35,18 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <sthread.h>
-#include <socket.h>
-#include <socket_ipc.h>
+#include <znsock.h>
 
 #include "../args_parser.h"
 
 typedef struct id_socket_pair {
   char *id;
-  socket_int socket;
+  znsock socket;
   bool ipv6;
 } id_socket_pair;
 
 typedef struct server_data {
-  socket_int ipc_socket;
+  znsock ipc_socket;
   socket_args *args;
   id_socket_pair **pair_list;
   size_t pair_count;

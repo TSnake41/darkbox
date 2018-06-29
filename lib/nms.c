@@ -26,11 +26,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <socket.h>
 
-#define nms_flags socket_default_flags
+#include <znsock.h>
 
-bool nms_send(socket_int socket, const void *data, uint16_t length)
+bool nms_send(znsock socket, const void *data, uint16_t length)
 {
   /* Convert length to network bytes */
   uint8_t length_bytes[2] = {
@@ -38,19 +37,19 @@ bool nms_send(socket_int socket, const void *data, uint16_t length)
   	length >> 8,
   };
 
-  if (send(socket, length_bytes, 2, nms_flags) == -1 ||
-    send(socket, data, length, nms_flags) == -1)
+  if (znsock_send(socket, length_bytes, 2) == -1 ||
+    znsock_send(socket, data, length) == -1)
     /* Unable to send data. */
     return true;
 
   return false;
 }
 
-bool nms_recv(socket_int socket, void **buffer, uint16_t *received)
+bool nms_recv(znsock socket, void **buffer, uint16_t *received)
 {
   uint8_t head_bytes[2];
 
-  if (recv(socket, head_bytes, 2, nms_flags) == -1)
+  if (znsock_recv(socket, head_bytes, 2) == -1)
     return true;
 
   /* Convert message length network bytes to integer. */
@@ -63,7 +62,7 @@ bool nms_recv(socket_int socket, void **buffer, uint16_t *received)
     return true;
   }
 
-  if (recv(socket, *buffer, *received, nms_flags) == -1) {
+  if (znsock_recv(socket, *buffer, *received) == -1) {
     /* Failed ? */
     free(*buffer);
     return true;
@@ -72,17 +71,17 @@ bool nms_recv(socket_int socket, void **buffer, uint16_t *received)
   return false;
 }
 
-bool nms_recv_no_alloc(socket_int socket, void *buffer, uint16_t *received)
+bool nms_recv_no_alloc(znsock socket, void *buffer, uint16_t *received)
 {
   uint8_t head_bytes[2];
 
-  if (recv(socket, head_bytes, 2, nms_flags) == -1)
+  if (znsock_recv(socket, head_bytes, 2) == -1)
     return true;
 
   /* Convert message length network bytes to integer. */
   *received = head_bytes[0] + (head_bytes[1] << 8);
 
-  if (recv(socket, buffer, *received, nms_flags) == -1)
+  if (znsock_recv(socket, buffer, *received) == -1)
     /* Failed ? */
     return true;
 

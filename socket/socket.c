@@ -30,7 +30,7 @@
 */
 
 #include <stdio.h>
-#include <socket.h>
+#include <znsock.h>
 
 #include <tiny_assert.h>
 
@@ -42,7 +42,10 @@
 
 int main(int argc, char **argv)
 {
-  socket_init();
+  if (znsock_init()) {
+    perror("znsock_init() failed");
+    return -1;
+  }
 
   /* Parse args */
   socket_args args;
@@ -57,7 +60,7 @@ int main(int argc, char **argv)
     status = client(args);
 
   free_args(args);
-  socket_end();
+  znsock_cleanup();
   return status;
 
   show_help:

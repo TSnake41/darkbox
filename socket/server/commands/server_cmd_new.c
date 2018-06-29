@@ -39,7 +39,7 @@
 
    Usage : Create a new socket sock_id.
 */
-void server_cmd_new(socket_message msg, socket_int client, server_data *data)
+void server_cmd_new(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 2) {
     /* Invalid arguments */
@@ -62,7 +62,7 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
   bool use_ipv6 = msg.argc > 2 && parse_bool(msg.argv[2]);
   int af = use_ipv6 ? AF_INET6 : AF_INET;
 
-  socket_int new_sock = socket(af, SOCK_STREAM, 0);
+  znsock new_sock = socket(af, SOCK_STREAM, 0);
 
   if (new_sock == -1) {
     /* Unable to create socket. */
@@ -72,12 +72,8 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
 
   #ifdef WIN32
   /* See server_cmd_accept for more infos */
-  socket_set_blocking(new_sock, true);
+  znsock_set_blocking(new_sock, true);
   #endif
-
-  /* Enable keepalive */
-  int keepalive = true;
-  setsockopt(new_sock, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(int));
 
   /* Add the new socket to the list */
   id_socket_pair *pair = malloc(sizeof(id_socket_pair) + strlen(msg.argv[1]) + 1);
@@ -85,7 +81,7 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
   if (pair == NULL) {
     /* Out of memory */
     send_code(client, CMD_OUT_OF_MEMORY);
-    close(new_sock);
+    znsock_close(new_sock, true);
     return;
   }
 
@@ -97,7 +93,7 @@ void server_cmd_new(socket_message msg, socket_int client, server_data *data)
 
   if (server_add_pair(data, pair)) {
     send_code(client, CMD_OUT_OF_MEMORY);
-    close(new_sock);
+    znsock_close(new_sock, true);
     free(pair);
     return;
   }

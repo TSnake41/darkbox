@@ -34,7 +34,7 @@
 /* Syntax : free sock_id
    Usage : Close and free sock_id.
 */
-void server_cmd_free(socket_message msg, socket_int client, server_data *data)
+void server_cmd_free(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 2) {
     /* Invalid arguments */
@@ -55,13 +55,13 @@ void server_cmd_free(socket_message msg, socket_int client, server_data *data)
     return;
   }
 
-  socket_int socket = pair->socket;
+  znsock socket = pair->socket;
 
-  server_remove_pair(data, index);
+  server_remove_pair_unlocked(data, index);
 
   /* We can unlock mutex since pair no longer exists in list. */
   smutex_unlock(&data->pair_mutex);
 
-  socket_graceful_close(socket);
+  znsock_close(socket, true);
   send_code(client, CMD_SUCCESS);
 }

@@ -36,8 +36,7 @@
 
 #include <fllist.h>
 #include <sthread.h>
-#include <socket.h>
-#include <socket_ipc.h>
+#include <znsock.h>
 #include <tiny_assert.h>
 
 #include "server.h"
@@ -63,8 +62,8 @@ bool server(socket_args args, int message_fd)
   data.pair_list = NULL;
   data.pair_count = 0;
 
-  data.ipc_socket = socket_ipc_server_new(args.id, 5);
-  if (!socket_is_valid(data.ipc_socket)) {
+  data.ipc_socket = znsock_ipc_server(args.id, 5);
+  if (!znsock_is_valid(data.ipc_socket)) {
     fputs("ERROR: Unable to create the IPC server.\n", stderr);
     return true;
   }
@@ -96,12 +95,15 @@ static void server_thread(void *_server_data)
   server_data *data = _server_data;
 
   while (true) {
-    socket_int c = accept(data->ipc_socket, NULL, NULL);
+    znsock c = znsock_ipc_accept(data->ipc_socket);
+
+    if (!znsock_is_valid(c))
+      continue;
 
     socket_message msg;
 
     if (message_recv(c, &msg)) {
-      close(c);
+      znsock_ipc_close(c);
       continue;
     }
 
@@ -117,7 +119,7 @@ static void server_thread(void *_server_data)
       }
     }
 
-    close(c);
+    znsock_ipc_close(c);
     message_free(msg);
   }
 }

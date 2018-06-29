@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    znsock tiny socket library.
+    Copyright (c) 2018 Teddy ASTIE (TSnake41)
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +21,22 @@
     SOFTWARE.
 */
 
-/*
-    Interprocess communication for SockeT.
-
-    Implementation differ between POSIX and Windows :
-     - POSIX uses Unix Domain sockets
-     - Windows uses Named Pipes.
-*/
-
-#ifndef H_IPC
-#define H_IPC
-
 #include <stdbool.h>
-#include "socket.h"
+#include <znsock.h>
 
-socket_int socket_ipc_server_new(const char *id, int max_clients);
-socket_int socket_ipc_server_accept(socket_int server);
-socket_int socket_ipc_client_new(const char *id);
+bool znsock_init(void)
+{
+  #ifdef WIN32
+  WSADATA wsa;
+  return WSAStartup(MAKEWORD(2, 2), &wsa) != 0;
+  #else
+  return false;
+  #endif
+}
 
-#endif /* H_IPC */
+void znsock_cleanup(void)
+{
+  #ifdef WIN32
+  WSACleanup();
+  #endif
+}

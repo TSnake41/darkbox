@@ -1,5 +1,6 @@
 /*
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    znsock tiny socket library.
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -27,8 +28,7 @@
 #include <time.h>
 
 #include <windows.h>
-#include <socket.h>
-#include <socket_ipc.h>
+#include <znsock.h>
 
 /*
     Create a file named $socket_[id] that store the port.
@@ -44,12 +44,12 @@ static void get_file_id_path(const char *id, char *out)
   strcat(out, id);
 }
 
-socket_int socket_ipc_server_new(const char *id, int max_pending)
+znsock znsock_ipc_server(const char *id, int max_pending)
 {
   char f_path[strlen(file_id_prefix) + strlen(id) + 1];
   get_file_id_path(id, f_path);
 
-  socket_int s = socket(AF_INET, SOCK_STREAM, 0);
+  znsock s = socket(AF_INET, SOCK_STREAM, 0);
   if (s == INVALID_SOCKET)
     return INVALID_SOCKET;
 
@@ -80,7 +80,7 @@ socket_int socket_ipc_server_new(const char *id, int max_pending)
   return s;
 }
 
-socket_int socket_ipc_client_new(const char *id)
+znsock znsock_ipc_client(const char *id)
 {
   char f_path[strlen(file_id_prefix) + strlen(id) + 1];
   get_file_id_path(id, f_path);
@@ -94,7 +94,7 @@ socket_int socket_ipc_client_new(const char *id)
   fread(&port, sizeof(unsigned short), 1, f);
   fclose(f);
 
-  socket_int s;
+  znsock s;
   if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
     return INVALID_SOCKET;
 
@@ -116,13 +116,17 @@ socket_int socket_ipc_client_new(const char *id)
   return s;
 }
 
-socket_int socket_ipc_server_accept(socket_int server)
+znsock znsock_ipc_accept(znsock s)
 {
-  socket_int s = accept(server, NULL, NULL);
-  if (socket_is_valid(s)) {
-    u_long non_blocking = 0;
-    ioctlsocket((int)s, FIONBIO, &non_blocking);
-  }
+  znsock new_sock = accept(s, NULL, NULL);
 
-  return s;
+  if (znsock_is_valid(new_sock))
+    znsock_set_blocking(s, true);
+
+  return new_sock;
+}
+
+void znsock_ipc_close(znsock s)
+{
+  znsock_close(s, true);
 }

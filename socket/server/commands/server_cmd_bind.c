@@ -36,7 +36,7 @@
 /* Syntax : bind sock_id ip port
    Usage : Bind socket to port.
 */
-void server_cmd_bind(socket_message msg, socket_int client, server_data *data)
+void server_cmd_bind(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 4) {
     /* Invalid arguments */

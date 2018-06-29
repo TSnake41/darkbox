@@ -25,11 +25,11 @@
 
     Implementation differ between POSIX and Windows :
      - POSIX implementation uses Unix Domain sockets
-     - Windows implementation uses Named Pipes.
+     - Windows implementation uses TCP/IP.
 */
 
 #ifndef WIN32
-#include "socket_ipc_unix.c"
+#include "ipc/ipc_unix.c"
 #else
-#include "socket_ipc_win.c"
+#include "ipc/ipc_win.c"
 #endif

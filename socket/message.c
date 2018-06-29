@@ -34,7 +34,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include <socket_ipc.h>
+#include <znsock.h>
 
 #include "message.h"
 
@@ -49,9 +49,7 @@
     char argN_data[argN_size]
 */
 
-#define msg_flags socket_default_flags
-
-bool message_recv(socket_int socket, socket_message *message)
+bool message_recv(znsock socket, socket_message *message)
 {
   if (message == NULL)
     goto error;
@@ -59,7 +57,7 @@ bool message_recv(socket_int socket, socket_message *message)
   memset(message, '\0', sizeof(socket_message));
 
   /* Recieve the argument count. */
-  if (recv(socket, &message->argc, sizeof(unsigned int), msg_flags) == -1)
+  if (znsock_recv(socket, &message->argc, sizeof(unsigned int)) == -1)
     goto error;
 
   message->argv = calloc(message->argc, sizeof(char *));
@@ -70,7 +68,7 @@ bool message_recv(socket_int socket, socket_message *message)
   while (i < message->argc) {
     /* Recieve the argument size (including NULL terminator). */
     unsigned int size;
-    if (recv(socket, &size, sizeof(unsigned int), msg_flags) == -1)
+    if (znsock_recv(socket, &size, sizeof(unsigned int)) == -1)
       goto error;
 
     /* Allocate memory for argument */
@@ -79,7 +77,7 @@ bool message_recv(socket_int socket, socket_message *message)
       goto error;
 
     /* Recieve and store the argument */
-    if (recv(socket, message->argv[i], size, msg_flags) == -1)
+    if (znsock_recv(socket, message->argv[i], size) == -1)
       goto error;
 
     i++;
@@ -105,9 +103,9 @@ bool message_recv(socket_int socket, socket_message *message)
     return true;
 }
 
-bool message_send(socket_int socket, socket_message message)
+bool message_send(znsock socket, socket_message message)
 {
-  if (send(socket, &message.argc, sizeof(unsigned int), msg_flags) == -1)
+  if (znsock_send(socket, &message.argc, sizeof(unsigned int)) == -1)
     return true;
 
   int i = 0;
@@ -115,10 +113,10 @@ bool message_send(socket_int socket, socket_message message)
     char *str = message.argv[i];
     unsigned int l = strlen(str) + 1;
 
-    if (send(socket, &l, sizeof(unsigned int), msg_flags) == -1)
+    if (znsock_send(socket, &l, sizeof(unsigned int)) == -1)
       return true;
 
-    if (send(socket, str, l, msg_flags) == -1)
+    if (znsock_send(socket, str, l) == -1)
       return true;
 
     i++;

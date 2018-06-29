@@ -118,9 +118,9 @@ void server_remove_pair(server_data *data, unsigned int index)
   smutex_unlock(&data->pair_mutex);
 }
 
-int send_code(socket_int socket, uint8_t code)
+int send_code(znsock socket, uint8_t code)
 {
-  return send(socket, &code, 1, socket_default_flags);
+  return znsock_send(socket, &code, 1);
 }
 
 bool parse_bool(const char *str)

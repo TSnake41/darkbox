@@ -32,12 +32,12 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include <socket.h>
+#include <znsock.h>
 
-uint8_t recv_code(socket_int socket)
+uint8_t recv_code(znsock socket)
 {
   uint8_t code;
-  if (recv(socket, &code, 1, socket_default_flags) == -1)
+  if (znsock_recv(socket, &code, 1) == -1)
     code = 0xFF;
 
   return code;

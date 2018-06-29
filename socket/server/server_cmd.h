@@ -35,7 +35,7 @@
 #include "server.h"
 #include "../message.h"
 
-typedef void (*server_cmd_func)(socket_message, socket_int, server_data *);
+typedef void (*server_cmd_func)(socket_message, znsock, server_data *);
 
 typedef struct server_cmd {
   server_cmd_func cmd;

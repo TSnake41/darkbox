@@ -33,9 +33,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <socket_ipc.h>
+#include <znsock.h>
 #include <tiny_assert.h>
-#include <socket.h>
 
 #include "../args_parser.h"
 #include "../message.h"
@@ -44,8 +43,8 @@
 
 bool client(socket_args args)
 {
-  socket_int socket = socket_ipc_client_new(args.id);
-  if (!socket_is_valid(socket)) {
+  znsock socket = znsock_ipc_client(args.id);
+  if (!znsock_is_valid(socket)) {
     fputs("ERROR: Unable to connect to IPC server.\n", stderr);
     return true;
   }
@@ -68,5 +67,6 @@ bool client(socket_args args)
     i++;
   }
 
+  znsock_ipc_close(socket);
   return false;
 }

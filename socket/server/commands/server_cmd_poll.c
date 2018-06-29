@@ -40,7 +40,7 @@
      Poll for input from sockets using a timeout.
      Returns (by output) the available socket.
 */
-void server_cmd_poll(socket_message msg, socket_int client, server_data *data)
+void server_cmd_poll(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 2) {
     /* Invalid arguments */
@@ -108,25 +108,42 @@ void server_cmd_poll(socket_message msg, socket_int client, server_data *data)
     char status = 0;
 
     #ifdef USE_POLL
-    if (fds[i].revents & POLLIN)
-      /* Input available. */
-      status = 'I';
-    else if ((fds[i].revents & POLLERR) || (fds[i].revents & POLLHUP))
-      /* Disconnected/errored peer. */
-      status = 'D';
+    if (fds[i].revents) {
+      int fd = fds[i].fd;
+
+      /* Check if socket is listening (a listening socket cannot be disconnected) */
+      int listening;
+      socklen_t len = sizeof(listening);
+
+      if (getsockopt(fd, SOL_SOCKET, SO_ACCEPTCONN, &listening, &len) == 0) {
+        if (!listening && recv(fd, NULL, 0, 0) < 0)
+          /* Disconnected/errored peer. */
+          status = 'D';
+        else
+          /* Input available. */
+          status = 'I';
+      } else {
+        /* getsockopt() fails, peer is likely to be disconnected. */
+        status = 'D';
+      }
+    }
     #else
     if (FD_ISSET(fds[i], &set)) {
       /* Check if socket is listening (a listening socket cannot be disconnected) */
       int listening;
       socklen_t len = sizeof(listening);
-      getsockopt(fds[i], SOL_SOCKET, SO_ACCEPTCONN, &listening, &len);
 
-      if (!listening && recv(fds[i], NULL, 0, 0) < 0)
-        /* No data can be received from peer. */
+      if (getsockopt(fds[i], SOL_SOCKET, SO_ACCEPTCONN, &listening, &len) == 0) {
+        if (!listening && recv(fds[i], NULL, 0, 0) < 0)
+          /* Disconnected/errored peer. */
+          status = 'D';
+        else
+          /* Input available. */
+          status = 'I';
+      } else {
+        /* getsockopt() fails, peer is likely to be disconnected. */
         status = 'D';
-      else
-        /* Data can be received form peer. */
-        status = 'I';
+      }
     }
     #endif
 

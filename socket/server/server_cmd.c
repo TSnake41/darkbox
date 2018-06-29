@@ -1,6 +1,6 @@
 /*
     SockeT - Portable TCP and NMS Network IO interface.
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2017-2018 Teddy ASTIE (TSnake41)
 
     All rights reserved.
     Redistribution and use in source and binary forms, with or without
@@ -31,27 +31,27 @@
 
 #include "server_cmd.h"
 
-void server_cmd_new(socket_message, socket_int, server_data *);
-void server_cmd_free(socket_message, socket_int, server_data *);
-void server_cmd_accept(socket_message, socket_int, server_data *);
+void server_cmd_new(socket_message, znsock, server_data *);
+void server_cmd_free(socket_message, znsock, server_data *);
+void server_cmd_accept(socket_message, znsock, server_data *);
 
-void server_cmd_recv(socket_message, socket_int, server_data *);
-void server_cmd_send(socket_message, socket_int, server_data *);
+void server_cmd_recv(socket_message, znsock, server_data *);
+void server_cmd_send(socket_message, znsock, server_data *);
 
-void server_cmd_nms_recv(socket_message, socket_int, server_data *);
-void server_cmd_nms_send(socket_message, socket_int, server_data *);
+void server_cmd_nms_recv(socket_message, znsock, server_data *);
+void server_cmd_nms_send(socket_message, znsock, server_data *);
 
-void server_cmd_bind(socket_message, socket_int, server_data *);
-void server_cmd_listen(socket_message, socket_int, server_data *);
+void server_cmd_bind(socket_message, znsock, server_data *);
+void server_cmd_listen(socket_message, znsock, server_data *);
 
-void server_cmd_connect(socket_message, socket_int, server_data *);
+void server_cmd_connect(socket_message, znsock, server_data *);
 
-void server_cmd_list(socket_message, socket_int, server_data *);
-void server_cmd_info(socket_message, socket_int, server_data *);
+void server_cmd_list(socket_message, znsock, server_data *);
+void server_cmd_info(socket_message, znsock, server_data *);
 
-void server_cmd_poll(socket_message, socket_int, server_data *);
+void server_cmd_poll(socket_message, znsock, server_data *);
 
-void server_cmd_exit(socket_message, socket_int, server_data *);
+void server_cmd_exit(socket_message, znsock, server_data *);
 
 const server_cmd server_cmds[] = {
   { server_cmd_new, "new" },

@@ -37,7 +37,7 @@
 /* Syntax : nms_recv sock_id
    Usage : Recieve data from socket using NMS.
 */
-void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *data)
+void server_cmd_nms_recv(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 2) {
     /* Invalid arguments */
@@ -79,7 +79,7 @@ void server_cmd_nms_recv(socket_message msg, socket_int client, server_data *dat
 /* Syntax : nms_send sock_id
    Usage : Send bytes to socket using NMS.
 */
-void server_cmd_nms_send(socket_message msg, socket_int client, server_data *data)
+void server_cmd_nms_send(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 2) {
     /* Invalid arguments */

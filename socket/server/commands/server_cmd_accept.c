@@ -39,7 +39,7 @@
    Usage : Accept a pending socket connection of listner_sock_id.
    If new_sock_id is not defined, define id to "IP:PORT".
 */
-void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
+void server_cmd_accept(socket_message msg, znsock client, server_data *data)
 {
   if (msg.argc < 2) {
     /* Invalid arguments */
@@ -61,7 +61,7 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
   struct sockaddr_storage addr = { 0 };
   socklen_t addr_len = sizeof(addr);
 
-  socket_int new_socket =
+  znsock new_socket =
     accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
 
   if (new_socket == -1) {
@@ -74,19 +74,15 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
   /* I have some doubts for Windows whether the sure socket is blocking
     or not, so I prefer be (for *NIX, this is defined by standards).
   */
-  socket_set_blocking(new_socket, true);
+  znsock_set_blocking(new_socket, true);
   #endif
-
-  /* Enable keepalive */
-  int keepalive = true;
-  setsockopt(new_socket, SOL_SOCKET, SO_KEEPALIVE, &keepalive, sizeof(int));
 
   char ip_port[INET6_ADDRSTRLEN + 6];
 
   /* Convert addr to ip:port */
   if (server_addr_to_str(ip_port, &addr, addr_len)) {
     send_code(client, CMD_INTERNAL_ERROR);
-    close(new_socket);
+    znsock_close(new_socket, true);
     return;
   }
 
@@ -99,7 +95,7 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
   if (new_pair == NULL) {
     /* Out of memory */
     send_code(client, CMD_OUT_OF_MEMORY);
-    close(new_socket);
+    znsock_close(new_socket, true);
     return;
   }
 
@@ -110,7 +106,7 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
   if (old_pair) {
     /* Overwritte old pair. */
     overwritten = true;
-    socket_graceful_close(old_pair->socket);
+    znsock_close(old_pair->socket, true);
     server_remove_pair_unlocked(data, index);
   }
   smutex_unlock(&data->pair_mutex);
@@ -123,7 +119,7 @@ void server_cmd_accept(socket_message msg, socket_int client, server_data *data)
 
   if (server_add_pair(data, new_pair)) {
     send_code(client, CMD_OUT_OF_MEMORY);
-    close(new_socket);
+    znsock_close(old_pair->socket, true);
     free(new_pair);
     return;
   }

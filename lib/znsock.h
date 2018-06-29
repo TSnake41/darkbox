@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2017 Teddy ASTIE (TSnake41)
+    Copyright (c) 2018 Teddy ASTIE (TSnake41)
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +20,8 @@
     SOFTWARE.
 */
 
-#ifndef H_SOCKETS
-#define H_SOCKETS
+#ifndef H_ZNSOCK
+#define H_ZNSOCK
 
 #include <stdbool.h>
 
@@ -36,26 +36,27 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
+#include <sys/time.h>
+#include <sys/un.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <poll.h>
+#include <fcntl.h>
 
-typedef int socket_int;
+typedef int znsock;
 
-#define socket_default_flags (MSG_NOSIGNAL)
-#define socket_is_valid(socket) ((socket) != -1)
+#define znsock_is_valid(socket) ((socket) != -1)
+#define znsock_no_signal (MSG_NOSIGNAL)
 #else
 #include <winsock2.h>
 #include <ws2tcpip.h>
-typedef SOCKET socket_int;
+
+typedef SOCKET znsock;
 typedef unsigned short in_port_t;
 
-#define socket_default_flags (0)
 #define close closesocket
-#define inet_pton inet_pton_win
-#define inet_ntop inet_ntop_win
 #define poll WSAPoll
 
 #define SHUT_WR SD_SEND
@@ -70,20 +71,32 @@ typedef unsigned short in_port_t;
 #define getsockopt(s, l, n, v, ol) getsockopt(s, l, n, (char *)(v), ol)
 #endif
 
-#define socket_is_valid(socket) ((socket) != INVALID_SOCKET)
+#define znsock_is_valid(socket) ((socket) != INVALID_SOCKET)
+#define znsock_no_signal (0)
 #endif
 
-void socket_init(void);
-void socket_end(void);
-int socket_available(socket_int);
-bool socket_set_blocking(socket_int socket, bool blocking);
-bool socket_set_read_timeout(socket_int socket, long timeout);
-bool socket_set_keepalive(socket_int socket, int keepalive);
-void socket_graceful_close(socket_int socket);
+bool znsock_init(void);
+void znsock_cleanup(void);
+
+bool znsock_set_blocking(znsock socket, bool blocking);
+bool znsock_set_read_timeout(znsock socket, long timeout);
+bool znsock_set_keepalive(znsock socket, int keepalive);
+void znsock_close(znsock socket, bool graceful);
+
+znsock znsock_ipc_server(const char *id, int max_pending);
+znsock znsock_ipc_client(const char *id);
+znsock znsock_ipc_accept(znsock s);
+void znsock_ipc_close(znsock s);
 
 #ifdef WIN32
-int inet_pton_win(int af, const char *src, void *dst);
-const char *inet_ntop_win(int af, const void *src, char *dst, socklen_t size);
+int znsock_compat_inet_pton(int af, const char *src, void *dst);
+const char *znsock_compat_inet_ntop(int af, const void *src, char *dst, socklen_t size);
+
+#define inet_pton znsock_compat_inet_pton
+#define inet_ntop znsock_compat_inet_ntop
 #endif
 
-#endif /* H_SOCKETS */
+#define znsock_recv(s, buffer, size) recv(s, buffer, size, znsock_no_signal)
+#define znsock_send(s, buffer, size) send(s, buffer, size, znsock_no_signal)
+
+#endif /* H_ZNSOCK */

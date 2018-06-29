@@ -32,24 +32,22 @@
 #ifndef H_CLIENT_HANDLE
 #define H_CLIENT_HANDLE
 
-#include <socket.h>
+#include <znsock.h>
 
-typedef void (*client_handle_func)(socket_int);
+typedef void (*client_handle_func)(znsock);
 
 typedef struct client_handle {
   client_handle_func func;
   char *cmd;
 } client_handle;
 
-void client_handle_code(socket_int socket);
+void client_handle_code(znsock socket);
 
-void client_handle_recv(socket_int socket);
-void client_handle_send(socket_int socket);
+void client_handle_recv(znsock socket);
+void client_handle_send(znsock socket);
 
-void client_handle_nms_recv(socket_int socket);
-void client_handle_nms_send(socket_int socket);
-
-void client_handle_poll(socket_int socket);
+void client_handle_nms_recv(znsock socket);
+void client_handle_nms_send(znsock socket);
 
 extern const unsigned int client_handles_count;
 extern const client_handle client_handles[];

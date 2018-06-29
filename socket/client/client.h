@@ -32,7 +32,7 @@
 #ifndef H_CLIENT
 #define H_CLIENT
 
-#include <socket.h>
+#include <znsock.h>
 
 #include "../args_parser.h"
 

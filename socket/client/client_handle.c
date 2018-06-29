@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <nms.h>
-#include <socket.h>
+#include <znsock.h>
 
 #ifndef WIN32
 #include <core_i.h>
@@ -73,7 +73,7 @@ const client_handle client_handles[] = {
 const unsigned int client_handles_count = sizeof(client_handles) / sizeof(*client_handles);
 
 /** Recieve code from socket, and use it as exit code. */
-void client_handle_code(socket_int socket)
+void client_handle_code(znsock socket)
 {
   uint8_t code = recv_code(socket);
   exit(code);
@@ -82,7 +82,7 @@ void client_handle_code(socket_int socket)
 /** First recieve code from IPC socket, then (if sucess)
  *  read message write them to stdout until count!=0xFFFF
  */
-void client_handle_recv(socket_int socket)
+void client_handle_recv(znsock socket)
 {
   uint8_t code = recv_code(socket);
   if (code != CMD_SUCCESS)
@@ -107,11 +107,12 @@ void client_handle_recv(socket_int socket)
   } while(count != 0);
 
   free(buffer);
+  znsock_ipc_close(socket);
   exit(CMD_SUCCESS);
 }
 
 /** Send to IPC socket data from stdin. */
-void client_handle_send(socket_int socket)
+void client_handle_send(znsock socket)
 {
   setvbuf(stdin, NULL, _IONBF, 0);
 
@@ -135,13 +136,14 @@ void client_handle_send(socket_int socket)
   free(buffer);
 
   uint8_t code = recv_code(socket);
+  znsock_ipc_close(socket);
   exit(code);
 }
 
 /** Recieve code from IPC socket, then (if success)
  *  recieve network message and write it to stdout.
  */
-void client_handle_nms_recv(socket_int socket)
+void client_handle_nms_recv(znsock socket)
 {
   uint8_t code = recv_code(socket);
   if (code != CMD_SUCCESS)
@@ -162,5 +164,6 @@ void client_handle_nms_recv(socket_int socket)
     fwrite(buffer, 1, recieved, stdout);
 
   free(buffer);
+  znsock_ipc_close(socket);
   exit(recieved ? CMD_SUCCESS : CMD_NMS_ZERO_SIZE);
 }

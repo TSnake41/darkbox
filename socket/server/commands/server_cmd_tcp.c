@@ -30,7 +30,7 @@
 */
 
 #include <stdio.h>
-#include <socket.h>
+#include <znsock.h>
 #include <nms.h>
 
 #include "server_cmd_utils.h"
@@ -46,9 +46,9 @@
     Otherwise :
       - Read as much as possible bytes.
 */
-void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
+void server_cmd_recv(socket_message msg, znsock client, server_data *data)
 {
-  #define reset_socket(s) socket_set_blocking((s), true)
+  #define reset_socket(s) znsock_set_blocking((s), true)
 
   if (msg.argc != 2 && msg.argc < 4) {
     /* Invalid arguments */
@@ -79,10 +79,10 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
     /* Read as much as possible bytes. */
 
     /* Set as non-blocking. */
-    socket_set_blocking(pair->socket, false);
+    znsock_set_blocking(pair->socket, false);
 
     do {
-      recieved = recv(pair->socket, buffer, RECV_BUFFER_SIZE, socket_default_flags);
+      recieved = znsock_recv(pair->socket, buffer, RECV_BUFFER_SIZE);
       if (recieved == -1)
         break;
 
@@ -99,13 +99,13 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 
     if (!blocking)
       /* Set as non-blocking. */
-      socket_set_blocking(pair->socket, false);
+      znsock_set_blocking(pair->socket, false);
 
     unsigned int recv_count = count / RECV_BUFFER_SIZE,
                  remaining = count - (RECV_BUFFER_SIZE * recv_count);
 
     while (recv_count-- || recieved == RECV_BUFFER_SIZE) {
-      recieved = recv(pair->socket, buffer, RECV_BUFFER_SIZE, socket_default_flags);
+      recieved = znsock_recv(pair->socket, buffer, RECV_BUFFER_SIZE);
       if (recieved == -1)
         break;
 
@@ -113,7 +113,7 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
         goto error;
     }
 
-    recieved = recv(pair->socket, buffer, remaining, socket_default_flags);
+    recieved = znsock_recv(pair->socket, buffer, remaining);
 
     if (recieved != -1 && nms_send(client, buffer, recieved))
       goto error;
@@ -131,7 +131,7 @@ void server_cmd_recv(socket_message msg, socket_int client, server_data *data)
 /* Syntax : send sock_id
    Usage : Send bytes to socket.
 */
-void server_cmd_send(socket_message msg, socket_int client, server_data *data)
+void server_cmd_send(socket_message msg, znsock client, server_data *data)
 {
   /* NOTE: This code is heavily based on nms_send (might merge ?). */
 
@@ -167,7 +167,7 @@ void server_cmd_send(socket_message msg, socket_int client, server_data *data)
     }
 
     /* Send data to socket */
-    if (send(pair->socket, buffer, recieved, socket_default_flags) == -1) {
+    if (znsock_send(pair->socket, buffer, recieved) == -1) {
       /* Unable to send data to socket. */
       send_code(client, CMD_NETWORK_ERROR);
       free(buffer);

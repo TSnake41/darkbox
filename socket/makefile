@@ -36,8 +36,8 @@ libdir=../lib
 EXEC=socket$(exec_suffix)
 BINDIR=../bin
 
-lib_src=$(libdir)/sthread.c $(libdir)/core_i.c $(libdir)/socket.c \
-		$(libdir)/nms.c	$(libdir)/ipc/socket_ipc.c $(libdir)/tiny_assert.c
+lib_src=$(libdir)/sthread.c $(libdir)/core_i.c $(libdir)/znsock.c \
+		$(libdir)/nms.c $(libdir)/tiny_assert.c
 
 src=socket.c args_parser.c message.c pipe_fork.c \
 	client/*.c server/*.c server/commands/*.c
