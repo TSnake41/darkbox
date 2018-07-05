@@ -31,6 +31,6 @@ bool znsock_set_blocking(znsock socket, bool blocking)
   return fcntl(socket, F_SETFL, flags) == -1;
   #else
   unsigned long mode = !blocking;
-  return !ioctlsocket(socket, FIONBIO, &mode);
+  return ioctlsocket(socket, FIONBIO, &mode);
   #endif
 }

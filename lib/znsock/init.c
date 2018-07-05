@@ -21,6 +21,7 @@
     SOFTWARE.
 */
 
+#include <signal.h>
 #include <stdbool.h>
 #include <znsock.h>
 
@@ -30,6 +31,8 @@ bool znsock_init(void)
   WSADATA wsa;
   return WSAStartup(MAKEWORD(2, 2), &wsa) != 0;
   #else
+  /* Ignore broken pipe signals. */
+  signal(SIGPIPE, SIG_IGN);
   return false;
   #endif
 }

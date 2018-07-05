@@ -64,18 +64,11 @@ void server_cmd_accept(socket_message msg, znsock client, server_data *data)
   znsock new_socket =
     accept(listner_pair->socket, (struct sockaddr *)&addr, &addr_len);
 
-  if (new_socket == -1) {
+  if (!znsock_is_valid(new_socket)) {
     /* accept() error */
     send_code(client, CMD_NETWORK_ERROR);
     return;
   }
-
-  #ifdef WIN32
-  /* I have some doubts for Windows whether the sure socket is blocking
-    or not, so I prefer be (for *NIX, this is defined by standards).
-  */
-  znsock_set_blocking(new_socket, true);
-  #endif
 
   char ip_port[INET6_ADDRSTRLEN + 6];
 

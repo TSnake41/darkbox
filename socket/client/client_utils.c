@@ -36,7 +36,8 @@
 
 uint8_t recv_code(znsock socket)
 {
-  uint8_t code;
+  uint8_t code = 0;
+
   if (znsock_recv(socket, &code, 1) == -1)
     code = 0xFF;
 

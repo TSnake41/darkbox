@@ -128,6 +128,7 @@ errorlevels:
     10: Client (socket command) internal out of memory
     11: 0-size NMS packet received (info)
     12: IPC error (inter-process communication error).
+    255 : IPC error, can't receive error code.
 
 Build defines :
     FORCE_POLL :
@@ -144,4 +145,9 @@ Build defines :
         Use it if you get warnings about pointer type.
 
     GRACEFUL_CLOSE_TIMEOUT (ms) :
-        Change max timeout when shutdowning then closing a socket.
+        Change max linger time when closing a socket.
+
+    FORCE_AF_UNIX : (Windows only)
+        Force the use of unix domain sockets for IPC.
+        You shouldn't use it unless you know what you are doing.
+        https://blogs.msdn.microsoft.com/commandline/2017/12/19/af_unix-comes-to-windows/

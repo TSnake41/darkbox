@@ -28,7 +28,7 @@
      - Windows implementation uses TCP/IP.
 */
 
-#ifndef WIN32
+#if !defined(WIN32) || defined(FORCE_AF_UNIX)
 #include "ipc/ipc_unix.c"
 #else
 #include "ipc/ipc_win.c"

@@ -19,10 +19,13 @@ popd
 ) || goto :error
 
 (echo Hello World !!) | socket -id:tcp_test -c send client
-for /l %%A in (1,1,14) do (
-  socket -id:tcp_test -c recv client_peer true 1
-  darkbox -w 50
-)
+:loop
+for /f "tokens=1,*" %%A in ('socket -id:tcp_test -c poll 50 client_peer') do goto :receive
+goto :end_loop
+:receive
+socket -id:tcp_test -c recv client_peer true 1
+darkbox -w 5
+goto :loop
 goto :end_loop
 
 :error

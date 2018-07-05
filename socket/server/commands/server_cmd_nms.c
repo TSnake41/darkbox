@@ -104,6 +104,8 @@ void server_cmd_nms_send(socket_message msg, znsock client, server_data *data)
     return;
   }
 
+  send_code(client, CMD_SUCCESS);
+
   do {
     if (nms_recv_no_alloc(client, buffer, &recieved)) {
       /* Assumes that the IPC socket pipe is broken.
@@ -120,8 +122,10 @@ void server_cmd_nms_send(socket_message msg, znsock client, server_data *data)
       free(buffer);
       return;
     }
-  } while (recieved == 0xFFFF);
 
-  send_code(client, CMD_SUCCESS);
+    /* Data sent */
+    send_code(client, CMD_SUCCESS);
+  } while (recieved != 0);
+
   free(buffer);
 }

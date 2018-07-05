@@ -63,6 +63,9 @@ typedef unsigned short in_port_t;
 #define SHUT_RD SD_RECEIVE
 #define SHUT_RDWR SD_BOTH
 
+/* Windows does not "really" support MSG_WAITALL. */
+#define MSG_WAITALL 0
+
 /* Avoid pointer warnings (since WinAPI uses char * instead of void *). */
 #ifdef AVOID_POINTER_WARNING
 #define send(s, b, l, f) send(s, (char *)(b), l, f)
@@ -96,7 +99,12 @@ const char *znsock_compat_inet_ntop(int af, const void *src, char *dst, socklen_
 #define inet_ntop znsock_compat_inet_ntop
 #endif
 
-#define znsock_recv(s, buffer, size) recv(s, buffer, size, znsock_no_signal)
-#define znsock_send(s, buffer, size) send(s, buffer, size, znsock_no_signal)
+#define znsock_recv_block(s, buffer, size, blocking) \
+  recv(s, buffer, size, blocking ? MSG_WAITALL : 0)
+#define znsock_send_block(s, buffer, size, blocking) \
+  send(s, buffer, size, blocking ? MSG_WAITALL : 0)
+
+#define znsock_recv(s, buffer, size) znsock_recv_block(s, buffer, size, true)
+#define znsock_send(s, buffer, size) znsock_send_block(s, buffer, size, true)
 
 #endif /* H_ZNSOCK */

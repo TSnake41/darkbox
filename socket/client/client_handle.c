@@ -76,6 +76,7 @@ const unsigned int client_handles_count = sizeof(client_handles) / sizeof(*clien
 void client_handle_code(znsock socket)
 {
   uint8_t code = recv_code(socket);
+  znsock_ipc_close(socket);
   exit(code);
 }
 
@@ -85,9 +86,11 @@ void client_handle_code(znsock socket)
 void client_handle_recv(znsock socket)
 {
   uint8_t code = recv_code(socket);
-  if (code != CMD_SUCCESS)
+  if (code != CMD_SUCCESS) {
     /* Is an error. */
+    znsock_ipc_close(socket);
     exit(code);
+  }
 
   #ifdef WIN32
   /* Set stdout to binary mode */
@@ -96,8 +99,10 @@ void client_handle_recv(znsock socket)
 
   uint16_t count = 0;
   char *buffer = malloc(0xFFFF);
-  if (buffer == NULL)
+  if (buffer == NULL) {
+    znsock_ipc_close(socket);
     exit(CMD_CLIENT_OOM);
+  }
 
   do {
     if (nms_recv_no_alloc(socket, buffer, &count))
@@ -121,21 +126,27 @@ void client_handle_send(znsock socket)
   set_bin_mode(stdin);
   #endif
 
-  uint16_t count = 0;
+  int count = 0;
   char *buffer = malloc(0xFFFF);
-  if (buffer == NULL)
+  if (buffer == NULL) {
+    znsock_ipc_close(socket);
     exit(CMD_CLIENT_OOM);
+  }
 
-  do {
-    count = fread(buffer, 1, 0xFFFF, stdin);
+  uint8_t code = recv_code(socket);
+  if (code == CMD_SUCCESS) {
+    do {
+      count = fread(buffer, 1, 0xFFFF, stdin);
 
-    if (nms_send(socket, buffer, count))
-      exit(CMD_IPC_ERROR);
-  } while(count == 0xFFFF);
+      if (nms_send(socket, buffer, count))
+        exit(CMD_IPC_ERROR);
+
+      code = recv_code(socket);
+    } while(count != 0 && code == CMD_SUCCESS);
+  }
 
   free(buffer);
 
-  uint8_t code = recv_code(socket);
   znsock_ipc_close(socket);
   exit(code);
 }

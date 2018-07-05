@@ -54,7 +54,7 @@ void server_cmd_new(socket_message msg, znsock client, server_data *data)
 
   /* Remove previous bound socket. */
   if (old_pair != NULL) {
-    close(old_pair->socket);
+    znsock_close(old_pair->socket, true);
     server_remove_pair(data, old_pair_index);
     overwritten = true;
   }
@@ -69,11 +69,6 @@ void server_cmd_new(socket_message msg, znsock client, server_data *data)
     send_code(client, CMD_NETWORK_ERROR);
     return;
   }
-
-  #ifdef WIN32
-  /* See server_cmd_accept for more infos */
-  znsock_set_blocking(new_sock, true);
-  #endif
 
   /* Add the new socket to the list */
   id_socket_pair *pair = malloc(sizeof(id_socket_pair) + strlen(msg.argv[1]) + 1);

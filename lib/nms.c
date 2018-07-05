@@ -37,10 +37,13 @@ bool nms_send(znsock socket, const void *data, uint16_t length)
   	length >> 8,
   };
 
-  if (znsock_send(socket, length_bytes, 2) == -1 ||
-    znsock_send(socket, data, length) == -1)
-    /* Unable to send data. */
+  if (znsock_send(socket, length_bytes, 2) == -1)
     return true;
+
+  if (length > 0)
+    if (send(socket, data, length, MSG_WAITALL) == -1)
+      /* Unable to send data. */
+      return true;
 
   return false;
 }
@@ -55,14 +58,18 @@ bool nms_recv(znsock socket, void **buffer, uint16_t *received)
   /* Convert message length network bytes to integer. */
   *received = head_bytes[0] + (head_bytes[1] << 8);
 
-  *buffer = malloc(*received);
-  if (*buffer == NULL) {
-    /* Out of memory ? */
-    free(*buffer);
-    return true;
-  }
+  if (*received == 0)
+    /* Handle zero-size request. */
+    return false;
 
-  if (znsock_recv(socket, *buffer, *received) == -1) {
+  *buffer = malloc(*received);
+  if (*buffer == NULL)
+    /* Out of memory ? */
+    return true;
+
+  int ret = znsock_recv(socket, *buffer, *received);
+
+  if (ret != *received) {
     /* Failed ? */
     free(*buffer);
     return true;
@@ -75,13 +82,19 @@ bool nms_recv_no_alloc(znsock socket, void *buffer, uint16_t *received)
 {
   uint8_t head_bytes[2];
 
-  if (znsock_recv(socket, head_bytes, 2) == -1)
+  if (znsock_recv(socket, head_bytes, 2) != 2)
     return true;
 
   /* Convert message length network bytes to integer. */
   *received = head_bytes[0] + (head_bytes[1] << 8);
 
-  if (znsock_recv(socket, buffer, *received) == -1)
+  if (*received == 0)
+    /* zero-size request */
+    return false;
+
+  int ret = znsock_recv(socket, buffer, *received);
+
+  if (ret != *received)
     /* Failed ? */
     return true;
 

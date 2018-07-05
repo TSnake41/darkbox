@@ -35,8 +35,7 @@
 
 #include "server_cmd_utils.h"
 
-/* Min: 1, Max: 0xFFFF */
-#define RECV_BUFFER_SIZE 0xFFFF
+#include <errno.h>
 
 /* Syntax : recv sock_id [<blocking> <count>]
 
@@ -64,8 +63,8 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
     return;
   }
 
-  long recieved = 0;
-  void *buffer = malloc(RECV_BUFFER_SIZE);
+  int recieved = 0;
+  void *buffer = malloc(0xFFFF);
 
   if (buffer == NULL) {
     /* Out of memory. */
@@ -82,7 +81,7 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
     znsock_set_blocking(pair->socket, false);
 
     do {
-      recieved = znsock_recv(pair->socket, buffer, RECV_BUFFER_SIZE);
+      recieved = znsock_recv(pair->socket, buffer, 0xFFFF);
       if (recieved == -1)
         break;
 
@@ -90,8 +89,6 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
         break;
 
     } while (recieved != 0);
-
-    nms_send(client, buffer, 0);
   } else { /* msg.argc == 4 */
     /* Read <count> bytes in blocking or non-blocking modes. */
     bool blocking = parse_bool(msg.argv[2]);
@@ -101,11 +98,12 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
       /* Set as non-blocking. */
       znsock_set_blocking(pair->socket, false);
 
-    unsigned int recv_count = count / RECV_BUFFER_SIZE,
-                 remaining = count - (RECV_BUFFER_SIZE * recv_count);
+    unsigned int recv_count = count / 0xFFFF,
+                 remaining = count - (0xFFFF * recv_count);
 
-    while (recv_count-- || recieved == RECV_BUFFER_SIZE) {
-      recieved = znsock_recv(pair->socket, buffer, RECV_BUFFER_SIZE);
+    while (recv_count-- || recieved == 0xFFFF) {
+      recieved = znsock_recv_block(pair->socket, buffer, 0xFFFF, blocking);
+
       if (recieved == -1)
         break;
 
@@ -113,7 +111,7 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
         goto error;
     }
 
-    recieved = znsock_recv(pair->socket, buffer, remaining);
+    recieved = znsock_recv_block(pair->socket, buffer, remaining, blocking);
 
     if (recieved != -1 && nms_send(client, buffer, recieved))
       goto error;
@@ -149,7 +147,7 @@ void server_cmd_send(socket_message msg, znsock client, server_data *data)
     return;
   }
 
-  uint16_t recieved;
+  uint16_t received;
   void *buffer = malloc(0xFFFF);
 
   if (buffer == NULL) {
@@ -158,23 +156,26 @@ void server_cmd_send(socket_message msg, znsock client, server_data *data)
     return;
   }
 
+  send_code(client, CMD_SUCCESS);
+
   do {
-    if (nms_recv_no_alloc(client, buffer, &recieved)) {
+    if (nms_recv_no_alloc(client, buffer, &received)) {
       /* Broken IPC pipe ? */
-      send_code(client, CMD_IPC_ERROR);
       free(buffer);
       return;
     }
 
     /* Send data to socket */
-    if (znsock_send(pair->socket, buffer, recieved) == -1) {
+    if (znsock_send(pair->socket, buffer, received) == -1) {
       /* Unable to send data to socket. */
       send_code(client, CMD_NETWORK_ERROR);
       free(buffer);
       return;
     }
-  } while (recieved == 0xFFFF);
 
-  send_code(client, CMD_SUCCESS);
+    /* Data sent */
+    send_code(client, CMD_SUCCESS);
+  } while (received != 0);
+
   free(buffer);
 }

@@ -110,20 +110,13 @@ znsock znsock_ipc_client(const char *id)
     return INVALID_SOCKET;
   }
 
-  /* Set non-blocking */
-  u_long non_blocking = 0;
-  ioctlsocket((int)socket, FIONBIO, &non_blocking);
+  //znsock_set_blocking(s, true);
   return s;
 }
 
 znsock znsock_ipc_accept(znsock s)
 {
-  znsock new_sock = accept(s, NULL, NULL);
-
-  if (znsock_is_valid(new_sock))
-    znsock_set_blocking(s, true);
-
-  return new_sock;
+  return accept(s, NULL, NULL);
 }
 
 void znsock_ipc_close(znsock s)
