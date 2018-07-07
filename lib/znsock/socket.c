@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdint.h>
 #include <znsock.h>
 
@@ -10,6 +11,29 @@
 #else
 #define ZNSOCK_USE_SELECT
 #endif
+
+int znsock_recv_block(znsock s, void *buffer, size_t size, bool blocking)
+{
+  #ifndef WIN32
+  /* Use MSG_WAITALL */
+  return recv(s, buffer, size, blocking ? MSG_WAITALL : 0);
+  #else
+  if (blocking) {
+    size_t readed = 0;
+    do {
+      int ret = recv(s, buffer + readed, size - readed, 0);
+      if (ret <= 0)
+        /* Something went wrong... */
+        return ret;
+
+      readed += ret;
+    } while(size > readed);
+
+    return readed;
+  } else
+    return recv(s, buffer, size, 0);
+  #endif
+}
 
 void znsock_close(znsock s, bool graceful)
 {

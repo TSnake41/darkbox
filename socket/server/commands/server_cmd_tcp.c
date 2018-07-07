@@ -81,7 +81,7 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
     znsock_set_blocking(pair->socket, false);
 
     do {
-      recieved = znsock_recv(pair->socket, buffer, 0xFFFF);
+      recieved = znsock_recv_block(pair->socket, buffer, 0xFFFF, false);
       if (recieved == -1)
         break;
 

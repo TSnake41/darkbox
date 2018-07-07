@@ -23,6 +23,7 @@
 #ifndef H_ZNSOCK
 #define H_ZNSOCK
 
+#include <stddef.h>
 #include <stdbool.h>
 
 /* Add cross-platform sockets */
@@ -81,6 +82,8 @@ typedef unsigned short in_port_t;
 bool znsock_init(void);
 void znsock_cleanup(void);
 
+int znsock_recv_block(znsock s, void *buffer, size_t size, bool blocking);
+
 bool znsock_set_blocking(znsock socket, bool blocking);
 bool znsock_set_read_timeout(znsock socket, long timeout);
 bool znsock_set_keepalive(znsock socket, int keepalive);
@@ -99,12 +102,7 @@ const char *znsock_compat_inet_ntop(int af, const void *src, char *dst, socklen_
 #define inet_ntop znsock_compat_inet_ntop
 #endif
 
-#define znsock_recv_block(s, buffer, size, blocking) \
-  recv(s, buffer, size, blocking ? MSG_WAITALL : 0)
-#define znsock_send_block(s, buffer, size, blocking) \
-  send(s, buffer, size, blocking ? MSG_WAITALL : 0)
-
 #define znsock_recv(s, buffer, size) znsock_recv_block(s, buffer, size, true)
-#define znsock_send(s, buffer, size) znsock_send_block(s, buffer, size, true)
+#define znsock_send(s, buffer, size) send(s, buffer, size, 0)
 
 #endif /* H_ZNSOCK */
