@@ -6,14 +6,14 @@ Darkbox fully portable fast I/O server, powerfull graphic command
 Fully compatible with Dos9 Project.
 
 Syntaxes:
-    1) (process, code or "launcher" part) | darkbox
-    2) darkbox -i[k/m] | (process, code or "launcher" part)
-    3) darkbox -w t
-    4) darkbox -kbh (reduced: -k)
+1) (process, code or "launcher" part) | darkbox
+2) darkbox -i[k/m] | (process, code or "launcher" part)
+3) darkbox -w t
+4) darkbox -kbh (reduced: -k)
 
 1) Start darkbox as output server.
 2) Start darkbox as input server.
-   k: Keyboard only, m: Mouse only, nothing: both
+  k: Keyboard only, m: Mouse only, nothing: both
 3) Wait t ms.
 4) Return 1 if data is available in stdin,
    should be used for non-blocking input.
@@ -24,174 +24,191 @@ Syntaxes:
 NOTE: darkbox support both '-' and '/' as command prefixes.
 
 Output commands passing:
-    Commands pass to stdin, so any command like type, more, echo,
-    <nul set/p "=text" or whatever you can imagine send command to darkbox.
+  Commands pass to stdin, so any command like type, more, echo,
+  <nul set/p "=text" or whatever you can imagine send command to darkbox.
 
-    So, you can store commands to files to reuses them easly, like sprites or
-    something else.
+  So, you can store commands to files to reuses them easly, like sprites or
+  something else.
 
-    Also, darkbox accept both new syntax ('-') and batbox/tinybg syntax ('/') to
-    begin command.
+  Also, darkbox accept both new syntax ('-') and batbox/tinybg syntax ('/') to
+  begin command.
 
 Output command format:
-    Commands follow this format
+  Commands follow this format
 
-    -(execution_count)<commands as letters>
-    REMARK: '-' can be replaced by '/'
+  -(execution_count)<commands as letters>
+  REMARK: '-' can be replaced by '/'
 
-    So each <commands as letters> run (execution_count) times (or 1 time if undefined).
+  So each <commands as letters> run (execution_count) times (or 1 time if undefined).
 
-    NOTES:
-        - You can escape chracters (" or spaces without double quotes) with '\'
-        - With double quotes, new lines are considerated as characters like any others.
-        - No commands will produce an error (Parsing error: No command specified).
-        - Commands should be in litterals ONLY (Parsing error: Invalid litterals)
-        - Commands are case-insensitive.
+  NOTES:
+    - You can escape chracters (" or spaces without double quotes) with '\'
+    - With double quotes, new lines are considerated as characters like any others.
+    - No commands will produce an error (Parsing error: No command specified).
+    - Commands should be in litterals ONLY (Parsing error: Invalid litterals)
+    - Commands are case-insensitive.
 
-    TRICK:
-        You can write your commands througth multiples echoes :
-            echo -5dn "This is a"
-            echo      "small text"
-            echo      "throught"
-            echo      "multiples"
-            echo      "lines"
+  TRICK:
+    You can write your commands througth multiples echoes :
+      echo -5dn "This is a"
+      echo      "small text"
+      echo      "throught"
+      echo      "multiples"
+      echo      "lines"
 
-Launcher (and working variations):
-    Official launchers:
+Launcher (and working variations) :
+  Official launchers:
+    Original (first):
+      @Echo off
+      call game.bat | darkbox
 
-        Original (first) :
-            @Echo off
-            call game.bat | darkbox
+    Original with Input server:
+      @Echo off
+      darkbox -i | call game.bat | darkbox
 
-        Original with Input server
-            @Echo off
-            darkbox -i | call game.bat | darkbox
+    Enhanced (only in one file) :
+      @Echo off
+      if defined __ goto :(code)
+      set __=.
+      call %0 %* | darkbox
+      set __=
+      pause>NUL
+      goto :eof
 
-        Enhanced (only in one file) :
-            @Echo off
-            if defined __ goto :(code)
-            set __=.
-            call %0 %* | darkbox
-            set __=
-            pause>NUL
-            goto :eof
+      "call" is facultative
 
-            "call" is facultative
+    Enhanced with Input server
+      @Echo off
+      if defined __ goto :(code)
+      set __=.
+      darkbox -i | call %0 %* | darkbox
+      set __=
+      pause>NUL
+      goto :eof
 
-        Enhanced with Input server
-            @Echo off
-            if defined __ goto :(code)
-            set __=.
-            darkbox -i | call %0 %* | darkbox
-            set __=
-            pause>NUL
-            goto :eof
+      "call" is facultative.
 
-            "call" is facultative.
+  Unofficial launcher (variants) :
+    @echo off
+    if not defined $ (
+        set "$=1"
+        (
+          call "%~f0" %*
+        ) | darkbox
+        exit/b
+    )
 
-    Unofficial launcher (variants):
-        @echo off
-        if not defined $ (
-            set "$=1"
-            (
-              call "%~f0" %*
-            ) | darkbox
-            exit/b
-        )
+Output commands reference :
+  ASCII :
+    -a Integer
 
-Output commands reference:
+    Usage: Print the character corresponding to the integer.
 
-    ASCII:
-        -a Integer
+  Newline :
+    -n
 
-        Usage : Print the character corresponding to the integer
+    Usage: Go to the next line.
 
-    Newline:
-        -n
+  Color :
+    -c color
+    'color' is in hexadecimal format.
 
-        Usage : Go to the next line
+    Usage: Change the current color.
+      - 0xF0: Background
+      - 0x0F: Foreground
 
-    Color:
-        -c color
-        color is in hexadecimal format.
+  Goto :
+    -g x y
 
-        Usage : Change the current color
-               0xF0 : Background
-               0x0F : Foreground
+    Usage: Move cursor to (x;y).
 
-    Goto:
-        -g x y
+  Hide/Show cursor :
+    -h 0/1
 
-        Usage : Move cursor to (x;y)
+    Usage: Hide or show cursor.
 
-    Hide/Show cursor:
-        -h 0/1
+  Clear Screen :
+    -s
 
-        Usage : Hide or show cursor
+    Usage: Clear console.
 
-    Clear Screen:
-        -s
+  Origin :
+    -o x y
 
-        Usage : Clear console
+    Usage: Change goto origin.
 
-    Origin:
-        -o x y
+  Reset :
+    -r
 
-        Usage : Change goto origin
+    Usage: Reset foreground and background colors.
 
-    Reset:
-        -r
+  Quit :
+    -q
 
-        Usage : Reset foreground and background colors
+    Usage: Properly stop darkbox.
 
-    Quit:
-        -q
+  Wait :
+    -w t
 
-        Usage : Properly stop darkbox
+    Usage : Wait t miliseconds.
 
-    Wait:
-        -w t
+    NOTE : Wait is internal to darkbox, it
+           do not interrupt batch execution.
 
-        Usage : Wait t miliseconds
+    REMARK : Wait flush stdout even if t is null.
 
-        NOTE: Wait is internal to darkbox, it
-              do not interrupt batch execution.
+  Line :
+    -l Ax Ay Bx By
 
-        REMARK: Wait flush stdout even if t is null.
+    Usage : Draw a line from A to B.
 
-Input callback reference:
+    NOTE : Uses the console background color as line color.
+           Reason : Use spaces as character which is faster and more cross-platform.
 
-    Mouse:
-        m x y b
+  Box :
+    -b x y w h hollow
 
-        x: Mouse X position
-        y: Mouse Y position
-        b: Mouse button
+    Usage : Draw a box.
+    NOTE : Uses the console background color as line color.
 
-    Keyboard press:
-        k key
+  Circle :
+    -i x y r
 
-        key: Key code.
+    Usage : Draw a circle.
+    NOTE : Uses the console background color as line color.
+
+Input callback reference :
+  Mouse :
+    m x y b
+
+    x: Mouse X position
+    y: Mouse Y position
+    b: Mouse button
+
+  Keyboard press:
+    k key
+
+    key: Key code.
 
 List of supported mouse buttons :
-    0: NOTHING (mouse movement)
-    1: LEFT_BUTTON
-    2: RIGHT_BUTTON
-    3: DOUBLE LEFT_BUTTON
-    4: DOUBLE RIGHT_BUTTON
-    5: MIDDLE_BUTTON
-    6: SCROLL_UP (portability issues known (Win32))
-    7: SCROLL_DOWN (portability issues known (Win32))
-    8: RELEASE
+  0: NOTHING (mouse movement)
+  1: LEFT_BUTTON
+  2: RIGHT_BUTTON
+  3: DOUBLE LEFT_BUTTON
+  4: DOUBLE RIGHT_BUTTON
+  5: MIDDLE_BUTTON
+  6: SCROLL_UP (portability issues known (Win32))
+  7: SCROLL_DOWN (portability issues known (Win32))
+  8: RELEASE
 
-See also:
-    Official post : http://batch.xoo.it/t5526-Dev-Darkbox-TSnake41.htm
-    Snake game : http://batch.xoo.it/t5614-Batch-Snake-IK-DC.htm
-    Exquation : http://batch.xoo.it/t5654-Batch-Exquation-IK-DC.htm
+See also :
+  Official post : http://batch.xoo.it/t5526-Dev-Darkbox-TSnake41.htm
+  Snake game : http://batch.xoo.it/t5614-Batch-Snake-IK-DC.htm
+  Exquation : http://batch.xoo.it/t5654-Batch-Exquation-IK-DC.htm
 
-    tests for examples of uses
+  tests for examples of uses
 
-    C library core/core_i in "lib" directory (part of darkbox project)
+  C library core/core_i in "lib" directory (part of darkbox project)
 
-    Dos9 project : dos9.org
-    darkbox_i and darkbox_t
+  Dos9 project : dos9.org
+  darkbox_i and darkbox_t

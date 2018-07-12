@@ -68,13 +68,12 @@ int main(int argc, char const *argv[])
 
       /* Start input server */
       case 'i': ;
-        #define m_arg (tolower(argv[1][2]))
+        int m_arg = tolower(argv[1][2]);
 
-        int mode = m_arg == 'k' ? ENABLE_KEYBOARD : /* Keyboard mode */
-                   m_arg == 'm' ? ENABLE_MOUSE : /* Mouse mode */
-                   KNM_MODE; /* Keyboard and Mouse mode */
-
-        #undef m_arg
+        int mode =
+          m_arg == 'k' ? ENABLE_KEYBOARD : /* Keyboard mode */
+          m_arg == 'm' ? ENABLE_MOUSE : /* Mouse mode */
+          KNM_MODE; /* Keyboard and Mouse mode */
 
         input_server(mode);
         return 0;
@@ -312,10 +311,7 @@ static void execute_cmd(darkbox_cmd cmd)
           core_sleep(read_int());
           break;
 
-      /* Drawing variables. */
-      int x, y, r, w, h, hollow;
-
-        case 'l': ;
+        case 'l': {
           /* Syntax : -l Ax Ay Bx By
              Usage : Draw a line from A to B.
           */
@@ -348,17 +344,18 @@ static void execute_cmd(darkbox_cmd cmd)
             }
           }
           break;
+        }
 
-        case 'b': ;
+        case 'b': {
           /* Syntax : -b x y w h hollow
              Usage : Draw a box.
           */
-          x = read_int();
-          y = read_int();
-          w = read_int();
-          h = read_int();
+          int x = read_int();
+          int y = read_int();
+          int w = read_int();
+          int h = read_int();
 
-          hollow = read_int();
+          int hollow = read_int();
 
           for (int ix = x; ix < (x + w); ix++)
             for (int iy = y; iy < (y + h); iy++)
@@ -366,46 +363,48 @@ static void execute_cmd(darkbox_cmd cmd)
                 core_gotoxy(origin_x + ix, origin_y + iy);
                 putchar(' ');
               }
+
           break;
+        }
 
-          /* Draw a circle
-             Arguments : x y r hollow
+        case 'i': {
+          /* Syntax : -i x y r
+             Usage : Draw a circle.
           */
-          case 'i': ;
-            x = read_int();
-            y = read_int();
-            r = read_int();
+          int x = read_int();
+          int y = read_int();
+          int r = read_int();
 
-            int rx = r,
-                ry = 0;
+          int rx = r, ry = 0;
 
-            err = 0;
+          int err = 0;
 
-            #define circle_plot(cx, cy) core_gotoxy((cx) + origin_x, (cy) + origin_y); \
-              putchar(' ')
+          #define circle_plot(cx, cy) do { \
+            core_gotoxy((cx) + origin_x, (cy) + origin_y); \
+            putchar(' '); \
+          } while (0)
 
-            fprintf(stderr, "%d %d\n", x, y);
+          while (rx >= ry) {
+            circle_plot(x + rx, y + ry);
+            circle_plot(x + ry, y + rx);
+            circle_plot(x - ry, y + rx);
+            circle_plot(x - rx, y + ry);
+            circle_plot(x - rx, y - ry);
+            circle_plot(x - ry, y - rx);
+            circle_plot(x + ry, y - rx);
+            circle_plot(x + rx, y - ry);
 
-            while (rx >= ry) {
-              circle_plot(x + rx, y + ry);
-              circle_plot(x + ry, y + rx);
-              circle_plot(x - ry, y + rx);
-              circle_plot(x - rx, y + ry);
-              circle_plot(x - rx, y - ry);
-              circle_plot(x - ry, y - rx);
-              circle_plot(x + ry, y - rx);
-              circle_plot(x + rx, y - ry);
-
-              if (err <= 0) {
-                ry++;
-                err += 2 * ry + 1;
-              } else {
-                rx--;
-                err -= 2 * rx + 1;
-              }
+            if (err <= 0) {
+              ry++;
+              err += 2 * ry + 1;
+            } else {
+              rx--;
+              err -= 2 * rx + 1;
             }
-            #undef circle_plot
-            break;
+          }
+          #undef circle_plot
+          break;
+        }
       }
 
       str++;

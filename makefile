@@ -26,7 +26,7 @@
 
 exec_suffix=
 
-subdirs=darkbox darkbox_i darkbox_t socket # makemenu
+subdirs=darkbox darkbox_i socket # makemenu
 
 all: $(subdirs)
 no_extras: darkbox

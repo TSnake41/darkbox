@@ -32,9 +32,6 @@
 #ifndef H_DARKBOX
 #define H_DARKBOX
 
-#include <stdbool.h>
-#include <stdlib.h>
-
 /* --- Beginning of user configuration --- */
 
 /* Maximal size of texts */
