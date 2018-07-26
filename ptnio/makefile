@@ -1,4 +1,5 @@
-# Copyright (c) 2016-2017 Teddy ASTIE (TSnake41)
+# ptnio - Portable TCP Network IO
+# Copyright (c) 2017 Teddy ASTIE (TSnake41)
 #
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without
@@ -24,24 +25,31 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-exec_suffix=
 
-subdirs=darkbox darkbox_i ptnio # makemenu
+CFLAGS ?= -O2
+LDFLAGS ?= -O2 -s
 
-all: $(subdirs)
-no_extras: darkbox
+LDFLAGS += -I$(libdir) -I. -lpthread
 
-$(subdirs):
-	$(MAKE) -C $@
+libdir=../lib
 
-upx:
-	upx ./bin/* \
-	    ./tests/* \
-	    ./tests/network/* \
-	    2>/dev/null
+EXEC=ptnio$(exec_suffix)
+BINDIR=../bin
 
-clean:
-	-rm ./bin/darkbox* ./bin/makemenu* ./bin/socket*
-	-rm ./tests/darkbox* ./tests/makemenu* ./tests/socket*
+lib_src=$(libdir)/sthread.c $(libdir)/core_i.c $(libdir)/znsock.c \
+	$(libdir)/nms.c $(libdir)/tiny_assert.c
 
-.PHONY: $(subdirs)
+src=ptnio.c args_parser.c message.c pipe_fork.c \
+	client/*.c server/*.c server/commands/*.c
+
+all: ptnio postbuild
+
+ptnio:
+	$(CC) -o $(EXEC) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS)
+
+postbuild:
+	test -d $(BINDIR) || mkdir $(BINDIR)
+	mv $(EXEC) ../bin
+	cp $(BINDIR)/$(EXEC) ../tests/
+
+.PHONY: $(EXEC)

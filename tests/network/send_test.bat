@@ -12,14 +12,14 @@ set /p IP=IP :
 set /p PORT=PORT :
 
 (
-	socket -id:client -n
-	socket -id:client -c new socket
-	socket -id:client -c connect socket %IP% %PORT%
+	ptnio -id:client -n
+	ptnio -id:client -c new socket
+	ptnio -id:client -c connect socket %IP% %PORT%
 ) || goto :error
 
 :loop
 set /p msg=Message to send :
-(echo !msg! | socket -id:client -c nms_send socket) || goto :end_loop
+(echo !msg! | ptnio -id:client -c nms_send socket) || goto :end_loop
 echo Sent
 goto :loop
 
@@ -28,5 +28,5 @@ echo An error occured
 
 :end_loop
 echo Terminated
-socket -id:client -c exit
+ptnio -id:client -c exit
 goto :eof

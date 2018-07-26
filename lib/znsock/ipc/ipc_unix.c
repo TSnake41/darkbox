@@ -31,7 +31,7 @@
 static znsock znsock_ipc_socket(const char *id,
   struct sockaddr_un *saun_o)
 {
-  const char *f_path_prefix = ".socket_";
+  const char *f_path_prefix = ".ptnio_";
   strcpy(saun_o->sun_path, f_path_prefix);
   strcat(saun_o->sun_path, id);
 

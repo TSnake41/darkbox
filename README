@@ -9,11 +9,10 @@ Repository structure :
     - lib : Some libraries used in some darkbox projects.
     - darkbox : Darkbox server source code.
     - darkbox_i : Darkbox Standalone Input module
-    - darkbox_t : Darkbox Toolkit module
     - makemenu : Darkbox Menu module (WIP)
-    - socket : Portable TCP and NMS Network IO interface (WIP).
+    - ptnio : Portable TCP Network IO
     - tcc : Customised Tiny C Compiler for Windows
-    - tests : Some tests for darkbox and misc.
+    - tests : Some tests for darkbox and misc
 
 Useful links :
  - Dos9 Project : dos9.org

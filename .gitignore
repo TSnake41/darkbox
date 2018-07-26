@@ -4,10 +4,12 @@ tcc/
 tools/lua/lua*
 tests/darkbox*
 tests/makemenu*
-tests/socket*
+tests/ptnio*
 tests/dos9
 tests/misc
 bin/
 doc/tea
 
 tests/network/bin_output
+$*
+.ptnio_*

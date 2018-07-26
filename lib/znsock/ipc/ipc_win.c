@@ -36,7 +36,7 @@
     the connection with the server.
 */
 
-static const char *file_id_prefix = "$socket_";
+static const char *file_id_prefix = "$ptnio_";
 
 static void get_file_id_path(const char *id, char *out)
 {
@@ -110,7 +110,6 @@ znsock znsock_ipc_client(const char *id)
     return INVALID_SOCKET;
   }
 
-  //znsock_set_blocking(s, true);
   return s;
 }
 

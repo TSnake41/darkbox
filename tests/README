@@ -1,4 +1,4 @@
-This directory contains many tests for darkbox, they are tested and guarented on Windows, and POSIX (Dos9).
+This directory contains many tests for darkbox, they are tested on Windows, and POSIX (Dos9).
 
 "misc" directory contains some equivalents tests for some others commands like batbox.exe and bg.exe.
 "dos9" directory contains static dos9 executable
