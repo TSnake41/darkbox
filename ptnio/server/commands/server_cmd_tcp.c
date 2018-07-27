@@ -63,7 +63,7 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
     return;
   }
 
-  int recieved = 0;
+  int received = 0;
   void *buffer = malloc(0xFFFF);
 
   if (buffer == NULL) {
@@ -81,14 +81,14 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
     znsock_set_blocking(pair->socket, false);
 
     do {
-      recieved = znsock_recv_block(pair->socket, buffer, 0xFFFF, false);
-      if (recieved == -1)
+      received = znsock_recv_block(pair->socket, buffer, 0xFFFF, false);
+      if (received == -1)
         break;
 
-      if (nms_send(client, buffer, recieved))
+      if (nms_send(client, buffer, received))
         break;
 
-    } while (recieved != 0);
+    } while (received != 0);
   } else { /* msg.argc == 4 */
     /* Read <count> bytes in blocking or non-blocking modes. */
     bool blocking = parse_bool(msg.argv[2]);
@@ -101,22 +101,22 @@ void server_cmd_recv(socket_message msg, znsock client, server_data *data)
     unsigned int recv_count = count / 0xFFFF,
                  remaining = count - (0xFFFF * recv_count);
 
-    while (recv_count-- || recieved == 0xFFFF) {
-      recieved = znsock_recv_block(pair->socket, buffer, 0xFFFF, blocking);
+    while (recv_count-- || received == 0xFFFF) {
+      received = znsock_recv_block(pair->socket, buffer, 0xFFFF, blocking);
 
-      if (recieved == -1)
+      if (received == -1)
         break;
 
-      if (nms_send(client, buffer, recieved))
+      if (nms_send(client, buffer, received))
         goto error;
     }
 
-    recieved = znsock_recv_block(pair->socket, buffer, remaining, blocking);
+    received = znsock_recv_block(pair->socket, buffer, remaining, blocking);
 
-    if (recieved != -1 && nms_send(client, buffer, recieved))
+    if (received != -1 && nms_send(client, buffer, received))
       goto error;
 
-    if (recieved != 0)
+    if (received != 0)
       /* Send a 0-size packet. */
       nms_send(client, buffer, 0);
   }

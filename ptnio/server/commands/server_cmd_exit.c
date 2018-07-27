@@ -44,7 +44,7 @@ void server_cmd_exit(socket_message msg, znsock client, server_data *data)
 
   /* Close IPC socket, thus disabling IPC. */
   znsock_close(close(client), true);
-  znsock_close(data->ipc_socket, true);
+  znsock_close(data->ipc_socket, false);
 
   /* Force all sockets to close. */
   size_t i = data->pair_count;

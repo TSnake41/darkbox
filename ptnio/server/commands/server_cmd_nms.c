@@ -62,17 +62,19 @@ void server_cmd_nms_recv(socket_message msg, znsock client, server_data *data)
   #endif
 
   /* Create buffer of 2^16-1 bytes. */
-  uint16_t recieved;
+  uint16_t received;
   void *buffer;
 
-  if (nms_recv(pair->socket, &buffer, &recieved))
+  if (nms_recv(pair->socket, &buffer, &received))
     send_code(client, CMD_NETWORK_ERROR);
   else {
     send_code(client, CMD_SUCCESS);
 
     /* Send back recieved data. */
-    nms_send(client, buffer, recieved);
-    free(buffer);
+    nms_send(client, buffer, received);
+
+    if (received > 0)
+      free(buffer);
   }
 }
 
@@ -95,7 +97,7 @@ void server_cmd_nms_send(socket_message msg, znsock client, server_data *data)
     return;
   }
 
-  uint16_t recieved;
+  uint16_t received;
   void *buffer = malloc(0xFFFF);
 
   if (buffer == NULL) {
@@ -104,28 +106,34 @@ void server_cmd_nms_send(socket_message msg, znsock client, server_data *data)
     return;
   }
 
+  /* TODO: Everything is okay but needs some cleanup. */
+
   send_code(client, CMD_SUCCESS);
 
-  do {
-    if (nms_recv_no_alloc(client, buffer, &recieved)) {
-      /* Assumes that the IPC socket pipe is broken.
-         So, do not send any message because it will *probably* fail.
-      */
-      free(buffer);
-      return;
-    }
+  if (nms_recv_no_alloc(client, buffer, &received)) {
+    /* Assumes that the IPC socket pipe is broken.
+       So, do not send any message because it will *probably* fail.
+    */
+    free(buffer);
+    return;
+  }
 
+  do {
     /* Send data to socket */
-    if (nms_send(pair->socket, buffer, recieved)) {
+    if (nms_send(pair->socket, buffer, received)) {
       /* Unable to send data to client. */
       send_code(client, CMD_NETWORK_ERROR);
-      free(buffer);
-      return;
+      break;
     }
 
     /* Data sent */
     send_code(client, CMD_SUCCESS);
-  } while (recieved != 0);
 
+    if (nms_recv_no_alloc(client, buffer, &received))
+      break;
+
+  } while (received != 0);
+
+  send_code(client, CMD_SUCCESS);
   free(buffer);
 }
