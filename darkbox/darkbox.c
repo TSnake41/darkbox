@@ -250,14 +250,30 @@ static void execute_cmd(darkbox_cmd cmd)
           core_change_color(read_int());
           break;
 
-        case 'g': ;
-          /* Syntax : -g x y
-             Usage : Move cursor to (x;y)
-          */
-          /* Read X first. */
-          int gx = origin_x + read_int();
-          core_gotoxy(gx, origin_y + read_int());
-          break;
+          case 'g': {
+            /* Syntax : -g x y
+               Usage : Move cursor to (x;y)
+            */
+
+            /* Read X first. */
+            int gx = origin_x + read_int();
+            core_gotoxy(gx, origin_y + read_int());
+            break;
+          }
+
+          case 'j': {
+            /* Syntax : -j x y
+               Usage : Move cursor to offset (x;y)
+                       from current position.
+
+               NOTE: Ignores origin.
+            */
+
+            /* Read X first. */
+            int gx = read_int();
+            core_gotoxy_relative(gx, read_int());
+            break;
+          }
 
         case 'h':
           /* Syntax : -h 0/1

@@ -122,6 +122,13 @@ Output commands reference :
 
     Usage: Move cursor to (x;y).
 
+  Jump :
+    -j x y
+
+    Usage : Move cursor to offset (x;y) from current position.
+
+    NOTE : Ignores origin.
+
   Hide/Show cursor :
     -h 0/1
 
