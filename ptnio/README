@@ -131,22 +131,35 @@ errorlevels :
 
 Build defines :
   FORCE_POLL :
-    Force the use of poll().
+    Force the use of poll() as polling function.
 
   FORCE_SELECT :
-    Force the use of select().
+    Force the use of select() as polling function.
 
   NO_FORK :
     Disable the "forking" ability of ptnio thus improving debugger support.
 
   AVOID_POINTER_WARNING : (Windows only)
-    Remove warnings caused by char's pointers of winsock2 functions.
+    Remove warnings caused by char's pointers of winsock 2 functions.
     Use it if you get warnings about pointer type.
 
   GRACEFUL_CLOSE_TIMEOUT (ms) :
     Change max linger time when closing a socket.
 
-  FORCE_AF_UNIX : (Windows only)
-    Force the use of unix domain sockets for IPC.
-    You shouldn't use it unless you know what you are doing.
-    https://blogs.msdn.microsoft.com/commandline/2017/12/19/af_unix-comes-to-windows/
+  IPC_USE_[backend] :
+    Force the use of a specific IPC backend.
+
+    Available backends :
+      TCP
+      UNIX (for Windows, see notes)
+
+    TCP : Use TCP/IP Sockets, works on all major platforms.
+    UNIX : Use UNIX Domain Sockets, works on most *NIX
+           (for Windows support, see notes).
+
+    Platforms default backend :
+      Windows : TCP
+      *NIX : UNIX
+
+    Notes : Windows only supports UNIX domain sockets since Windows 10 Build
+            17063 (and probably need some tweaks to make it working).
