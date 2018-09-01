@@ -41,7 +41,7 @@ upx:
 	    2>/dev/null
 
 clean:
-	-rm ./bin/darkbox* ./bin/makemenu* ./bin/socket*
-	-rm ./tests/darkbox* ./tests/makemenu* ./tests/socket*
+	-rm ./bin/darkbox* ./bin/makemenu* ./bin/ptnio*
+	-rm ./tests/darkbox* ./tests/makemenu* ./tests/ptnio*
 
 .PHONY: $(subdirs)
