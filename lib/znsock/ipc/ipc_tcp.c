@@ -20,7 +20,10 @@
 #include <string.h>
 #include <time.h>
 
+#ifdef WIN32
 #include <windows.h>
+#endif
+
 #include <znsock.h>
 
 /*
@@ -43,8 +46,8 @@ znsock znsock_ipc_server(const char *id, int max_pending)
   get_file_id_path(id, f_path);
 
   znsock s = socket(AF_INET, SOCK_STREAM, 0);
-  if (s == INVALID_SOCKET)
-    return INVALID_SOCKET;
+  if (!znsock_is_valid(s))
+    return znsock_invalid;
 
   struct sockaddr_in sin = { 0 };
   sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
@@ -53,13 +56,13 @@ znsock znsock_ipc_server(const char *id, int max_pending)
 
   if(bind(s, (struct sockaddr *)&sin, sizeof(sin)) == SOCKET_ERROR) {
     znsock_close(s, false);
-    return INVALID_SOCKET;
+    return znsock_invalid;
   }
 
   FILE *f = fopen(f_path, "w");
   if (f == NULL) {
-    closesocket(s);
-    return INVALID_SOCKET;
+    znsock_close(s, false);
+    return znsock_invalid;
   }
 
   listen(s, max_pending);
@@ -82,25 +85,23 @@ znsock znsock_ipc_client(const char *id)
 
   FILE *f = fopen(f_path, "r");
   if (f == NULL)
-    return INVALID_SOCKET;
+    return znsock_invalid;
 
   fread(&port, sizeof(unsigned short), 1, f);
   fclose(f);
 
   znsock s;
-  if ((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET)
-    return INVALID_SOCKET;
+  if (!znsock_is_valid(s = socket(AF_INET, SOCK_STREAM, 0)))
+    return znsock_invalid;
 
   struct sockaddr_in sin = { 0 };
   sin.sin_family = AF_INET;
   sin.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
   sin.sin_port = port;
 
-  if (connect(s, (struct sockaddr *)&sin,
-    sizeof(struct sockaddr)) == SOCKET_ERROR) {
-
-    closesocket(s);
-    return INVALID_SOCKET;
+  if (connect(s, (struct sockaddr *)&sin, sizeof(struct sockaddr)) == -1) {
+    znsock_close(s, false);
+    return znsock_invalid;
   }
 
   return s;

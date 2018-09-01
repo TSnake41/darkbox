@@ -42,7 +42,8 @@
 
 typedef int znsock;
 
-#define znsock_is_valid(socket) ((socket) != -1)
+#define znsock_invalid -1
+#define znsock_is_valid(socket) ((socket) != znsock_invalid)
 #define znsock_no_signal (MSG_NOSIGNAL)
 #else
 #include <winsock2.h>
@@ -69,7 +70,8 @@ typedef unsigned short in_port_t;
 #define getsockopt(s, l, n, v, ol) getsockopt(s, l, n, (char *)(v), ol)
 #endif
 
-#define znsock_is_valid(socket) ((socket) != INVALID_SOCKET)
+#define znsock_invalid INVALID_SOCKET
+#define znsock_is_valid(socket) ((socket) != znsock_invalid)
 #define znsock_no_signal (0)
 #endif
 
