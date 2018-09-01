@@ -15,10 +15,6 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifndef WIN32
-#define _XOPEN_SOURCE 700
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

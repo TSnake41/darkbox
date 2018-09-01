@@ -50,6 +50,7 @@ znsock znsock_ipc_server(const char *id, int max_pending)
     return znsock_invalid;
 
   struct sockaddr_in sin = { 0 };
+  
   sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
   sin.sin_family = AF_INET;
   sin.sin_port = 0x0000;
@@ -96,7 +97,7 @@ znsock znsock_ipc_client(const char *id)
 
   struct sockaddr_in sin = { 0 };
   sin.sin_family = AF_INET;
-  sin.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
+  sin.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
   sin.sin_port = port;
 
   if (connect(s, (struct sockaddr *)&sin, sizeof(struct sockaddr)) == -1) {
