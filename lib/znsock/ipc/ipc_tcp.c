@@ -55,7 +55,7 @@ znsock znsock_ipc_server(const char *id, int max_pending)
   sin.sin_family = AF_INET;
   sin.sin_port = 0x0000;
 
-  if(bind(s, (struct sockaddr *)&sin, sizeof(sin)) == SOCKET_ERROR) {
+  if(bind(s, (struct sockaddr *)&sin, sizeof(sin)) == -1) {
     znsock_close(s, false);
     return znsock_invalid;
   }
