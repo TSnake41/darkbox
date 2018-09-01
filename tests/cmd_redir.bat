@@ -8,8 +8,8 @@
     echo -nc 0xb
     darkbox_i -? | darkbox -e
 
-    echo -nc 0xd
-    darkbox_t | darkbox -e
+    echo -nc 0xc
+    ptnio -? | darkbox -e
 
     echo -rq
 ) | darkbox

@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 title server
 
 pushd ..
-if defined DOS9_OS_TYPE (
+if !DOS9_OS_TYPE!==*NIX (
 	set PATH=!CD!:!PATH!
 ) else set PATH=!CD!;!PATH!
 popd

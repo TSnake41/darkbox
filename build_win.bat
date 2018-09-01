@@ -7,7 +7,6 @@ mkdir bin 2>nul
 
 set darkbox_src=darkbox\darkbox.c lib\core.c lib\core_i.c
 set darkbox_i_src=darkbox_i\darkbox_i.c lib\core_i.c
-:: set darkbox_t_src=darkbox_t\darkbox_t.c
 :: set makemenu_src=makemenu\makemenu.c makemenu\parser.c lib\core.c lib\fllist.c
 
 set ptnio_src=lib\sthread.c lib\znsock.c lib\nms.c lib\tiny_assert.c
@@ -21,9 +20,8 @@ prompt ^>
 
 tcc %CFLAGS% -o bin\darkbox.exe %darkbox_src%
 tcc %CFLAGS% -o bin\darkbox_i.exe %darkbox_i_src%
-tcc %CFLAGS% -o bin\darkbox_t.exe %darkbox_t_src%
 tcc %CFLAGS% -DAVOID_POINTER_WARNING -lkernel32 -lws2_32 -o bin\ptnio.exe %ptnio_src%
-tcc %CFLAGS% -o bin\makemenu.exe %makemenu_src%
+:: tcc %CFLAGS% -o bin\makemenu.exe %makemenu_src%
 
 :: upx bin\*.exe
 copy bin\*.exe tests\
