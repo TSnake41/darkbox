@@ -15,6 +15,8 @@ for %%A in (ptnio\*.c ptnio\server\*.c ptnio\server\commands\*.c ptnio\client\*.
     set ptnio_src=!ptnio_src! %%A
 )
 
+set old_prompt=%prompt%
+
 prompt ^>
 @echo on
 
@@ -27,6 +29,6 @@ tcc %CFLAGS% -DAVOID_POINTER_WARNING -lkernel32 -lws2_32 -o bin\ptnio.exe %ptnio
 copy bin\*.exe tests\
 
 @echo off
-prompt
+prompt %old_prompt%
 
 pause

@@ -8,15 +8,26 @@ mkdir bin 2>nul
 
 set choice_src=choice\choice.c choice\parse_args.c choice\strcasechr.c !lib!\core.c !lib!\core_i.c
 
+set old_prompt=%prompt%
 prompt ^>
 @echo on
 
 tcc %CFLAGS% -o bin\choice_fr.exe %choice_src% -DLANG_FR
 tcc %CFLAGS% -o bin\choice_en.exe %choice_src%
 
+tcc %CFLAGS% -o bin\choice_fr.exe %choice_src% -DLANG_FR
+tcc %CFLAGS% -o bin\choice_en.exe %choice_src%
+
+cmd /c fasm tcs_o\tcs_o.asm bin\tcs_o.exe
+
+tcc %CFLAGS% -o bin\ctcs_o.exe tcs_o\ctcs_o.c
+tcc %CFLAGS% -o bin\ctcs_o_core.exe tcs_o\ctcs_o_core.c !lib!\core.c
+
+tcc %CFLAGS% -luser32 -o bin\cbatbox.exe cbatbox\cbatbox.c !lib!\core.c
+
 :: upx bin\*.exe
 
 @echo off
-prompt
+prompt %old_prompt%
 
 pause

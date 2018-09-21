@@ -1,0 +1,26 @@
+ _|_  _  _     _
+  |_ (_ _> __ (_)
+
+TCS Output - A tiny graphical server-based command.
+Tiny darkbox subset.
+
+Usage (see darkbox's documentation) : 
+  (...) | tcs_o
+
+Supported darkbox commands : 
+  -a : ASCII
+  -c : Color
+  -d : Display
+  -n : New Line
+  -s : Clear
+  -g : Goto
+  -o : Origin
+  -w : Wait
+  -q : Quit
+  
+Only '-(command)' command format is supported, escaping/quotes is supported.
+
+tcs_o variants : 
+  tcs_o : Original assembly version.
+  ctcs_o : C port of tcs_o.
+  ctcs_o_core : core.c port of ctcs_o (compatible with all core.c supported platforms).
