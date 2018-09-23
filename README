@@ -2,7 +2,12 @@
 |  \  /\  |__) |__/ |__) /  \ \_/
 |__/ /~~\ |  \ |  \ |__) \__/ / \
 
-Darkbox - A Fast and Portable Console IO Server
+ _  |_  _  .  _
+|_) |_ | ) | (_)
+|
+
+darkbox - A Fast and Portable Console IO Server
+ptnio - Portable TCP Network IO
 
 Repository structure :
     - bin : Darkbox binaries (Windows binaries are built using the given tcc)
@@ -10,9 +15,10 @@ Repository structure :
     - darkbox : Darkbox server source code.
     - darkbox_i : Darkbox Standalone Input module
     - makemenu : Darkbox Menu module (WIP)
-    - ptnio : Portable TCP Network IO
+    - ptnio : ptnio source code
     - tcc : Customised Tiny C Compiler for Windows
     - tests : Some tests for darkbox and misc
+    - extras : Some other stuff.
 
 Useful links :
  - Dos9 Project : dos9.org
