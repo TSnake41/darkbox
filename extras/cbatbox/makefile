@@ -1,5 +1,4 @@
-# Darkbox - A Fast and Portable Console IO Server
-# Copyright (C) 2017-2018 Teddy ASTIE
+# Copyright (C) 2018 Teddy ASTIE
 #
 # Permission to use, copy, modify, and/or distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -13,19 +12,27 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-exec_suffix ?=
+CFLAGS ?= -O2 -s
+LDFLAGS ?= -s
 
-subdirs=choice tcs_o cbatbox
+LDFLAGS += -I$(libdir)
 
-all: $(subdirs)
+libdir=../../lib
 
-$(subdirs):
-	$(MAKE) -C $@
+BINDIR=../bin
 
-upx:
-	upx ./bin/* 2>/dev/null
+lib_src=$(libdir)/core.c $(libdir)/core_i.c
+src=cbatbox_core.c
 
-clean:
-	-rm ./bin/choice* ./bin/tcs_o* ./bin/ctcs_o* ./bin/cbatbox* 2>/dev/null || true
+EXEC=cbatbox_core$(exec_suffix)
 
-.PHONY: $(subdirs)
+all: cbatbox_core postbuild
+
+cbatbox_core:
+	$(CC) -o $(EXEC) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS)
+
+postbuild:
+	test -d $(BINDIR) || mkdir $(BINDIR)
+	mv cbatbox_core$(exec_suffix) ../bin
+
+.PHONY: $(EXEC)

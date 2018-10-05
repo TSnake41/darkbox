@@ -23,7 +23,8 @@ cmd /c fasm tcs_o\tcs_o.asm bin\tcs_o.exe
 tcc %CFLAGS% -o bin\ctcs_o.exe tcs_o\ctcs_o.c
 tcc %CFLAGS% -o bin\ctcs_o_core.exe tcs_o\ctcs_o_core.c !lib!\core.c
 
-tcc %CFLAGS% -luser32 -o bin\cbatbox.exe cbatbox\cbatbox.c !lib!\core.c
+tcc %CFLAGS% -luser32 -o bin\cbatbox.exe cbatbox\cbatbox.c
+tcc %CFLAGS% -o bin\cbatbox_core.exe cbatbox\cbatbox_core.c !lib!\core.c !lib!\core_i.c
 
 :: upx bin\*.exe
 

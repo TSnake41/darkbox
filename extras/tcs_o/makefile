@@ -26,13 +26,13 @@ src=ctcs_o_core.c
 
 EXEC=ctcs_o_core$(exec_suffix)
 
-all: ctcs_o_core
+all: ctcs_o_core postbuild
 
 ctcs_o_core:
 	$(CC) -o $(EXEC) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS)
 
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
-	mv ctcs_o_core ../bin
+	mv ctcs_o_core$(exec_suffix) ../bin
 
 .PHONY: $(EXEC)
