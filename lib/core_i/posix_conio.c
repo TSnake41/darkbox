@@ -35,7 +35,7 @@ int getch(void)
   tcsetattr(fileno(stdin), TCSANOW, &oldattr);
 
   /* Handle special chracters */
-  if (ch == '\033' && getch() == '[')
+  if (ch == '\033' && getch() == '[') {
     switch (getch()) {
       case 'A': /* up arrow */
         return 72;
@@ -73,13 +73,16 @@ int getch(void)
         return 81;
         break;
 
+      case 'M':
+        /* Mouse input beginning sequence. */
+        return -2;
+        break;
+
       default:
-        return -2; /* unmanaged/unknown key */
+        return -1; /* unmanaged/unknown key */
         break;
     }
-
-  else
-    return ch;
+  } else return ch;
 }
 
 /* Morgan McGuire, morgan@cs.brown.edu */

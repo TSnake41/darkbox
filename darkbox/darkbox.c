@@ -426,13 +426,13 @@ static void input_server(int mode)
     core_input_get_event(&e);
 
     switch (e.type) {
-      case KEY_PRESS:
+      case CORE_EVENT_KEYBOARD:
         if (mode & ENABLE_KEYBOARD)
             /* Mode allow keyboard event. */
             printf("k %d\n", e.event.key_press);
         break;
 
-      case MOUSE:
+      case CORE_EVENT_MOUSE:
         printf("m %d %d %d\n", e.event.mouse.x, e.event.mouse.y, e.event.mouse.b);
         break;
     }

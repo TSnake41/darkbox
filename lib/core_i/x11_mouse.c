@@ -36,39 +36,39 @@ void core_mouse_terminate(bool on_move)
 static char tomouse_b(int mouse_char)
 {
   /* Update *latest and return button. */
-  #define return_button(button) return (latest = (button))
+  #define return_button(button) return (latest = (CORE_##button))
   /* The same with D_ (double click) support. */
   #define return_button_dc(button) \
-    return (latest = (latest == button ? D_##button : button))
+    return (latest = (latest == CORE_##button ? CORE_D_##button : CORE_##button))
 
 	switch (mouse_char) {
-		case ' ': /* Left button */
-		case '@':
-			return_button_dc(LEFT_BUTTON);
+      case ' ': /* Left button */
+      case '@':
+        return_button_dc(LEFT_BUTTON);
 
-		case '"': /* Right button */
-		case 'B':
-      return_button_dc(RIGHT_BUTTON);
+      case '"': /* Right button */
+      case 'B':
+        return_button_dc(RIGHT_BUTTON);
 
-		case '!': /* Middle button */
-		case 'A':
-			return_button(MIDDLE_BUTTON);
+      case '!': /* Middle button */
+      case 'A':
+        return_button(MIDDLE_BUTTON);
 
-		case '`': /* Scroll up */
-			return_button(SCROLL_UP);
+      case '`': /* Scroll up */
+        return_button(SCROLL_UP);
 
-		case 'a': /* Scroll down */
-			return_button(SCROLL_DOWN);
+      case 'a': /* Scroll down */
+        return_button(SCROLL_DOWN);
 
-		case '#': /* Mouse release */
-			/* Do not redefine *latest */
-      return RELEASE;
+      case '#': /* Mouse release */
+        /* Do not redefine *latest */
+        return CORE_RELEASE;
 
-		case 'C': /* Nothing (1003 mode only) */
-			return_button(NOTHING);
+      case 'C': /* Nothing (1003 mode only) */
+        return_button(NOTHING);
 
-		default:
-			return -1;
+      default:
+        return -1;
 	}
 }
 
@@ -76,17 +76,17 @@ void core_input_get_event(core_input_event *e)
 {
   int c = core_getkey();
 
-  if (c == -2) {
+  if (c == CORE_KEY_MOUSE) {
   	/* Mouse event */
-    e->type = MOUSE;
+    e->type = CORE_EVENT_MOUSE;
     e->event.mouse.b = tomouse_b(core_getkey());
     e->event.mouse.x = core_getkey() - 33;
     e->event.mouse.y = core_getkey() - 33;
-	} else {
-		/* Key press */
-		e->type = KEY_PRESS;
-		e->event.key_press = c;
-	}
+  } else {
+    /* Key press */
+    e->type = CORE_EVENT_KEYBOARD;
+    e->event.key_press = c;
+  }
 }
 
 void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int *b)
@@ -96,7 +96,7 @@ void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int
   int c;
   do /* Wait CSI mouse start (-2, see posix_conio.c) */
     c = core_getkey();
-  while(c != -2);
+  while(c != CORE_KEY_MOUSE);
 
   *b = tomouse_b(core_getkey());
 

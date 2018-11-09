@@ -55,51 +55,55 @@ void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int
 	DWORD e;
 	INPUT_RECORD ir;
 
-	*b = NOTHING;
+	*b = CORE_NOTHING;
 
 	do {
 		do
 			ReadConsoleInput(hin, &ir, 1, &e);
-		while (ir.EventType != MOUSE_EVENT);
+		while (ir.EventType != CORE_EVENT_MOUSE);
 
 		COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
 		*x = mouse_pos.X;
 		*y = mouse_pos.Y;
 
 		*b = tomouse_b(ir.Event.MouseEvent.dwButtonState, ir.Event.MouseEvent.dwEventFlags);
-	} while (!on_move && *b == NOTHING);
+	} while (!on_move && *b == CORE_NOTHING);
 
     core_mouse_terminate(on_move);
 }
 
 static char tomouse_b(DWORD m_bs, DWORD m_ef)
 {
-  static char latest = NOTHING;
+  static char latest = CORE_NOTHING;
 
   /* Redefine latest and return button. */
   #define return_button(button) return (latest = (button))
 
-	if (m_bs & FROM_LEFT_1ST_BUTTON_PRESSED) /* left clic */
-		return_button((m_ef & DOUBLE_CLICK) ? D_LEFT_BUTTON : LEFT_BUTTON);
+  if (m_bs & FROM_LEFT_1ST_BUTTON_PRESSED) /* left clic */
+    return_button((m_ef & DOUBLE_CLICK)
+      ? CORE_D_LEFT_BUTTON
+      : CORE_LEFT_BUTTON);
 
-	else if (m_bs & RIGHTMOST_BUTTON_PRESSED) /* right clic */
-		return_button((m_ef & DOUBLE_CLICK) ? D_RIGHT_BUTTON : RIGHT_BUTTON);
+  else if (m_bs & RIGHTMOST_BUTTON_PRESSED) /* right clic */
+    return_button((m_ef & DOUBLE_CLICK)
+      ? CORE_D_RIGHT_BUTTON
+      : CORE_RIGHT_BUTTON);
 
-	else if (m_bs & FROM_LEFT_2ND_BUTTON_PRESSED) /* middle clic */
-		return_button(MIDDLE_BUTTON);
+  else if (m_bs & FROM_LEFT_2ND_BUTTON_PRESSED) /* middle clic */
+      return_button(CORE_MIDDLE_BUTTON);
 
-	else if (m_ef & MOUSE_WHEELED) /* mouse scrolling */
-		return (int)m_bs < 0 ? SCROLL_UP : SCROLL_DOWN;
+  else if (m_ef & MOUSE_WHEELED) /* mouse scrolling */
+      return (int)m_bs < 0 ? CORE_SCROLL_UP : CORE_SCROLL_DOWN;
 
-	else {
+  else {
     /* mouse moved */
-    if (latest != NOTHING) {
+    if (latest != CORE_NOTHING) {
       /* Button release */
-      latest = NOTHING;
-      return RELEASE;
+      latest = CORE_NOTHING;
+      return CORE_RELEASE;
     }
 
-  	return NOTHING;
+    return CORE_NOTHING;
   }
 }
 
@@ -120,19 +124,19 @@ void core_input_get_event(core_input_event *ie)
           /* Mouse mode disabled, skip event. */
           continue;
 
-    		COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
-    		ie->type = MOUSE;
-    		ie->event.mouse.x = mouse_pos.X;
-    		ie->event.mouse.y = mouse_pos.Y;
-
-    		DWORD m_bs = ir.Event.MouseEvent.dwButtonState,
-    			  m_ef = ir.Event.MouseEvent.dwEventFlags;
-
-    		ie->event.mouse.b = tomouse_b(m_bs, m_ef);
+        COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
+        ie->type = CORE_EVENT_MOUSE;
+        ie->event.mouse.x = mouse_pos.X;
+        ie->event.mouse.y = mouse_pos.Y;
+  
+        DWORD m_bs = ir.Event.MouseEvent.dwButtonState,
+              m_ef = ir.Event.MouseEvent.dwEventFlags;
+  
+        ie->event.mouse.b = tomouse_b(m_bs, m_ef);
         event_pulled = true;
-    		break;
+        break;
 
-    	case KEY_EVENT:
+      case KEY_EVENT:
         if (!ir.Event.KeyEvent.bKeyDown)
           continue;
 
@@ -141,13 +145,13 @@ void core_input_get_event(core_input_event *ie)
         */
         WriteConsoleInputA(hin, &ir, 1, &e);
 
-    		ie->type = KEY_PRESS;
+        ie->type = CORE_EVENT_KEYBOARD;
         int input = getch();
         if (input == 224)
           input = getch();
-    		ie->event.key_press = input;
+        ie->event.key_press = input;
         event_pulled = true;
-    		break;
-    }
+        break;
+      }
 	} while (!event_pulled);
 }

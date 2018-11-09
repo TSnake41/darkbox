@@ -33,8 +33,8 @@ int kbhit();
 
 /* Event type */
 enum core_event_type {
-    MOUSE = 1,
-    KEY_PRESS = 2
+    CORE_EVENT_MOUSE = 1,
+    CORE_EVENT_KEYBOARD = 2
 };
 
 typedef struct core_mouse_event {
@@ -42,7 +42,7 @@ typedef struct core_mouse_event {
 } core_mouse_event;
 
 typedef struct core_input_event {
-    int type;
+    enum core_event_type type;
     union {
         core_mouse_event mouse;
         unsigned char key_press;
@@ -50,16 +50,23 @@ typedef struct core_input_event {
 } core_input_event;
 
 /* Mouse input enumeration */
+enum core_mouse_button {
+	CORE_NOTHING = 0,
+    CORE_LEFT_BUTTON,
+    CORE_RIGHT_BUTTON,
+    CORE_D_LEFT_BUTTON,
+    CORE_D_RIGHT_BUTTON,
+    CORE_MIDDLE_BUTTON,
+    CORE_SCROLL_UP,
+    CORE_SCROLL_DOWN,
+    CORE_RELEASE
+};
+
+/* core_i special keys */
 enum {
-	NOTHING = 0,
-    LEFT_BUTTON,
-    RIGHT_BUTTON,
-    D_LEFT_BUTTON,
-    D_RIGHT_BUTTON,
-    MIDDLE_BUTTON,
-    SCROLL_UP,
-    SCROLL_DOWN,
-    RELEASE
+  CORE_KEY_ERROR = -1,
+  CORE_KEY_UNKNOWN = -1, /* same as CORE_KEY_ERROR */
+  CORE_KEY_MOUSE = -2, /* *NIX only */
 };
 
 #define core_getkey getch
