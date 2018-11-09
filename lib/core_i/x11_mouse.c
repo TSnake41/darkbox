@@ -20,12 +20,13 @@
 
 #include <core_i.h>
 
-static char tomouse_b(int mouse_char);
-static char latest;
+static enum core_mouse_button tomouse_b(int mouse_char);
+static enum core_mouse_button latest;
 
 void core_mouse_initialize(bool on_move)
 {
   fprintf(stderr, "\033[?%dh", on_move ? 1003 : 1000);
+  latest = CORE_RELEASE;
 }
 
 void core_mouse_terminate(bool on_move)
@@ -33,43 +34,65 @@ void core_mouse_terminate(bool on_move)
   fprintf(stderr, "\033[?%dl", on_move ? 1003 : 1000);
 }
 
-static char tomouse_b(int mouse_char)
+static enum core_mouse_button tomouse_b(int b)
 {
-  /* Update *latest and return button. */
-  #define return_button(button) return (latest = (CORE_##button))
+  /* Update latest if needed and return button. */
+  #define return_button(button, redefine_latest) do { \
+    if (redefine_latest) latest = CORE_##button; \
+    return CORE_##button; \
+  } while (0)
+
   /* The same with D_ (double click) support. */
-  #define return_button_dc(button) \
-    return (latest = (latest == CORE_##button ? CORE_D_##button : CORE_##button))
+  #define return_button_dc(button, redefine_latest) do { \
+    enum core_mouse_button temp_btn = (latest == CORE_##button) ? CORE_D_##button : CORE_##button; \
+    if (redefine_latest) latest = temp_btn; \
+    return temp_btn; \
+  } while (0)
 
-	switch (mouse_char) {
-      case ' ': /* Left button */
-      case '@':
-        return_button_dc(LEFT_BUTTON);
+  /* See extras/doc/xterm-mouse-tracking-analysis.ods for more informations. */
+  b -= 32;
 
-      case '"': /* Right button */
-      case 'B':
-        return_button_dc(RIGHT_BUTTON);
+  enum core_mouse_button btn = b & 0x3;
 
-      case '!': /* Middle button */
-      case 'A':
-        return_button(MIDDLE_BUTTON);
+  /* Check scrolling flag */
+  if (b & (1 << 6)) {
+    /* Reset latest with a neutral/non-significant value. */
+    latest = CORE_NOTHING;
+    /* Currently scrolling, but up or down ? */
+    /* NOTE: No idea if there is another value for the btn flag. */
+    return (btn == 1) ? CORE_SCROLL_DOWN : CORE_SCROLL_UP;
+  }
 
-      case '`': /* Scroll up */
-        return_button(SCROLL_UP);
+  /* Check movement flag */
+  bool moving = b & (1 << 5);
 
-      case 'a': /* Scroll down */
-        return_button(SCROLL_DOWN);
+  if (moving)
+    /* Reset latest */
+    latest = CORE_RELEASE;
 
-      case '#': /* Mouse release */
-        /* Do not redefine *latest */
-        return CORE_RELEASE;
+  switch (btn) {
+    case 0:
+      return_button_dc(LEFT_BUTTON, !moving);
+      break;
 
-      case 'C': /* Nothing (1003 mode only) */
-        return_button(NOTHING);
+    case 1:
+      return_button(MIDDLE_BUTTON, !moving);
+      break;
 
-      default:
-        return -1;
-	}
+    case 2:
+      return_button_dc(RIGHT_BUTTON, !moving);
+      break;
+
+    case 3:
+      if (moving)
+        return_button(NOTHING, false);
+      else
+        return_button(RELEASE, false);
+      break;
+  }
+
+  /* Should not be achieved. */
+  return -1;
 }
 
 void core_input_get_event(core_input_event *e)
