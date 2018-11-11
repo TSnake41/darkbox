@@ -38,28 +38,28 @@ enum {
 };
 
 typedef struct core_mouse_event {
-    int x, y, b;
+  int x, y, b;
 } core_mouse_event;
 
 typedef struct core_input_event {
-    int type;
-    union {
-        core_mouse_event mouse;
-        int key_press;
-    } event;
+  int type;
+  union {
+    core_mouse_event mouse;
+    int key_press;
+  } event;
 } core_input_event;
 
 /* Mouse input enumeration */
-enum core_mouse_button {
-	CORE_NOTHING = 0,
-    CORE_LEFT_BUTTON,
-    CORE_RIGHT_BUTTON,
-    CORE_D_LEFT_BUTTON,
-    CORE_D_RIGHT_BUTTON,
-    CORE_MIDDLE_BUTTON,
-    CORE_SCROLL_UP,
-    CORE_SCROLL_DOWN,
-    CORE_RELEASE
+enum {
+  CORE_NOTHING = 0,
+  CORE_LEFT_BUTTON,
+  CORE_RIGHT_BUTTON,
+  CORE_D_LEFT_BUTTON,
+  CORE_D_RIGHT_BUTTON,
+  CORE_MIDDLE_BUTTON,
+  CORE_SCROLL_UP,
+  CORE_SCROLL_DOWN,
+  CORE_RELEASE
 };
 
 /* core_i special keys */
@@ -72,7 +72,7 @@ enum {
 #define core_getkey getch
 #define core_kbhit kbhit
 
-void core_get_mouse(bool, unsigned int *, unsigned int *, unsigned int *);
+void core_get_mouse(bool, int *, int *, int *);
 void core_input_get_event(core_input_event *e);
 
 void core_mouse_initialize(bool on_move);

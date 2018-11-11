@@ -44,7 +44,7 @@ static int tomouse_b(int b)
 
   /* The same with D_ (double click) support. */
   #define return_button_dc(button, redefine_latest) do { \
-    enum core_mouse_button temp_btn = (latest == CORE_##button) ? CORE_D_##button : CORE_##button; \
+    int temp_btn = (latest == CORE_##button) ? CORE_D_##button : CORE_##button; \
     if (redefine_latest) latest = temp_btn; \
     return temp_btn; \
   } while (0)

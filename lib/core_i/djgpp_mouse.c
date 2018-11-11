@@ -16,6 +16,8 @@
 
 #include <core_i.h>
 
+/* TODO: Try some djgpp stuff ? */
+
 void core_mouse_initialize(bool on_move)
 {
 
@@ -29,7 +31,9 @@ void core_mouse_terminate(bool on_move)
 /* Can't get mouse position in console from DOS */
 void core_get_mouse(bool m, int *x, int *y, int *b)
 {
-
+  *x = 0;
+  *y = 0;
+  *b = CORE_RELEASE;
 }
 
 void core_input_get_event(core_input_event *e)
