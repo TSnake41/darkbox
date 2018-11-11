@@ -20,8 +20,8 @@
 
 #include <core_i.h>
 
-static enum core_mouse_button tomouse_b(int mouse_char);
-static enum core_mouse_button latest;
+static int tomouse_b(int mouse_char);
+static int latest;
 
 void core_mouse_initialize(bool on_move)
 {
@@ -34,7 +34,7 @@ void core_mouse_terminate(bool on_move)
   fprintf(stderr, "\033[?%dl", on_move ? 1003 : 1000);
 }
 
-static enum core_mouse_button tomouse_b(int b)
+static int tomouse_b(int b)
 {
   /* Update latest if needed and return button. */
   #define return_button(button, redefine_latest) do { \
@@ -52,7 +52,7 @@ static enum core_mouse_button tomouse_b(int b)
   /* See extras/doc/xterm-mouse-tracking-analysis.ods for more informations. */
   b -= 32;
 
-  enum core_mouse_button btn = b & 0x3;
+  int btn = b & 0x3;
 
   /* Check scrolling flag */
   if (b & (1 << 6)) {
@@ -112,7 +112,7 @@ void core_input_get_event(core_input_event *e)
   }
 }
 
-void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int *b)
+void core_get_mouse(bool on_move, int *x, int *y, int *b)
 {
   core_mouse_initialize(on_move);
 

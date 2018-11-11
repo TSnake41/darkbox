@@ -27,7 +27,7 @@ void core_mouse_terminate(bool on_move)
 }
 
 /* Can't get mouse position in console from DOS */
-void core_get_mouse(bool m, unsigned int *x, unsigned int *y, unsigned int *b)
+void core_get_mouse(bool m, int *x, int *y, int *b)
 {
 
 }
@@ -35,6 +35,6 @@ void core_get_mouse(bool m, unsigned int *x, unsigned int *y, unsigned int *b)
 void core_input_get_event(core_input_event *e)
 {
   int c = core_getkey();
-  e->type = KEY_PRESS;
+  e->type = CORE_EVENT_MOUSE;
   e->event.key_press = c;
 }

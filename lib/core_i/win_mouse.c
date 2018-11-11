@@ -19,7 +19,7 @@
 
 #include <core_i.h>
 
-static char tomouse_b(DWORD, DWORD);
+static int tomouse_b(DWORD, DWORD);
 
 static DWORD flags;
 static bool on_move, mouse_enabled = false;
@@ -47,7 +47,7 @@ void core_mouse_terminate(bool on_move)
   SetConsoleMode(hin, flags);
 }
 
-void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int *b)
+void core_get_mouse(bool on_move, int *x, int *y, int *b)
 {
   core_mouse_initialize(on_move);
   HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
@@ -72,9 +72,9 @@ void core_get_mouse(bool on_move, unsigned int *x, unsigned int *y, unsigned int
     core_mouse_terminate(on_move);
 }
 
-static char tomouse_b(DWORD m_bs, DWORD m_ef)
+static int tomouse_b(DWORD m_bs, DWORD m_ef)
 {
-  static char latest = CORE_NOTHING;
+  static int latest = CORE_NOTHING;
 
   /* Redefine latest and return button. */
   #define return_button(button) return (latest = (button))

@@ -32,20 +32,20 @@ int kbhit();
 #endif
 
 /* Event type */
-enum core_event_type {
-    CORE_EVENT_MOUSE = 1,
-    CORE_EVENT_KEYBOARD = 2
+enum {
+  CORE_EVENT_MOUSE = 1,
+  CORE_EVENT_KEYBOARD = 2
 };
 
 typedef struct core_mouse_event {
-    unsigned int x, y, b;
+    int x, y, b;
 } core_mouse_event;
 
 typedef struct core_input_event {
-    enum core_event_type type;
+    int type;
     union {
         core_mouse_event mouse;
-        unsigned char key_press;
+        int key_press;
     } event;
 } core_input_event;
 
