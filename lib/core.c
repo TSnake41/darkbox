@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "core.h"
 
@@ -141,11 +142,11 @@ void core_clear_console(void)
     core_gotoxy(0, 0);
 }
 
-void core_change_color(unsigned char color)
+void core_change_color(uint8_t color)
 {
   #ifndef WIN32
-  char bc = color & 0xF;
-  char fc = color >> 4;
+  uint8_t bc = color & 0xF;
+  uint8_t fc = color >> 4;
 
   printf("\033[0m\033[%s3%dm\033[%s4%dm",
     bc > 7 ? "1;" : "", Ansi_Table[bc % 8],
@@ -165,7 +166,7 @@ void core_reset_color(void)
   #endif
 }
 
-void core_swritecolor(unsigned char color, const char *s)
+void core_swritecolor(uint8_t color, const char *s)
 {
   if (!s)
     return;
@@ -176,7 +177,7 @@ void core_swritecolor(unsigned char color, const char *s)
   core_reset_color();
 }
 
-void core_cwritecolor(unsigned char color, int c)
+void core_cwritecolor(uint8_t color, int c)
 {
   core_change_color(color);
   putchar(c);

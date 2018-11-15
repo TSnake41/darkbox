@@ -17,16 +17,17 @@
 #ifndef H_CORE
 #define H_CORE
 
+#include <stdint.h>
 #include <stdbool.h>
 
 void core_init(void);
 
-void core_swritecolor(unsigned char color, const char *s);
-void core_cwritecolor(unsigned char color, int c);
+void core_swritecolor(uint8_t color, const char *s);
+void core_cwritecolor(uint8_t color, int c);
 void core_gotoxy_relative(int x_offset, int y_offset);
 
 void core_gotoxy(int x, int y);
-void core_change_color(unsigned char color);
+void core_change_color(uint8_t color);
 void core_change_cursor_state(bool state);
 void core_clear_console(void);
 void core_reset_color(void);
