@@ -60,7 +60,7 @@ void core_get_mouse(bool on_move, int *x, int *y, int *b)
 	do {
 		do
 			ReadConsoleInput(hin, &ir, 1, &e);
-		while (ir.EventType != CORE_EVENT_MOUSE);
+		while (ir.EventType != MOUSE_EVENT);
 
 		COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
 		*x = mouse_pos.X;
@@ -128,10 +128,10 @@ void core_input_get_event(core_input_event *ie)
         ie->type = CORE_EVENT_MOUSE;
         ie->event.mouse.x = mouse_pos.X;
         ie->event.mouse.y = mouse_pos.Y;
-  
+
         DWORD m_bs = ir.Event.MouseEvent.dwButtonState,
               m_ef = ir.Event.MouseEvent.dwEventFlags;
-  
+
         ie->event.mouse.b = tomouse_b(m_bs, m_ef);
         event_pulled = true;
         break;

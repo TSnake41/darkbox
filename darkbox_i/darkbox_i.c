@@ -23,7 +23,7 @@
 
 int main(int argc, char **argv)
 {
-  unsigned int x, y, b;
+  int x, y, b;
 
   if (argc == 1)
     /* No arguments specified, show help */
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
     case 'k': ;
   		bool blocking = arg[2] != '_';
   		/* getch/kbhit with a small fix for Windows, do not cover every
-  		   keys (like non-ASCII/Extended-ASCIIonly ones), but most of them
+  		   keys (like non-ASCII/Extended-ASCII-only ones), but most of them
   		*/
   		char k = blocking || kbhit() ? ((k = getch()) != -32 ? k : getch()) : 0;
       return k;
