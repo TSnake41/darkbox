@@ -11,12 +11,13 @@ popd
 set /p IP=IP :
 set /p PORT=PORT :
 
-(
-	ptnio -id:server -n
-	ptnio -id:server -c new socket
-	ptnio -id:server -c bind socket %IP% %PORT%
-	ptnio -id:server -c listen socket 1
-) || goto :error
+ptnio -id:server -n || goto :error
+
+for %%A in (
+  "new socket"
+  "bind socket %IP% %PORT%"
+  "listen socket 1"
+) do (>nul call ptnio -id:server -c %%~A || goto :error)
 
 :loop
 ptnio -id:server -c accept socket client || goto :error

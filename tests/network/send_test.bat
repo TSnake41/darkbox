@@ -11,11 +11,12 @@ popd
 set /p IP=IP :
 set /p PORT=PORT :
 
-(
-	ptnio -id:client -n
-	ptnio -id:client -c new socket
-	ptnio -id:client -c connect socket %IP% %PORT%
-) || goto :error
+ptnio -id:client -n || goto :error
+
+for %%A in (
+  "new socket"
+  "connect socket %IP% %PORT%"
+) do (>nul call ptnio -id:tcp_rq -c %%~A || goto :error)
 
 :loop
 set /p msg=Message to send :

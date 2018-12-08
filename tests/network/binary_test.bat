@@ -7,17 +7,18 @@ if !DOS9_OS_TYPE!==*NIX (
 ) else set PATH=!CD!;!PATH!
 popd
 
-(
-  ptnio -id:bin_test -n
-  ptnio -id:bin_test -c new server
-  ptnio -id:bin_test -c bind server 127.0.0.1 25567
-  ptnio -id:bin_test -c listen server 1
+ptnio -id:bin_test -n || goto :error
 
-  ptnio -id:bin_test -c new client
-  ptnio -id:bin_test -c connect client 127.0.0.1 25567
+for %%A in (
+  "new server"
+  "bind server 127.0.0.1 25567"
+  "listen server 1"
 
-  ptnio -id:bin_test -c accept server socket > nul
-) || goto :error
+  "new client"
+  "connect client 127.0.0.1 25567"
+
+  "accept server socket"
+) do (>nul call ptnio -id:bin_test -c %%~A || goto :error)
 
 :: Send binary file
 ptnio -id:bin_test -c nms_send client < bin_test || echo nms_send error (!errorlevel!)
@@ -29,10 +30,10 @@ echo Finished, check bin_output
 goto :end
 
 :error
-echo Error occured.
+echo Error occured (%errorlevel%).
 goto :end
 
 :end
-ptnio -id:bin_test -c exit
+2>nul ptnio -id:bin_test -c exit
 pause
 goto :eof

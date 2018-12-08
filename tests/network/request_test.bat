@@ -9,11 +9,12 @@ if !DOS9_OS_TYPE!==*NIX (
 popd
 
 :: Initialize everything
-(
-  ptnio -id:tcp_rq -n
-  ptnio -id:tcp_rq -c new c
-  ptnio -id:tcp_rq -c connect c 208.97.177.124 80
-) || goto :error
+ptnio -id:tcp_rq -n || goto :error
+
+for %%A in (
+  "new c"
+  "connect c 208.97.177.124 80"
+) do (>nul call ptnio -id:tcp_rq -c %%~A || goto :error)
 
 :: Send request
 ptnio -id:tcp_rq -c send c < request
