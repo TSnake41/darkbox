@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2016-2019 Teddy ASTIE
+  Copyright (C) 2019 Teddy ASTIE
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -14,24 +14,33 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifndef H_CORE
-#define H_CORE
-
-#include <stdint.h>
 #include <stdbool.h>
 
-void core_init(void);
+void core_init(void)
+{
+}
 
-void core_swritecolor(uint8_t color, const char *s);
-void core_cwritecolor(uint8_t color, int c);
-void core_gotoxy_relative(int x_offset, int y_offset);
+void core_gotoxy(int x, int y)
+{
+}
 
-void core_gotoxy(int x, int y);
-void core_change_color(uint8_t color);
-void core_change_cursor_state(bool state);
-void core_clear_console(void);
-void core_reset_color(void);
+void core_gotoxy_relative(int x, int y)
+{
+}
 
-void core_sleep(unsigned long ms);
+void core_change_cursor_state(bool state)
+{
+}
 
-#endif /* H_CORE */
+
+void core_clear_console(void)
+{
+}
+
+void core_change_color(uint8_t color)
+{
+}
+
+void core_reset_color(void)
+{
+}

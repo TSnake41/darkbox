@@ -208,6 +208,26 @@ List of supported mouse buttons :
   7: SCROLL_DOWN (portability issues known (Win32))
   8: RELEASE
 
+Build defines :
+  Note : All CORE_* build defines can also be used in others
+         core-based projects such as cbatbox_core and ctcs_o_core.
+  
+  CORE_NO_CONSOLE :
+    Use a dummy core implementation, which have functions that do nothing.
+
+  CORE_USE_ANSI :
+    (default on non-Windows platforms)
+    Use standard ANSI sequences to implement the console API.
+
+  CORE_USE_WINAPI :
+    (default on Windows platforms)
+    Use Windows Win32 API to implement the console API.
+
+  CORE_W10_ANSI : (Windows only)
+    (implies CORE_USE_ANSI)
+    Enable Windows 10 Virtual Terminal Sequences feature in
+    darkbox and use ANSI sequences to implement the console API.
+
 See also :
   Official post : http://batch.xoo.it/t5526-Dev-Darkbox-TSnake41.htm
   Snake game : http://batch.xoo.it/t5614-Batch-Snake-IK-DC.htm
@@ -215,7 +235,7 @@ See also :
 
   tests for examples of uses
 
-  C library core/core_i in "lib" directory (part of darkbox project)
+  C library core and core_i in "lib" directory (part of darkbox project)
 
   Dos9 project : dos9.org
-  darkbox_i and darkbox_t
+  darkbox_i
