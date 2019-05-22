@@ -70,7 +70,7 @@ znsock znsock_ipc_client(const char *id)
   if ((s = znsock_ipc_socket(id, &saun)) == -1)
     return -1;
 
-  if (connect(s, (struct sockaddr *)&saun, sizeof(struct sockaddr_un)) == -1){
+  if (connect(s, (struct sockaddr *)&saun, sizeof(struct sockaddr_un)) == -1) {
     close(s);
     return -1;
   }

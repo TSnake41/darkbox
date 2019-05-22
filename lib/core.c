@@ -34,7 +34,7 @@
 #define CORE_USE_ANSI
 #endif
 
-#if !defined(CORE_USE_ANSI) && !defined(CORE_USE_WINAPI) && !defined(CORE_NO_CONSOLE)
+#if !defined(CORE_USE_ANSI) && !defined(CORE_USE_WINAPI) && !defined(CORE_NO_CONSOLE) && !defined(CORE_WIN_HYBRID)
   #ifndef WIN32
   #define CORE_USE_ANSI
   #else
@@ -46,6 +46,8 @@
 #include <core/winapi.c>
 #elif defined(CORE_USE_ANSI)
 #include <core/ansi.c>
+#elif defined(CORE_WIN_HYBRID)
+#include <core/hybrid.c>
 #else
 #include <core/dummy.c>
 #endif

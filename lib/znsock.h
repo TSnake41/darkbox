@@ -59,9 +59,6 @@ typedef unsigned short in_port_t;
 #define SHUT_RD SD_RECEIVE
 #define SHUT_RDWR SD_BOTH
 
-/* Windows does not "really" support MSG_WAITALL. */
-#define MSG_WAITALL 0
-
 /* Avoid pointer warnings (since WinAPI uses char * instead of void *). */
 #ifdef AVOID_POINTER_WARNING
 #define send(s, b, l, f) send(s, (char *)(b), l, f)

@@ -1,7 +1,7 @@
 @Echo off
 if defined __ goto :lorem
 set __=.
-%0 %* | darkbox
+call %0 %* | darkbox
 echo.
 set __=
 pause>NUL
