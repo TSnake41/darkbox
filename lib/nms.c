@@ -35,7 +35,7 @@ bool nms_send(znsock socket, const void *data, uint16_t length)
     return true;
 
   if (length > 0)
-    if (send(socket, data, length, MSG_WAITALL) == -1)
+    if (znsock_send(socket, data, length) == -1)
       /* Unable to send data. */
       return true;
 
