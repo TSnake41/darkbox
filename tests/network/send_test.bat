@@ -16,7 +16,7 @@ ptnio -id:client -n || goto :error
 for %%A in (
   "new socket"
   "connect socket %IP% %PORT%"
-) do (>nul call ptnio -id:tcp_rq -c %%~A || goto :error)
+) do (>nul call ptnio -id:client -c %%~A || goto :error)
 
 :loop
 set /p msg=Message to send :
