@@ -39,11 +39,16 @@ int getch(void)
 /* Morgan McGuire, morgan@cs.brown.edu */
 int kbhit(void)
 {
-  static int nbf = 0;
+  static char initialized = 0;
 
-  if (!nbf) {
-    setvbuf(stdin, NULL, _IONBF, 0);
-    nbf = 1;
+  if (! initialized) {
+    // Use termios to turn off line buffering
+    struct termios term;
+    tcgetattr(fileno(stdin), &term);
+    term.c_lflag &= ~ICANON;
+    tcsetattr(fileno(stdin), TCSANOW, &term);
+    setbuf(stdin, NULL);
+    initialized = 1;
   }
 
   int bytesWaiting;
