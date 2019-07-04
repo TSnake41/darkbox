@@ -1,10 +1,10 @@
 /*
    Copyright (C) 2017-2018 ASTIE Teddy (TSnake41)
- 
+
    Permission to use, copy, modify, and/or distribute this software for any
    purpose with or without fee is hereby granted, provided that the above
    copyright notice and this permission notice appear in all copies.
- 
+
    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
    WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
    MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
@@ -13,15 +13,15 @@
    OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
    CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
- 
+
 #include <core.h>
 #include <core_i.h>
- 
+
 int main(int argc, char **argv)
 {
   core_init();
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
       case 'a': {
         if (argc - i < 1)
           exit(0);
-        
+
         putchar(strtol(argv[i + 1], NULL, 0));
         i++;
         break;
@@ -44,12 +44,12 @@ int main(int argc, char **argv)
       case 'g': {
         if (argc - i < 2)
           exit(0);
-                
+
         core_gotoxy (
           ox + strtol(argv[i + 1], NULL, 0),
           oy + strtol(argv[i + 2], NULL, 0)
         );
-        
+
         i += 2;
         break;
       }
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
       case 'c': {
         if (argc - i < 1)
           exit(0);
-        
+
         core_change_color(strtol(argv[i + 1], NULL, 0));
         i++;
         break;
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
       case 'd': {
         if (argc - i < 1)
           exit(0);
-        
+
         fputs(argv[i + 1], stdout);
         i++;
         break;
@@ -75,10 +75,10 @@ int main(int argc, char **argv)
       case 'o': {
         if (argc - i < 2)
           exit(0);
-        
+
         ox = strtol(argv[i + 1], NULL, 0);
         oy = strtol(argv[i + 2], NULL, 0);
-        
+
         i += 2;
         break;
       }
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
       case 'w': {
         if (argc - i < 1)
           exit(0);
-        
+
         core_sleep(strtol(argv[i + 1], NULL, 0));
         i++;
         break;
@@ -114,20 +114,19 @@ int main(int argc, char **argv)
         printf("%d:%d:%d", x, y, b);
         break;
       }
-      
+
       case 'k': {
         if (argv[i][2] == '_' && !core_kbhit())
           break;
         
-        char k;
-        return (k = core_getkey()) != -32 ? k : core_getkey();
+        return core_getkey();
       }
 
       case 'p': {
         /* Ignored */
         if (argc - i < 1)
           exit(0);
-       
+
         i++;
         break;
       }

@@ -56,12 +56,7 @@ int main(int argc, char **argv)
 
     /* get keyboard key */
     case 'k': ;
-  		bool blocking = arg[2] != '_';
-  		/* getch/kbhit with a small fix for Windows, do not cover every
-  		   keys (like non-ASCII/Extended-ASCII-only ones), but most of them
-  		*/
-  		char k = blocking || kbhit() ? ((k = getch()) != -32 ? k : getch()) : 0;
-      return k;
+      return (arg[2] != '_') || kbhit() ? core_getkey() : 0;
 
     default:
       goto showhelp;

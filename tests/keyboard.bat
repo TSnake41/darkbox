@@ -15,5 +15,5 @@ goto :keyboard
 
 :show_key
 set /a r=%random% %% 15 + 1
-echo -cdw %r% "%~1" 0
+echo -cdanw %r% "%~1 " %~1 0
 goto :eof
