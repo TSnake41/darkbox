@@ -19,3 +19,10 @@ Mouse event format: "x y c"
   - x: X position of the mouse in the console
   - y: Y position of the mouse in the console
   - c: mouse event value (like mouse button or simply movement)
+
+IMPORTANT:
+  As darkbox now uses batbox keycodes, the errorlevel could excess 255 which
+  can be broken on platforms that does not support exit codes beyond 255.
+  (e.g Linux), therfore, you shouldn't use darkbox_i to handle such keys and
+  instead use darkbox which support these keys regardless of platform-specific
+  limits.
