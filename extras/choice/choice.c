@@ -101,9 +101,9 @@ unsigned char run_choice(choice_args args)
 
   if (args.default_key != 0) {
     /* Use delay */
-    unsigned int wait_cout = (args.timeout * 1000) / WAIT_DELAY;
+    unsigned int wait_count = (args.timeout * 1000) / WAIT_DELAY;
 
-    while (wait_cout--) {
+    while (wait_count--) {
       if (!core_is_stdin_console() || core_kbhit()) {
         if (check_key(args, &key_index))
           putchar('\a');
