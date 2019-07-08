@@ -131,7 +131,7 @@ bool check_key(choice_args args, unsigned char *index)
 {
   int key = core_is_stdin_console() ? core_getkey() : getchar();
 
-  if (key == EOF) {
+  if (key == EOF || key == '\x03') {
     /* Returns 0 */
     *index = 0;
     return false;
