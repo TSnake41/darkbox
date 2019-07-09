@@ -13,9 +13,7 @@ prompt ^>
 @echo on
 
 tcc %CFLAGS% -o bin\choice_fr.exe %choice_src% -DLANG_FR
-tcc %CFLAGS% -o bin\choice_en.exe %choice_src%
-
-tcc %CFLAGS% -o bin\choice_fr.exe %choice_src% -DLANG_FR
+tcc %CFLAGS% -o bin\choice_de.exe %choice_src% -DLANG_DE
 tcc %CFLAGS% -o bin\choice_en.exe %choice_src%
 
 cmd /c fasm tcs_o\tcs_o.asm bin\tcs_o.exe

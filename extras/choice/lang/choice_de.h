@@ -1,5 +1,6 @@
 /*
-  Copyright (C) 2017-2018 Teddy ASTIE
+  Translation contributed by @Grub4K.
+  Copyright (C) 2019 Teddy ASTIE
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -14,19 +15,16 @@
   OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-#ifndef H_CHOICE
-#define H_CHOICE
+#define DEFAULT_KEYS "JN"
 
-#ifdef LANG_FR
-#include "lang/choice_fr.h"
-#elif LANG_DE
-#include "lang/choice_de.h"
-#else
-#include "lang/choice_en.h"
-#endif
+#define ERROR_UNEXPECTED_ARG "Unerwartetes Argument : "
+#define ERROR_NO_KEY "Keine Auswahl definiert, kann nicht fortfahren.\n"
 
-/* Add your own languages and feel free to make pull
-   request at : https://gitlab.com/TSnake41/darkbox
-*/
+#define ERROR_UNEXPECTED_VALUE "Unerwarteter Wert : "
+#define ERROR_DEFAULT_KEY_NOT_FOUND "Standardauswahl nicht in Auswahl.\n"
+#define ERROR_DEFAULT_KEY_MISSING "Keine Standardauswahl.\n"
+#define ERROR_TIMEOUT_MISSING "Abbruchzeit erwartet.\n"
 
-#endif /* H_CHOICE */
+#define ERROR_VALUE_EXPECTED "Wert erwartet.\n"
+
+#define WAIT_FREQUENCY 0.1f

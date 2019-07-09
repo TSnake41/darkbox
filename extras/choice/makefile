@@ -26,13 +26,16 @@ EXEC_EN=choice_en$(exec_suffix)
 lib_src=$(libdir)/core.c $(libdir)/core_i.c
 src=choice.c parse_args.c strcasechr.c
 
-all: choice_fr choice_en postbuild
+all: choice_en choice_fr choice_de postbuild
 
 choice_en:
 	$(CC) -o $(EXEC_EN) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS)
 
 choice_fr:
 	$(CC) -o $(EXEC_FR) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS) -DLANG_FR
+
+choice_de:
+	$(CC) -o $(EXEC_FR) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS) -DLANG_DE
 
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
