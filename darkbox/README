@@ -9,7 +9,9 @@ Syntaxes:
 1) (process, code or "launcher" part) | darkbox
 2) darkbox -i[k/m] | (process, code or "launcher" part)
 3) darkbox -w t
-4) darkbox -kbh (reduced: -k)
+4) darkbox -h
+5) darkbox -k[_]
+6) darkbox -[m/y]
 
 1) Start darkbox as output server.
 2) Start darkbox as input server.
@@ -17,9 +19,13 @@ Syntaxes:
 3) Wait t ms.
 4) Return 1 if data is available in stdin,
    should be used for non-blocking input.
-
-   NOTE: "bh" is not required but recommended for
-         "a better code", so it's just cosmetic.
+5) Returns the keycode of the next key pressed, with '_', don't
+   wait and return immediatly with 0 if there is no input.
+6) Wait for a mouse event :
+    -m : Wait for any non-movement event.
+    -y : Wait for any event.
+   Then print to stdout the event.
+   Event format : x y btn
 
 NOTE: darkbox support both '-' and '/' as command prefixes.
 
@@ -211,7 +217,7 @@ List of supported mouse buttons :
 Build defines :
   Note : All CORE_* build defines can also be used in others
          core-based projects such as cbatbox_core and ctcs_o_core.
-  
+
   CORE_NO_CONSOLE :
     Use a dummy core implementation, which have functions that do nothing.
 
@@ -238,4 +244,3 @@ See also :
   C library core and core_i in "lib" directory (part of darkbox project)
 
   Dos9 project : dos9.org
-  darkbox_i

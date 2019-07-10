@@ -18,7 +18,7 @@ call :update
 
 :it_loop
 darkbox -w 25
-darkbox -kbh || goto :input
+darkbox -h || goto :input
 
 echo -gcdw 0 0 0x4 "No input : Yes" 0
 goto :it_loop
@@ -42,7 +42,7 @@ for /f "tokens=1,2,3,4" %%A in ("%i%") do (
     if %%A==q exit
 )
 call :update
-darkbox -kbh || goto :input
+darkbox -h || goto :input
 goto :it_loop
 
 :update

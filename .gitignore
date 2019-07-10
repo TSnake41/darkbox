@@ -5,6 +5,10 @@ tools/lua/lua*
 tests/darkbox*
 tests/makemenu*
 tests/ptnio*
+extras/tests/cbatbox*
+extras/tests/choice_*
+extras/tests/*tcs_o*
+extras/tests/darkbox_*
 tests/dos9
 tests/misc
 bin/

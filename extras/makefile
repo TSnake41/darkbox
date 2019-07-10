@@ -15,7 +15,7 @@
 
 exec_suffix ?=
 
-subdirs=choice tcs_o cbatbox
+subdirs=choice tcs_o cbatbox darkbox_i
 
 all: $(subdirs)
 
@@ -26,6 +26,7 @@ upx:
 	upx ./bin/* 2>/dev/null
 
 clean:
-	-rm ./bin/choice* ./bin/tcs_o* ./bin/ctcs_o* ./bin/cbatbox* 2>/dev/null || true
+	-rm ./bin/choice* ./bin/tcs_o* ./bin/ctcs_o* ./bin/cbatbox* ./bin/darkbox_i* || true
+	-rm ./tests/choice* ./tests/tcs_o* ./tests/ctcs_o* ./tests/cbatbox* ./tests/darkbox_i* || true
 
 .PHONY: $(subdirs)

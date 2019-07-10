@@ -12,7 +12,7 @@ set old_X=0
 set old_Y=0
 
 :loop
-for /f "tokens=1,2,3" %%A in ('darkbox_i -y') do (
+for /f "tokens=1,2,3" %%A in ('darkbox -y') do (
     set X=%%A
     set Y=%%B
     set C=%%C

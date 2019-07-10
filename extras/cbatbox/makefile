@@ -33,6 +33,7 @@ cbatbox_core:
 
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
-	mv cbatbox_core$(exec_suffix) ../bin
+	mv $(EXEC) ../bin
+	cp $(BINDIR)/$(EXEC) ../tests/
 
 .PHONY: $(EXEC)

@@ -31,8 +31,8 @@
 
 #define WAIT_DELAY ((int)(WAIT_FREQUENCY * 1000))
 
-unsigned char run_choice(choice_args args);
-bool check_key(choice_args args, unsigned char *index);
+int run_choice(choice_args args);
+bool check_key(choice_args args, unsigned int *index);
 
 int main(int argc, char **argv)
 {
@@ -60,10 +60,9 @@ int main(int argc, char **argv)
     return 0;
 }
 
-unsigned char run_choice(choice_args args)
+int run_choice(choice_args args)
 {
-  unsigned char key_index,
-                default_key_index;
+  unsigned int key_index, default_key_index;
 
   if (args.default_key != 0)
     default_key_index = strchr(args.keys, args.default_key) - args.keys + 1;
@@ -127,7 +126,7 @@ unsigned char run_choice(choice_args args)
   return 0;
 }
 
-bool check_key(choice_args args, unsigned char *index)
+bool check_key(choice_args args, unsigned int *index)
 {
   int key = core_is_stdin_console() ? core_getkey() : getchar();
 

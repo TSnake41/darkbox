@@ -34,5 +34,6 @@ ctcs_o_core:
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
 	mv ctcs_o_core$(exec_suffix) ../bin
+	cp $(BINDIR)/$(EXEC) ../tests/
 
 .PHONY: $(EXEC)

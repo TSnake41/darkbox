@@ -18,8 +18,7 @@ LDFLAGS ?= -s
 
 CFLAGS += -I$(libdir)
 
-libdir=../lib
-
+libdir=../../lib
 
 EXEC=darkbox_i$(exec_suffix)
 BINDIR=../bin
@@ -34,7 +33,7 @@ darkbox_i:
 
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
-	mv $(EXEC) ../bin
-	cp $(BINDIR)/$(EXEC) ../tests/
+	mv $(EXEC) $(BINDIR)
+	cp $(BINDIR)/$(EXEC) ../tests
 
 .PHONY: $(EXEC)

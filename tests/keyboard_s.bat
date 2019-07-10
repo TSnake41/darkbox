@@ -1,5 +1,5 @@
 @Echo off
 :loop
-darkbox_i -k
+darkbox -k
 echo %errorlevel%
 goto :loop

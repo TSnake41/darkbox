@@ -24,12 +24,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-exec_suffix=
+exec_suffix ?=
 
-subdirs=darkbox darkbox_i ptnio # makemenu
+subdirs=darkbox ptnio
 
 all: $(subdirs)
-no_extras: darkbox
 
 $(subdirs):
 	$(MAKE) -C $@
@@ -41,7 +40,7 @@ upx:
 	    2>/dev/null
 
 clean:
-	-rm ./bin/darkbox* ./bin/makemenu* ./bin/ptnio*
-	-rm ./tests/darkbox* ./tests/makemenu* ./tests/ptnio*
+	-rm ./bin/darkbox* ./bin/ptnio*
+	-rm ./tests/darkbox* ./tests/ptnio*
 
 .PHONY: $(subdirs)

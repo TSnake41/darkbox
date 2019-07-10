@@ -18,10 +18,13 @@ LDFLAGS ?= -s
 LDFLAGS += -I$(libdir)
 
 libdir=../../lib
-
 BINDIR=../bin
+
 EXEC_FR=choice_fr$(exec_suffix)
 EXEC_EN=choice_en$(exec_suffix)
+EXEC_DE=choice_de$(exec_suffix)
+
+EXEC_ALL=$(EXEC_FR) $(EXEC_EN) $(EXEC_DE)
 
 lib_src=$(libdir)/core.c $(libdir)/core_i.c
 src=choice.c parse_args.c strcasechr.c
@@ -35,10 +38,11 @@ choice_fr:
 	$(CC) -o $(EXEC_FR) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS) -DLANG_FR
 
 choice_de:
-	$(CC) -o $(EXEC_FR) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS) -DLANG_DE
+	$(CC) -o $(EXEC_DE) $(CFLAGS) $(lib_src) $(src) $(LDFLAGS) -DLANG_DE
 
 postbuild:
 	test -d $(BINDIR) || mkdir $(BINDIR)
-	mv $(EXEC_EN) $(EXEC_FR) ../bin
+	cp $(EXEC_ALL) ../tests
+	mv $(EXEC_ALL) ../bin
 
 .PHONY: $(EXEC)

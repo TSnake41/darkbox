@@ -1,6 +1,6 @@
 /*
   Darkbox - A Fast and Portable Console IO Server
-  Copyright (C) 2016-2018 Teddy ASTIE
+  Copyright (C) 2016-2019 Teddy ASTIE
 
   Permission to use, copy, modify, and/or distribute this software for any
   purpose with or without fee is hereby granted, provided that the above
@@ -44,6 +44,8 @@ char text_buffer[MAX_TEXT_LENGTH],
 
 int origin_x, origin_y;
 
+static const char *mouse_format = "%d %d %d\n";
+
 int main(int argc, char const *argv[])
 {
   if (argc > 1 && (argv[1][0] == '-' || argv[1][0] == '/'))
@@ -67,10 +69,31 @@ int main(int argc, char const *argv[])
       /* Returns a non-zero value if data is
          available in stdin otherwise, return 0
       */
-      case 'k':
+      case 'h':
         return core_peek_stdin();
         break;
 
+      /* Get mouse clic or any non-movement event */
+      case 'm': {
+        int x, y, b;
+        core_get_mouse(false, &x, &y, &b);
+        printf(mouse_format, x, y, b);
+        return 0;
+      }
+
+      /* Get any mouse event including movement */
+      case 'y': {
+        int x, y, b;
+        core_get_mouse(true, &x, &y, &b);
+        printf(mouse_format, x, y, b);
+        return 0;
+      }
+
+      /* Get a keyboard key. */
+      case 'k': ;
+        return (argv[1][2] != '_') || kbhit() ? core_getkey() : 0;
+
+      /* Wait a specified time (in ms). */
       case 'w': ;
         if (argc < 2)
           return 1;
@@ -124,12 +147,18 @@ int main(int argc, char const *argv[])
          "  1: (code) | darkbox\n"
          "  2: darkbox -i[k/m] | (code)\n"
          "  3: darkbox -w t\n"
-         "  4: darkbox -k\n\n"
+         "  4: darkbox -h\n"
+         "  5: darkbox -k[_]\n"
+         "  6: darkbox -[m/y]\n\n"
          " 1: Start darkbox as output server\n"
          " 2: Start darkbox as input server\n"
          "    k: Keyboard-only, m: Mouse-only\n"
          " 3: Wait t ms\n"
-         " 4: Return a non-nul value if data is avaialble in stdin.\n\n"
+         " 4: Return a non-nul value if data is avaialble in stdin.\n"
+         " 5: Returns the keycode of the next key pressed.\n"
+         "    With '_', returns immediatly with 0 if no key is pressed.\n"
+         " 6: Wait for a mouse event and print it to stdout.\n"
+         "    m: Any non-movement event, y: Any mouse event\n\n"
          "NOTE: darkbox support both '-' and '/' as command prefixes.\n"
          "For more informations, see README at:\n"
          "https://gitlab.com/TSnake41/darkbox/blob/master/darkbox/README\n");
