@@ -20,7 +20,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <fllist.h>
 #include <sthread.h>
 #include <znsock.h>
 #include <tiny_assert.h>

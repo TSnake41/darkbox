@@ -26,7 +26,7 @@
 void server_cmd_exit(socket_message msg, znsock client, server_data *data)
 {
   /* Lock mutex (lock other thread). */
-  smutex_unlock(&data->pair_mutex);
+  smutex_lock(&data->pair_mutex);
 
   /* Close IPC socket, thus disabling IPC. */
   znsock_close(close(client), true);
