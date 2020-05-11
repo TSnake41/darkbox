@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     switch(tolower(argv[i][1])) {
       case 'a': {
         if (argc - i < 1)
-          exit(0);
+          return 0;
 
         putchar(strtol(argv[i + 1], NULL, 0));
         i++;
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 
       case 'g': {
         if (argc - i < 2)
-          exit(0);
+          return 0;
 
         core_gotoxy (
           ox + strtol(argv[i + 1], NULL, 0),
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 
       case 'c': {
         if (argc - i < 1)
-          exit(0);
+          return 0;
 
         core_change_color(strtol(argv[i + 1], NULL, 0));
         i++;
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 
       case 'd': {
         if (argc - i < 1)
-          exit(0);
+          return 0;
 
         fputs(argv[i + 1], stdout);
         i++;
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
       case 'o': {
         if (argc - i < 2)
-          exit(0);
+          return 0;
 
         ox = strtol(argv[i + 1], NULL, 0);
         oy = strtol(argv[i + 2], NULL, 0);
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 
       case 'w': {
         if (argc - i < 1)
-          exit(0);
+          return 0;
 
         core_sleep(strtol(argv[i + 1], NULL, 0));
         i++;
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 
       case 'h': {
         if (argc - i < 1)
-          exit(0);
+          return 0;
 
         core_change_cursor_state(strtol(argv[i + 1], NULL, 0));
         i++;
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
       case 'p': {
         /* Ignored */
         if (argc - i < 1)
-          exit(0);
+          return 0;
 
         i++;
         break;
