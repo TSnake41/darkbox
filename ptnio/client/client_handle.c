@@ -104,7 +104,7 @@ void client_handle_send(znsock socket)
   setvbuf(stdin, NULL, _IONBF, 0);
 
   #ifdef WIN32
-	/* Set stdin to binary mode */
+  /* Set stdin to binary mode */
   set_bin_mode(stdin);
   #endif
 
