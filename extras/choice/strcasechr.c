@@ -18,12 +18,12 @@
 
 char *strcasechr(const char *str, int c)
 {
-	while (*str) {
-		if (tolower(*str) == tolower(c))
-			return (char *)str;
+  while (*str) {
+    if (tolower(*str) == tolower(c))
+      return (char *)str;
 
-		str++;
-	}
+    str++;
+  }
 
-	return (void *)0;
+  return (void *)0;
 }

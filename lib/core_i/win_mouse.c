@@ -52,22 +52,22 @@ void core_get_mouse(bool on_move, int *x, int *y, int *b)
   core_mouse_initialize(on_move);
   HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
 
-	DWORD e;
-	INPUT_RECORD ir;
+  DWORD e;
+  INPUT_RECORD ir;
 
-	*b = CORE_NOTHING;
+  *b = CORE_NOTHING;
 
-	do {
-		do
-			ReadConsoleInput(hin, &ir, 1, &e);
-		while (ir.EventType != MOUSE_EVENT);
+  do {
+    do
+      ReadConsoleInput(hin, &ir, 1, &e);
+    while (ir.EventType != MOUSE_EVENT);
 
-		COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
-		*x = mouse_pos.X;
-		*y = mouse_pos.Y;
+    COORD mouse_pos = ir.Event.MouseEvent.dwMousePosition;
+    *x = mouse_pos.X;
+    *y = mouse_pos.Y;
 
-		*b = tomouse_b(ir.Event.MouseEvent.dwButtonState, ir.Event.MouseEvent.dwEventFlags);
-	} while (!on_move && *b == CORE_NOTHING);
+    *b = tomouse_b(ir.Event.MouseEvent.dwButtonState, ir.Event.MouseEvent.dwEventFlags);
+  } while (!on_move && *b == CORE_NOTHING);
 
     core_mouse_terminate(on_move);
 }
@@ -150,5 +150,5 @@ void core_input_get_event(core_input_event *ie)
         event_pulled = true;
         break;
       }
-	} while (!event_pulled);
+  } while (!event_pulled);
 }

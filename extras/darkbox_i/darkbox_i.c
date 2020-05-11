@@ -67,12 +67,12 @@ int main(int argc, char **argv)
 
   showhelp:
     puts("darkbox_i - Standalone input command based on core_i - Astie Teddy (TSnake41)\n"
-      	 "Syntax:\n"
-      	 " darkbox_i [-k[_]] OR [-m] OR [-y] OR [-h]\n\n"
-      	 " -k: Return keyboard key to errorlevel\n"
-      	 " -m: Return mouse clic to stdout\n"
-      	 " -y: Return any mouse movement to stdout\n"
-      	 " -h: Return a non-nul positive value if data is available in stdin.\n\n"
+         "Syntax:\n"
+         " darkbox_i [-k[_]] OR [-m] OR [-y] OR [-h]\n\n"
+         " -k: Return keyboard key to errorlevel\n"
+         " -m: Return mouse clic to stdout\n"
+         " -y: Return any mouse movement to stdout\n"
+         " -h: Return a non-nul positive value if data is available in stdin.\n\n"
          "NOTE: darkbox_i support both '-' and '/' as command prefixes.\n");
     return 0;
 

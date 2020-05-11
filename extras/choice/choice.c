@@ -27,7 +27,7 @@
 #include "choice.h"
 
 #define s_strchr(str, c, sensitive) \
-	(sensitive ? strchr(str, c) : strcasechr(str, c))
+  (sensitive ? strchr(str, c) : strcasechr(str, c))
 
 #define WAIT_DELAY ((int)(WAIT_FREQUENCY * 1000))
 

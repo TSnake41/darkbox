@@ -105,7 +105,7 @@ bool smutex_lock(smutex *mutex);
 
 /**
  * Try to lock a mutex.
- * Return true if the mutex is busy.
+ * Returns true if the mutex is busy.
  */
 bool smutex_try_lock(smutex *mutex);
 

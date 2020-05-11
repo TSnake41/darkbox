@@ -100,7 +100,7 @@ void core_input_get_event(core_input_event *e)
   int c = core_getkey();
 
   if (c == CORE_KEY_MOUSE) {
-  	/* Mouse event */
+    /* Mouse event */
     e->type = CORE_EVENT_MOUSE;
     e->event.mouse.b = tomouse_b(core_getkey());
     e->event.mouse.x = core_getkey() - 33;

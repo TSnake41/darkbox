@@ -132,10 +132,10 @@ int main(int argc, char const *argv[])
 
   /* Main loop */
   while (true) {
-  	darkbox_cmd cmd;
+    darkbox_cmd cmd;
 
-  	if (parse_cmd(&cmd))
-  		execute_cmd(cmd);
+    if (parse_cmd(&cmd))
+      execute_cmd(cmd);
   }
 
   /* Never reached */
@@ -192,7 +192,7 @@ static bool parse_cmd(darkbox_cmd *command)
       exit(0);
 
     return false;
-	}
+  }
 
   str++;
 
@@ -472,6 +472,7 @@ static void input_server(int mode)
   if (mode & ENABLE_MOUSE)
     core_mouse_terminate(true);
 }
+
 /* Read the next integer from stdin */
 int read_int(void)
 {

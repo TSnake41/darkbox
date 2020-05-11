@@ -27,8 +27,8 @@ bool nms_send(znsock socket, const void *data, uint16_t length)
 {
   /* Convert length to network bytes */
   uint8_t length_bytes[2] = {
-  	length & 0xFF,
-  	length >> 8,
+    length & 0xFF,
+    length >> 8,
   };
 
   if (znsock_send(socket, length_bytes, 2) == -1)
