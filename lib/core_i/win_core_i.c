@@ -19,6 +19,13 @@
 #include <windows.h>
 #include <io.h>
 
+int core_getkey(void)
+{
+  int key = getch();
+  if (key == 224 || key == 0)
+    return 255 + getch();
+}
+
 int core_peek_stdin(void)
 {
   /* Threat stdin as a pipe, curiously, this works,
