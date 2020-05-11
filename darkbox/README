@@ -229,6 +229,10 @@ Build defines :
     (default on Windows platforms)
     Use Windows Win32 API to implement the console API.
 
+  CORE_WIN_HYBRID : (Windows only)
+    Use ANSI backend if Windows 10 Virtual Terminal Sequences feature is
+    supported, fallback to WinAPI if not supported.
+
   CORE_W10_ANSI : (Windows only)
     (implies CORE_USE_ANSI)
     Enable Windows 10 Virtual Terminal Sequences feature in
