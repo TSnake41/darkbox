@@ -58,6 +58,25 @@ int main(int argc, char **argv)
     case 'k': ;
       return (arg[2] != '_') || kbhit() ? core_getkey() : 0;
 
+    /* Get either mouse click or keyboard key. */
+    case 'z':
+      core_mouse_initialize(true);
+      
+      core_input_event e;
+      core_input_get_event(&e);
+
+      switch (e.type) {
+        case CORE_EVENT_KEYBOARD:
+          printf("k %d\n", e.event.key_press);
+          break;
+
+        case CORE_EVENT_MOUSE:
+          printf("m %d %d %d\n", e.event.mouse.x, e.event.mouse.y, e.event.mouse.b);
+          break;
+      }
+      core_mouse_terminate(true);
+      break;
+
     default:
       goto showhelp;
   }
@@ -72,7 +91,8 @@ int main(int argc, char **argv)
          " -k: Return keyboard key to errorlevel\n"
          " -m: Return mouse clic to stdout\n"
          " -y: Return any mouse movement to stdout\n"
-         " -h: Return a non-nul positive value if data is available in stdin.\n\n"
+         " -h: Return a non-nul positive value if data is available in stdin.\n"
+         " -z: Return any input event to stdout.\n\n"
          "NOTE: darkbox_i support both '-' and '/' as command prefixes.\n");
     return 0;
 
