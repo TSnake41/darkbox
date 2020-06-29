@@ -26,6 +26,8 @@
 
 #include "pipe_fork.h"
 
+#define PTNIO_VERSION "2020-06"
+
 int main(int argc, char **argv)
 {
   if (znsock_init()) {
@@ -52,6 +54,7 @@ int main(int argc, char **argv)
   show_help:
     free_args(args);
     puts("ptnio - Portable TCP Network IO - Astie Teddy (TSnake41)\n"
+         "Ver " PTNIO_VERSION "\n\n"
          "Syntaxes :\n"
          "  1: ptnio -id:ID -n [-t thread_count]\n"
          "  2: ptnio -id:ID -c command [command args]\n\n"

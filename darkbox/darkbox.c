@@ -27,6 +27,8 @@
 
 #include "darkbox.h"
 
+#define DARKBOX_VERSION "2020-06"
+
 static bool parse_cmd(darkbox_cmd *command);
 static void execute_cmd(darkbox_cmd cmd);
 
@@ -143,6 +145,7 @@ int main(int argc, char const *argv[])
 
   show_help:
     puts("darkbox - Fast Portable Console IO Server - Astie Teddy (TSnake41)\n"
+         "Ver " DARKBOX_VERSION "\n\n"
          "Syntaxes :\n"
          "  1: (code) | darkbox\n"
          "  2: darkbox -i[k/m] | (code)\n"
@@ -457,8 +460,8 @@ static void input_server(int mode)
     switch (e.type) {
       case CORE_EVENT_KEYBOARD:
         if (mode & ENABLE_KEYBOARD)
-            /* Mode allow keyboard event. */
-            printf("k %d\n", e.event.key_press);
+          /* Mode allow keyboard event. */
+          printf("k %d\n", e.event.key_press);
         break;
 
       case CORE_EVENT_MOUSE:
